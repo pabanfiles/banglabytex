@@ -1,11 +1,11 @@
 import asyncio
 import re
+import os
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import yt_dlp
-import requests
 
 app = FastAPI(title="BanglaByteX Extractor")
 app.add_middleware(
@@ -19,15 +19,20 @@ class ExtractRequest(BaseModel):
     url: str
     platform: Optional[str] = None
 
-# yt-dlp options
+# Cookie file path (if provided)
+COOKIE_FILE = "cookies.txt" if os.path.exists("cookies.txt") else None
+
 YDL_OPTS = {
     "quiet": True,
     "no_warnings": True,
     "skip_download": True,
     "noplaylist": True,
-    "socket_timeout": 15,
+    "socket_timeout": 20,
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 }
+
+if COOKIE_FILE:
+    YDL_OPTS["cookiefile"] = COOKIE_FILE
 
 def extract_hashtags(text: str) -> list[str]:
     return list(set(re.findall(r"#(\w+)", text or "")))
@@ -50,18 +55,15 @@ def extract_youtube(url: str) -> dict:
     }
 
 def extract_generic(url: str, platform: str) -> dict:
-    # Some platforms need specific extractors
     opts = YDL_OPTS.copy()
     if platform == "instagram":
-        opts["extractor_args"] = {"instagram": {"include": ["reel", "story"]}}
+        opts["extractor_args"] = {"instagram": {"include": ["reel", "story", "photo"]}}
     
     with yt_dlp.YoutubeDL(opts) as ydl:
         info = ydl.extract_info(url, download=False)
 
     formats = []
     seen = set()
-    
-    # Prioritize mp4 format with audio
     for f in info.get("formats", []):
         if not f.get("url"): continue
         ext = f.get("ext", "mp4")
@@ -75,19 +77,6 @@ def extract_generic(url: str, platform: str) -> dict:
                 "id": f.get("format_id", key),
                 "quality": quality,
                 "ext": ext,
-                "size": f.get("filesize") or f.get("filesize_approx") or 0,
-                "url": f["url"],
-                "type": "video",
-            })
-    
-    # If no formats with height, try all
-    if not formats:
-        for f in info.get("formats", []):
-            if not f.get("url"): continue
-            formats.append({
-                "id": str(f.get("format_id", "0")),
-                "quality": "Default",
-                "ext": f.get("ext", "mp4"),
                 "size": f.get("filesize") or f.get("filesize_approx") or 0,
                 "url": f["url"],
                 "type": "video",
@@ -123,16 +112,12 @@ async def extract(req: ExtractRequest):
         return result
     except yt_dlp.utils.DownloadError as e:
         msg = str(e)
-        if "private" in msg.lower() or "login" in msg.lower():
-            raise HTTPException(403, "Private content — login required")
+        if "login" in msg.lower() or "private" in msg.lower():
+            raise HTTPException(403, "Private content — login required or invalid URL")
         raise HTTPException(400, f"Extraction failed: {msg[:200]}")
     except Exception as e:
         raise HTTPException(500, f"Server error: {str(e)[:200]}")
 
 @app.get("/health")
 def health():
-    return {"ok": True}
-
-@app.get("/")
-def root():
-    return {"service": "BanglaByteX Extractor"}
+    return {"ok": True, "cookies": bool(COOKIE_FILE)}
