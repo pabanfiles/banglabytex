@@ -1,0 +1,17 @@
+﻿name = "mytools-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[vars]
+EXTRACTOR_URL = "https://mytools-extractor.fly.dev"
+RATE_LIMIT_PER_MIN = "10"
+RATE_LIMIT_PER_DAY = "100"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "REPLACE_WITH_YOUR_KV_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "banglabytex-db"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
