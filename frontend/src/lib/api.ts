@@ -23,7 +23,7 @@ export interface MediaResult {
   duration?: number
   caption?: string
   hashtags?: string[]
-  formats: MediaFormat[]
+  formats: MediaFormat[]`n  audioFormats?: MediaFormat[]
   watchUrl?: string
 }
 
