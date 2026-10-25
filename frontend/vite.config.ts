@@ -8,13 +8,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
   },
+  publicDir: 'public',
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:8787',
-        changeOrigin: true,
-      },
+      '/api': { target: 'http://localhost:8787', changeOrigin: true },
     },
   },
-  appType: 'mpa', // <--- এই লাইনটি নতুন যোগ করা হয়েছে
 })
