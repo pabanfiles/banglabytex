@@ -34,6 +34,13 @@ export default function ResultCard({ data }: { data: MediaResult }) {
 
   const isYouTube = data.platform.toLowerCase() === 'youtube'
 
+  // Format size nicely
+  const formatSize = (bytes?: number) => {
+    if (!bytes || bytes <= 0) return null
+    const mb = bytes / 1024 / 1024
+    return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`
+  }
+
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
       <div className="flex gap-4 p-5 border-b border-slate-100">
@@ -77,7 +84,7 @@ export default function ResultCard({ data }: { data: MediaResult }) {
                       {downloading === f.url ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
                       {f.quality} {f.ext.toUpperCase()}
                     </span>
-                    {f.size && f.size > 0 && <span className="text-sm opacity-90">{(f.size / 1024 / 1024).toFixed(1)} MB</span>}
+                    {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
                   </button>
                 ))}
               </div>
@@ -94,7 +101,7 @@ export default function ResultCard({ data }: { data: MediaResult }) {
                         {downloading === f.url ? <Loader2 size={18} className="animate-spin" /> : <Music size={18} />}
                         {f.quality} {f.ext.toUpperCase()}
                       </span>
-                      {f.size && f.size > 0 && <span className="text-sm opacity-90">{(f.size / 1024 / 1024).toFixed(1)} MB</span>}
+                      {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
                     </button>
                   ))}
                 </div>
