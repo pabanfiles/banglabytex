@@ -1,6 +1,7 @@
 import asyncio
 import re
 import os
+import tempfile
 from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,8 +20,19 @@ class ExtractRequest(BaseModel):
     url: str
     platform: Optional[str] = None
 
-# Cookie file path (if provided)
-COOKIE_FILE = "cookies.txt" if os.path.exists("cookies.txt") else None
+# --- Cookie handling from Environment Variable (Secure) ---
+COOKIE_FILE_PATH = None
+cookies_env = os.environ.get("COOKIES_CONTENT")
+if cookies_env:
+    try:
+        # Write to a temporary file that yt-dlp can read
+        temp_cookie = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt')
+        temp_cookie.write(cookies_env)
+        temp_cookie.close()
+        COOKIE_FILE_PATH = temp_cookie.name
+        print(f"✅ Cookies loaded from environment variable.")
+    except Exception as e:
+        print(f"❌ Failed to load cookies: {e}")
 
 YDL_OPTS = {
     "quiet": True,
@@ -31,8 +43,8 @@ YDL_OPTS = {
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 }
 
-if COOKIE_FILE:
-    YDL_OPTS["cookiefile"] = COOKIE_FILE
+if COOKIE_FILE_PATH:
+    YDL_OPTS["cookiefile"] = COOKIE_FILE_PATH
 
 def extract_hashtags(text: str) -> list[str]:
     return list(set(re.findall(r"#(\w+)", text or "")))
@@ -113,11 +125,11 @@ async def extract(req: ExtractRequest):
     except yt_dlp.utils.DownloadError as e:
         msg = str(e)
         if "login" in msg.lower() or "private" in msg.lower():
-            raise HTTPException(403, "Private content — login required or invalid URL")
+            raise HTTPException(403, "Private content — login required or cookies expired.")
         raise HTTPException(400, f"Extraction failed: {msg[:200]}")
     except Exception as e:
         raise HTTPException(500, f"Server error: {str(e)[:200]}")
 
 @app.get("/health")
 def health():
-    return {"ok": True, "cookies": bool(COOKIE_FILE)}
+    return {"ok": True, "cookies_loaded": bool(COOKIE_FILE_PATH)}
