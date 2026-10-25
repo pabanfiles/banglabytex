@@ -75,7 +75,7 @@ extractRoutes.post('/extract', async (c) => {
     try {
       const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
       c.executionCtx.waitUntil(
-        c.env.CACHE.put(cacheKey, JSON.stringify(result), { expirationTtl: 3600 })
+        c.env.CACHE.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 })
       )
     } catch (e) {}
 
