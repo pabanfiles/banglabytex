@@ -15,3 +15,6 @@ id = "3a9d8dec7de6410890efa7684d55c29b"
 binding = "DB"
 database_name = "banglabutes-db"
 database_id = "4627661e-707e-497e-8300-96cf20450028"
+
+[triggers]
+crons = ["*/5 * * * *"]
