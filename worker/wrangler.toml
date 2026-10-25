@@ -7,14 +7,5 @@ EXTRACTOR_URL = "https://video-api-7xw7.onrender.com"
 RATE_LIMIT_PER_MIN = "10"
 RATE_LIMIT_PER_DAY = "100"
 
-[[kv_namespaces]]
-binding = "CACHE"
-id = "3a9d8dec7de6410890efa7684d55c29b"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "banglabutes-db"
-database_id = "4627661e-707e-497e-8300-96cf20450028"
-
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["*/10 * * * *"]

@@ -17,24 +17,19 @@ app.route('/api', extractRoutes)
 app.route('/api', healthRoutes)
 
 app.notFound(c => c.json({ error: 'Not found' }, 404))
-
 app.onError((err, c) => {
-  console.error('Worker error:', err)
   return c.json({ error: err.message || 'Internal error' }, 500)
 })
 
-// Cloudflare Worker Cron Trigger Handler
 export default {
   fetch: app.fetch,
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-    console.log('⏰ Keep-Alive Trigger: Waking up Render server...')
+    const url = env.EXTRACTOR_URL || 'https://video-api-7xw7.onrender.com'
     try {
-      const extractorUrl = env.EXTRACTOR_URL || 'https://video-api-7xw7.onrender.com'
-      const response = await fetch(`${extractorUrl}/health`)
-      const result = await response.json()
-      console.log('✅ Render server is awake:', result)
-    } catch (err) {
-      console.error('❌ Failed to wake up:', err)
+      await fetch(`${url}/health`)
+      console.log('✅ Keep-alive: Render is awake')
+    } catch (e) {
+      console.error('❌ Keep-alive failed')
     }
   }
 }
