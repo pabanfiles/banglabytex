@@ -10,13 +10,13 @@ export const tools: ToolDefinition[] = [
   {
     slug: 'video-downloader', name: 'Video Downloader',
     description: 'Download videos from Facebook, Instagram, TikTok, Twitter & more.',
-    icon: 'ðŸŽ¬', category: 'Media',
+    icon: '🎬', category: 'Media',
     component: lazy(() => import('../pages/tools/VideoDownloader')),
   },
   {
     slug: 'pdf-editor', name: 'PDF Editor & Tools',
     description: 'Edit PDF text, merge, split, compress, and convert files easily.',
-    icon: 'ðŸ“„', category: 'Productivity',
+    icon: '📄', category: 'Productivity',
     component: lazy(() => import('../pages/NotFound')),
     externalLink: '/pdf-editor/index.html',
   }
