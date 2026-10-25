@@ -5,9 +5,8 @@ import { ArrowRight, Facebook, Youtube, Instagram, Send, Zap, Shield, Heart, Sma
 export default function Home() {
   return (
     <div className="bg-slate-50">
-      {/* HERO SECTION */}
       <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #a855f7 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
         <div className="max-w-7xl mx-auto px-4 py-24 md:py-32 relative z-10 flex flex-col items-center text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-medium mb-6 border border-purple-500/30">
             <Sparkles size={16} /> All-in-One Digital Hub
@@ -28,7 +27,6 @@ export default function Home() {
             </Link>
           </div>
           
-          {/* Floating Icons Animation */}
           <div className="mt-16 relative w-full max-w-lg h-48 opacity-80">
              <div className="absolute top-0 left-1/2 -translate-x-1/2 text-6xl">🛰️</div>
              <div className="absolute top-16 left-10 text-4xl animate-bounce">🎬</div>
@@ -38,7 +36,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SOCIAL SECTION */}
       <section className="max-w-7xl mx-auto px-4 -mt-8 relative z-20">
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
@@ -54,7 +51,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TOOLS GRID */}
       <section id="tools" className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Our Premium Tools</h2>
@@ -73,20 +69,23 @@ export default function Home() {
               </>
             );
 
-            return tool.externalLink ? (
-              <a key={tool.slug} href={tool.externalLink} target="_blank" rel="noopener noreferrer" className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all duration-300">
-                {cardContent}
-              </a>
-            ) : (
-              <Link key={tool.slug} to={/} className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all duration-300">
-                {cardContent}
-              </Link>
-            );
+            if (tool.externalLink) {
+              return (
+                <a key={tool.slug} href={tool.externalLink} target="_blank" rel="noopener noreferrer" className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all duration-300">
+                  {cardContent}
+                </a>
+              );
+            } else {
+              return (
+                <Link key={tool.slug} to={'/' + tool.slug} className="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-500 transition-all duration-300">
+                  {cardContent}
+                </Link>
+              );
+            }
           })}
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className="bg-white py-20 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
