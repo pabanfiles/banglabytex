@@ -18,6 +18,6 @@ export const tools: ToolDefinition[] = [
     description: 'Edit PDF text, merge, split, compress, and convert files easily.',
     icon: '📄', category: 'Productivity',
     component: lazy(() => import('../pages/NotFound')),
-    externalLink: '/pdf-editor/index.html',
+    externalLink: '/pdf-editor.html',
   }
 ]
