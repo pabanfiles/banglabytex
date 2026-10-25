@@ -3,6 +3,12 @@ import type { Env, MediaResult } from '../types'
 
 export const extractRoutes = new Hono<{ Bindings: Env }>()
 
+// ── Server Pool (load balancing) ──
+const EXTRACTORS = [
+  "https://video-api-7xw7.onrender.com",
+  "https://video-api-2-qj4p.onrender.com",
+]
+
 async function checkRateLimit(env: Env, ip: string): Promise<boolean> {
   try {
     const minuteKey = `rl:min:${ip}:${Math.floor(Date.now() / 60000)}`
@@ -11,9 +17,7 @@ async function checkRateLimit(env: Env, ip: string): Promise<boolean> {
     if (count >= 10) return false
     await env.CACHE.put(minuteKey, String(count + 1), { expirationTtl: 60 })
     return true
-  } catch (e) {
-    return true
-  }
+  } catch (e) { return true }
 }
 
 function detectPlatform(url: string): string | null {
@@ -33,9 +37,26 @@ function detectPlatform(url: string): string | null {
     if (host.includes('dailymotion.com') || host.includes('dai.ly')) return 'dailymotion'
     if (host.includes('soundcloud.com')) return 'soundcloud'
     return null
-  } catch {
-    return null
+  } catch { return null }
+}
+
+async function callExtractor(url: string, platform: string): Promise<MediaResult> {
+  // Random shuffle for load balancing
+  const servers = [...EXTRACTORS].sort(() => Math.random() - 0.5)
+  for (const server of servers) {
+    try {
+      const resp = await fetch(`${server}/extract`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, platform }),
+      })
+      if (resp.ok) return await resp.json() as MediaResult
+      console.error(`Server ${server} failed, trying next...`)
+    } catch (e) {
+      console.error(`Server ${server} unreachable, trying next...`)
+    }
   }
+  throw new Error('All servers are busy. Please try again.')
 }
 
 extractRoutes.post('/extract', async (c) => {
@@ -46,32 +67,21 @@ extractRoutes.post('/extract', async (c) => {
 
     const ip = c.req.header('CF-Connecting-IP') || 'unknown'
     const allowed = await checkRateLimit(c.env, ip)
-    if (!allowed) return c.json({ error: 'Rate limit exceeded.' }, 429)
+    if (!allowed) return c.json({ error: 'Rate limit exceeded. Try after 1 minute.' }, 429)
 
     const platform = detectPlatform(url)
     if (!platform) return c.json({ error: 'Unsupported platform' }, 400)
 
+    // Cache check
     try {
       const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
       const cached = await c.env.CACHE.get(cacheKey, 'json')
       if (cached) return c.json({ ...(cached as MediaResult), cached: true })
     } catch (e) {}
 
-    const extractorUrl = c.env.EXTRACTOR_URL || 'https://video-api-7xw7.onrender.com'
-    
-    const resp = await fetch(`${extractorUrl}/extract`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, platform }),
-    })
+    const result = await callExtractor(url, platform)
 
-    if (!resp.ok) {
-      const errText = await resp.text()
-      return c.json({ error: `Extractor failed: ${errText.slice(0, 100)}` }, 502)
-    }
-
-    const result = await resp.json() as MediaResult
-    
+    // Save to cache (24h)
     try {
       const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
       c.executionCtx.waitUntil(
@@ -85,31 +95,23 @@ extractRoutes.post('/extract', async (c) => {
   }
 })
 
-// Direct Download Proxy
+// Direct download proxy
 extractRoutes.get('/download', async (c) => {
   const url = c.req.query('url')
   const filename = c.req.query('filename') || 'video.mp4'
-  
   if (!url) return c.json({ error: 'URL required' }, 400)
   
   try {
     const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': 'https://www.instagram.com/'
-      }
+      headers: { 'User-Agent': 'Mozilla/5.0', 'Referer': 'https://www.instagram.com/' }
     })
-    
     if (!response.ok) return c.json({ error: 'Download failed' }, 502)
     
     const newHeaders = new Headers(response.headers)
     newHeaders.set('Content-Disposition', `attachment; filename="${filename}"`)
     newHeaders.set('Access-Control-Allow-Origin', '*')
     
-    return new Response(response.body, {
-      headers: newHeaders,
-      status: 200
-    })
+    return new Response(response.body, { headers: newHeaders, status: 200 })
   } catch (err: any) {
     return c.json({ error: err.message }, 500)
   }

@@ -17,19 +17,25 @@ app.route('/api', extractRoutes)
 app.route('/api', healthRoutes)
 
 app.notFound(c => c.json({ error: 'Not found' }, 404))
-app.onError((err, c) => {
-  return c.json({ error: err.message || 'Internal error' }, 500)
-})
+app.onError((err, c) => c.json({ error: err.message || 'Internal error' }, 500))
 
 export default {
   fetch: app.fetch,
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
-    const url = env.EXTRACTOR_URL || 'https://video-api-7xw7.onrender.com'
-    try {
-      await fetch(`${url}/health`)
-      console.log('✅ Keep-alive: Render is awake')
-    } catch (e) {
-      console.error('❌ Keep-alive failed')
-    }
+    const servers = [
+      "https://video-api-7xw7.onrender.com/health",
+      "https://video-api-2-qj4p.onrender.com/health",
+      "https://bangla-pdf-backend.onrender.com/health",
+    ]
+    
+    console.log('⏰ Keep-Alive: Waking all servers...')
+    
+    await Promise.allSettled(
+      servers.map(url => 
+        fetch(url)
+          .then(r => console.log(`✅ ${url} → ${r.status}`))
+          .catch(e => console.log(`❌ ${url} → failed`))
+      )
+    )
   }
 }
