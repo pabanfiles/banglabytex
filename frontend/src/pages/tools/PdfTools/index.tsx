@@ -1,22 +1,21 @@
-import { Link } from 'react-router-dom'
 import { ArrowRight, FileText, Layers, Scissors, RotateCw, Trash2, Image as ImageIcon, Droplets, Hash, Type, Minimize2, Lock, Unlock, ScanText, FileSpreadsheet } from 'lucide-react'
 
 const PDF_TOOLS = [
   { id: 'edit', name: 'Edit PDF Text', desc: 'Change text with live preview', icon: FileText, href: '/pdf-editor.html' },
-  { id: 'merge', name: 'Merge PDF', desc: 'Combine multiple PDFs into one', icon: Layers, href: '/pdf-tools.html' },
-  { id: 'split', name: 'Split PDF', desc: 'Separate one PDF into multiple files', icon: Scissors, href: '/pdf-tools.html' },
-  { id: 'rotate', name: 'Rotate PDF', desc: 'Rotate all or specific pages', icon: RotateCw, href: '/pdf-tools.html' },
-  { id: 'delete', name: 'Delete Pages', desc: 'Remove unwanted pages', icon: Trash2, href: '/pdf-tools.html' },
-  { id: 'img2pdf', name: 'Images to PDF', desc: 'Convert JPG/PNG to PDF', icon: ImageIcon, href: '/pdf-tools.html' },
-  { id: 'pdf2img', name: 'PDF to Images', desc: 'Extract pages as images', icon: ImageIcon, href: '/pdf-tools.html' },
-  { id: 'watermark', name: 'Watermark', desc: 'Add text watermark', icon: Droplets, href: '/pdf-tools.html' },
-  { id: 'pagenum', name: 'Page Numbers', desc: 'Add page numbers automatically', icon: Hash, href: '/pdf-tools.html' },
-  { id: 'pdf2text', name: 'PDF to Text', desc: 'Extract text from PDF', icon: Type, href: '/pdf-tools.html' },
-  { id: 'compress', name: 'Compress PDF', desc: 'Reduce file size without losing quality', icon: Minimize2, href: '/pdf-tools.html' },
-  { id: 'protect', name: 'Protect PDF', desc: 'Add password to PDF', icon: Lock, href: '/pdf-tools.html' },
-  { id: 'unlock', name: 'Unlock PDF', desc: 'Remove password from PDF', icon: Unlock, href: '/pdf-tools.html' },
-  { id: 'ocr', name: 'OCR PDF', desc: 'Extract text from scanned PDFs', icon: ScanText, href: '/pdf-tools.html' },
-  { id: 'convert', name: 'PDF to Word/Excel', desc: 'Convert to editable formats', icon: FileSpreadsheet, href: '/pdf-tools.html' },
+  { id: 'merge', name: 'Merge PDF', desc: 'Combine multiple PDFs into one', icon: Layers, href: '/pdf-tools.html?tool=merge' },
+  { id: 'split', name: 'Split PDF', desc: 'Separate one PDF into multiple files', icon: Scissors, href: '/pdf-tools.html?tool=split' },
+  { id: 'rotate', name: 'Rotate PDF', desc: 'Rotate all or specific pages', icon: RotateCw, href: '/pdf-tools.html?tool=rotate' },
+  { id: 'delete', name: 'Delete Pages', desc: 'Remove unwanted pages', icon: Trash2, href: '/pdf-tools.html?tool=del' },
+  { id: 'img2pdf', name: 'Images to PDF', desc: 'Convert JPG/PNG to PDF', icon: ImageIcon, href: '/pdf-tools.html?tool=img2pdf' },
+  { id: 'pdf2img', name: 'PDF to Images', desc: 'Extract pages as images', icon: ImageIcon, href: '/pdf-tools.html?tool=pdf2img' },
+  { id: 'watermark', name: 'Watermark', desc: 'Add text watermark', icon: Droplets, href: '/pdf-tools.html?tool=wm' },
+  { id: 'pagenum', name: 'Page Numbers', desc: 'Add page numbers automatically', icon: Hash, href: '/pdf-tools.html?tool=num' },
+  { id: 'pdf2text', name: 'PDF to Text', desc: 'Extract text from PDF', icon: Type, href: '/pdf-tools.html?tool=txt' },
+  { id: 'compress', name: 'Compress PDF', desc: 'Reduce file size without losing quality', icon: Minimize2, href: '/pdf-tools.html?tool=comp' },
+  { id: 'protect', name: 'Protect PDF', desc: 'Add password to PDF', icon: Lock, href: '/pdf-tools.html?tool=protect' },
+  { id: 'unlock', name: 'Unlock PDF', desc: 'Remove password from PDF', icon: Unlock, href: '/pdf-tools.html?tool=unlock' },
+  { id: 'ocr', name: 'OCR PDF', desc: 'Extract text from scanned PDFs', icon: ScanText, href: '/pdf-tools.html?tool=ocr' },
+  { id: 'convert', name: 'PDF to Word/Excel', desc: 'Convert to editable formats', icon: FileSpreadsheet, href: '/pdf-tools.html?tool=pdf2docx' },
 ]
 
 export default function PdfTools() {
