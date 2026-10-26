@@ -34,6 +34,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 5vw}
 <h1>Edit text inside any PDF — <span style="background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;color:transparent">with live preview</span></h1>
 <p>Upload, click any text, type the new text and watch it change instantly — same size, same color, same position.</p>
 <div id="drop"><div class="big">📄</div><strong>Drop your PDF here</strong><span>or click to browse · files never leave your browser</span></div>
+<input id="file" type="file" accept="application/pdf" hidden>
 </section>
 
 <div id="feat">
@@ -44,5 +45,32 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 5vw}
 </div>
 
 <footer>© 2026 BanglaByteX. All rights reserved. Made with ❤️ in India</footer>
+
+<script>
+  // Auto-configure backend URL
+  try { localStorage.setItem('burl', 'https://bangla-pdf-backend.onrender.com'); } catch(e) {}
+  
+  // Basic upload handler
+  const drop = document.getElementById('drop');
+  const fileInput = document.getElementById('file');
+  
+  drop.addEventListener('click', () => fileInput.click());
+  
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault();
+    drop.classList.remove('over');
+    if(e.dataTransfer.files.length) {
+      alert('File selected: ' + e.dataTransfer.files[0].name + '\\n(Actual editor script loads here)');
+    }
+  });
+  
+  fileInput.addEventListener('change', (e) => {
+    if(e.target.files.length) {
+      alert('File selected: ' + e.target.files[0].name + '\\n(Actual editor script loads here)');
+    }
+  });
+</script>
 </body>
 </html>
