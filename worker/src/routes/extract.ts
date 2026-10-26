@@ -3,7 +3,7 @@ import type { Env, MediaResult } from '../types'
 
 export const extractRoutes = new Hono<{ Bindings: Env }>()
 
-// ── Server Pool (load balancing) ──
+// রেন্ডার সার্ভার লিস্ট (ফলব্যাক)
 const EXTRACTORS = [
   "https://video-api-7xw7.onrender.com",
   "https://video-api-2-qj4p.onrender.com",
@@ -12,9 +12,8 @@ const EXTRACTORS = [
 async function checkRateLimit(env: Env, ip: string): Promise<boolean> {
   try {
     const minuteKey = `rl:min:${ip}:${Math.floor(Date.now() / 60000)}`
-    const minCount = await env.CACHE.get(minuteKey)
-    const count = parseInt(minCount || '0')
-    if (count >= 10) return false
+    const count = parseInt((await env.CACHE.get(minuteKey)) || '0')
+    if (count >= 15) return false
     await env.CACHE.put(minuteKey, String(count + 1), { expirationTtl: 60 })
     return true
   } catch (e) { return true }
@@ -31,32 +30,29 @@ function detectPlatform(url: string): string | null {
     if (host.includes('reddit.com')) return 'reddit'
     if (host.includes('pinterest.')) return 'pinterest'
     if (host.includes('vimeo.com')) return 'vimeo'
-    if (host.includes('youtube.com') || host.includes('youtu.be')) return 'youtube'
-    if (host.includes('snapchat.com')) return 'snapchat'
-    if (host.includes('linkedin.com')) return 'linkedin'
-    if (host.includes('dailymotion.com') || host.includes('dai.ly')) return 'dailymotion'
     if (host.includes('soundcloud.com')) return 'soundcloud'
     return null
   } catch { return null }
 }
 
-async function callExtractor(url: string, platform: string): Promise<MediaResult> {
-  // Random shuffle for load balancing
+async function callRender(url: string, platform: string): Promise<MediaResult> {
   const servers = [...EXTRACTORS].sort(() => Math.random() - 0.5)
   for (const server of servers) {
     try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 15000) // 15 সেকেন্ড টাইমআউট
+      
       const resp = await fetch(`${server}/extract`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, platform }),
+        signal: controller.signal
       })
+      clearTimeout(timeout)
       if (resp.ok) return await resp.json() as MediaResult
-      console.error(`Server ${server} failed, trying next...`)
-    } catch (e) {
-      console.error(`Server ${server} unreachable, trying next...`)
-    }
+    } catch (e) { console.error(`Render ${server} failed`) }
   }
-  throw new Error('All servers are busy. Please try again.')
+  throw new Error('Render servers busy. Please try again.')
 }
 
 extractRoutes.post('/extract', async (c) => {
@@ -66,27 +62,24 @@ extractRoutes.post('/extract', async (c) => {
     if (!url) return c.json({ error: 'URL required' }, 400)
 
     const ip = c.req.header('CF-Connecting-IP') || 'unknown'
-    const allowed = await checkRateLimit(c.env, ip)
-    if (!allowed) return c.json({ error: 'Rate limit exceeded. Try after 1 minute.' }, 429)
+    if (!(await checkRateLimit(c.env, ip))) return c.json({ error: 'Rate limit exceeded.' }, 429)
 
     const platform = detectPlatform(url)
     if (!platform) return c.json({ error: 'Unsupported platform' }, 400)
 
-    // Cache check
+    // ১. ক্যাশ চেক (সবচেয়ে ফাস্ট)
+    const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
     try {
-      const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
       const cached = await c.env.CACHE.get(cacheKey, 'json')
       if (cached) return c.json({ ...(cached as MediaResult), cached: true })
     } catch (e) {}
 
-    const result = await callExtractor(url, platform)
+    // ২. Render সার্ভারে কল করা
+    const result = await callRender(url, platform)
 
-    // Save to cache (24h)
+    // ৩. ২৪ ঘণ্টার জন্য ক্যাশ করা
     try {
-      const cacheKey = `media:${platform}:${encodeURIComponent(url)}`
-      c.executionCtx.waitUntil(
-        c.env.CACHE.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 })
-      )
+      c.executionCtx.waitUntil(c.env.CACHE.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 }))
     } catch (e) {}
 
     return c.json(result)
@@ -95,7 +88,6 @@ extractRoutes.post('/extract', async (c) => {
   }
 })
 
-// Direct download proxy
 extractRoutes.get('/download', async (c) => {
   const url = c.req.query('url')
   const filename = c.req.query('filename') || 'video.mp4'

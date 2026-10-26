@@ -1,11 +1,10 @@
-import { Download, ExternalLink, Copy, Loader2, Music, CheckCircle2 } from 'lucide-react'
+import { Download, ExternalLink, Copy, Loader2, Music } from 'lucide-react'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import type { MediaResult } from '@/lib/api'
 
 export default function ResultCard({ data }: { data: MediaResult }) {
   const [downloading, setDownloading] = useState<string | null>(null)
-  const [status, setStatus] = useState<string>('')
   const API_URL = import.meta.env.VITE_API_URL || '/api'
 
   const copyText = (text: string, label: string) => {
@@ -13,43 +12,26 @@ export default function ResultCard({ data }: { data: MediaResult }) {
     toast.success(`${label} copied!`)
   }
 
-  const handleDownload = async (url: string, quality: string, ext: string, audioUrl?: string) => {
+  const handleDownload = async (url: string, quality: string, ext: string) => {
     setDownloading(url)
-    setStatus('Starting download...')
-    toast.loading('Processing your request...', { id: 'dl' })
-    
+    toast.loading('Starting download...', { id: 'dl' })
     try {
       const filename = `${data.platform}-${quality}.${ext}`
-      let proxyUrl = `${API_URL}/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`
-      if (audioUrl) {
-        proxyUrl += `&audioUrl=${encodeURIComponent(audioUrl)}`
-      }
-      
-      // Simulate a beautiful loading status
-      setTimeout(() => setStatus('Connecting to server...'), 1000)
-      setTimeout(() => setStatus('Fetching media stream...'), 2500)
-      
+      const proxyUrl = `${API_URL}/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`
       const a = document.createElement('a')
       a.href = proxyUrl
       a.download = filename
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
-      
-      setTimeout(() => {
-        toast.success('Download started!', { id: 'dl' })
-        setStatus('')
-      }, 3500)
-      
+      toast.success('Download started!', { id: 'dl' })
     } catch (err) {
       toast.error('Download failed', { id: 'dl' })
-      setStatus('')
     } finally {
-      setTimeout(() => setDownloading(null), 4000)
+      setTimeout(() => setDownloading(null), 2000)
     }
   }
 
-  const isYouTube = data.platform.toLowerCase() === 'youtube'
   const formatSize = (bytes?: number) => {
     if (!bytes || bytes <= 0) return null
     return (bytes / 1024 / 1024).toFixed(1) + ' MB'
@@ -82,74 +64,46 @@ export default function ResultCard({ data }: { data: MediaResult }) {
       )}
 
       <div className="p-5 space-y-4">
-        {isYouTube ? (
-          <a href={data.watchUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700">
-            <ExternalLink size={18} /> Watch on YouTube
-          </a>
-        ) : (
-          <>
-            {/* VIDEO FORMATS */}
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">📹 Video</h4>
-              <div className="space-y-2">
-                {(data.formats as any[]).map((f, i) => (
-                  <button 
-                    key={i} 
-                    onClick={() => handleDownload(f.url, f.quality, f.ext, f.audio_url)} 
-                    disabled={downloading === f.url} 
-                    className="flex items-center justify-between w-full px-4 py-3 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all disabled:opacity-80 disabled:cursor-not-allowed shadow-md shadow-emerald-500/20"
-                  >
-                    <span className="flex items-center gap-2">
-                      {downloading === f.url ? (
-                        <>
-                          <Loader2 size={18} className="animate-spin" />
-                          {status}
-                        </>
-                      ) : (
-                        <>
-                          <Download size={18} />
-                          {f.quality} {f.ext.toUpperCase()}
-                        </>
-                      )}
-                    </span>
-                    {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
+        <div>
+          <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">📹 Video</h4>
+          <div className="space-y-2">
+            {data.formats.map((f, i) => (
+              <button 
+                key={i} 
+                onClick={() => handleDownload(f.url, f.quality, f.ext)} 
+                disabled={downloading === f.url} 
+                className="flex items-center justify-between w-full px-4 py-3 bg-emerald-500 text-white font-medium rounded-full hover:bg-emerald-600 transition-all disabled:opacity-80 shadow-md shadow-emerald-500/20"
+              >
+                <span className="flex items-center gap-2">
+                  {downloading === f.url ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+                  {f.quality} {f.ext.toUpperCase()}
+                </span>
+                {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
+              </button>
+            ))}
+          </div>
+        </div>
 
-            {/* AUDIO FORMATS */}
-            {data.audioFormats && data.audioFormats.length > 0 && (
-              <div>
-                <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">🎵 Audio Only</h4>
-                <div className="space-y-2">
-                  {data.audioFormats.map((f, i) => (
-                    <button 
-                      key={i} 
-                      onClick={() => handleDownload(f.url, f.quality, f.ext)} 
-                      disabled={downloading === f.url} 
-                      className="flex items-center justify-between w-full px-4 py-3 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-900 transition-all disabled:opacity-80 disabled:cursor-not-allowed shadow-md shadow-slate-800/20"
-                    >
-                      <span className="flex items-center gap-2">
-                        {downloading === f.url ? (
-                          <>
-                            <Loader2 size={18} className="animate-spin" />
-                            {status}
-                          </>
-                        ) : (
-                          <>
-                            <Music size={18} />
-                            {f.quality} {f.ext.toUpperCase()}
-                          </>
-                        )}
-                      </span>
-                      {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </>
+        {data.audioFormats && data.audioFormats.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold text-slate-500 uppercase mb-2">🎵 Audio Only</h4>
+            <div className="space-y-2">
+              {data.audioFormats.map((f, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => handleDownload(f.url, f.quality, f.ext)} 
+                  disabled={downloading === f.url} 
+                  className="flex items-center justify-between w-full px-4 py-3 bg-slate-800 text-white font-medium rounded-full hover:bg-slate-900 transition-all disabled:opacity-80"
+                >
+                  <span className="flex items-center gap-2">
+                    {downloading === f.url ? <Loader2 size={18} className="animate-spin" /> : <Music size={18} />}
+                    {f.quality} {f.ext.toUpperCase()}
+                  </span>
+                  {formatSize(f.size) && <span className="text-sm opacity-90">{formatSize(f.size)}</span>}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
