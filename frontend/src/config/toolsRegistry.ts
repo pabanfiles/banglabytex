@@ -30,5 +30,11 @@ export const tools: ToolDefinition[] = [
     description: 'Convert PDF to Word/Excel, Office to PDF and more.',
     icon: '📝', category: 'Productivity',
     component: lazy(() => import('../pages/tools/WordTools')),
+  },
+  {
+    slug: 'social-checker', name: 'Social & Domain Checker',
+    description: 'Check availability of usernames and domain names instantly.',
+    icon: '🔍', category: 'Utility',
+    component: lazy(() => import('../pages/tools/SocialChecker')),
   }
 ]
