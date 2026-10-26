@@ -57,7 +57,7 @@ export default function RootLayout() {
       {isVisible && (
         <button 
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-[100] w-14 h-14 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer hover:-translate-y-1 transition-transform border border-slate-100"
+          className="fixed bottom-6 right-6 z-[100] w-10 h-10 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer hover:-translate-y-1 transition-transform border border-slate-100"
           title="Scroll to top"
         >
           {/* SVG Circular Progress */}
@@ -76,7 +76,7 @@ export default function RootLayout() {
               className="transition-all duration-150 ease-out"
             />
           </svg>
-          <ArrowUp size={20} className="text-emerald-500 relative z-10" />
+          <ArrowUp size={16} className="text-emerald-500 relative z-10" />
         </button>
       )}
 
