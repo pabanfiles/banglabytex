@@ -1,4 +1,4 @@
-﻿export default function About() {
+export default function About() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold text-slate-900 mb-6">About BanglaByteX</h1>

@@ -1,4 +1,4 @@
-﻿export default function Privacy() {
+export default function Privacy() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-bold text-slate-900 mb-6">Privacy Policy</h1>
@@ -9,9 +9,11 @@
         <h3 className="text-xl font-bold text-slate-900 mt-6">2. Log Data</h3>
         <p>We may collect basic anonymous data (like browser type and visit duration) to improve our service. We never sell this data.</p>
         <h3 className="text-xl font-bold text-slate-900 mt-6">3. Cookies</h3>
-        <p>We use minimal cookies to ensure the website functions correctly and to analyze traffic.</p>
+        <p>We use minimal cookies to ensure the website functions correctly and to analyze traffic. For Instagram downloads, we use a secure session token (cookies) strictly for fetching public media.</p>
         <h3 className="text-xl font-bold text-slate-900 mt-6">4. Third Parties</h3>
         <p>We do not share your personal information with third parties.</p>
+        <h3 className="text-xl font-bold text-slate-900 mt-6">5. Your Consent</h3>
+        <p>By using our site, you consent to our privacy policy. If you have any questions, contact us at support@banglabytex.com.</p>
       </div>
     </div>
   )
