@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home as HomeIcon, Facebook, Youtube, Instagram, Send, Share2, ArrowUp } from 'lucide-react'
+import { Home as HomeIcon, Facebook, Youtube, Instagram, Send, Share2, ArrowUp, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -8,6 +8,7 @@ export default function RootLayout() {
   const isHome = pathname === '/'
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // স্ক্রল পার্সেন্টেজ ট্র্যাকিং
   useEffect(() => {
@@ -15,11 +16,20 @@ export default function RootLayout() {
       const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
       const progress = (window.scrollY / totalHeight) * 100
       setScrollProgress(progress)
-      setIsVisible(window.scrollY > 200) // ২০০ পিক্সেল স্ক্রল করলে বাটন দেখাবে
+      setIsVisible(window.scrollY > 200)
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // মেনু ওপেন থাকলে স্ক্রল বন্ধ রাখা
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMobileMenuOpen])
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -50,26 +60,26 @@ export default function RootLayout() {
     { name: 'Telegram', url: 'https://t.me/banglabytex', icon: Send },
   ]
 
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Tools', path: '/' },
+    { name: 'About', path: '/about' },
+    { name: 'Contact', path: '/contact' },
+  ]
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col relative">
       
-      {/* Circular Scroll Progress (Bottom Right) */}
+      {/* Circular Scroll Progress */}
       {isVisible && (
         <button 
           onClick={scrollToTop}
           className="fixed bottom-6 right-6 z-[100] w-10 h-10 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer hover:-translate-y-1 transition-transform border border-slate-100"
-          title="Scroll to top"
         >
-          {/* SVG Circular Progress */}
           <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-            {/* Background Circle */}
             <circle cx="50" cy="50" r="42" fill="none" stroke="#f1f5f9" strokeWidth="6" />
-            {/* Progress Circle */}
             <circle 
-              cx="50" cy="50" r="42" 
-              fill="none" 
-              stroke="#10b981" 
-              strokeWidth="6" 
+              cx="50" cy="50" r="42" fill="none" stroke="#10b981" strokeWidth="6" 
               strokeDasharray={`${2 * Math.PI * 42}`} 
               strokeDashoffset={`${2 * Math.PI * 42 * (1 - scrollProgress / 100)}`} 
               strokeLinecap="round"
@@ -80,33 +90,73 @@ export default function RootLayout() {
         </button>
       )}
 
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      {/* Header / Navbar */}
+      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-emerald-600">
-            <span className="text-2xl">⚡</span> BanglaByteX
+          
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 font-extrabold text-xl text-slate-900">
+            <span className="text-2xl text-emerald-500">⚡</span> BanglaByte<span className="text-emerald-500">X</span>
           </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            {!isHome && (
-              <Link to="/" className="flex items-center gap-1 text-slate-600 hover:text-emerald-600">
-                <HomeIcon size={16} /> Home
+
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path} 
+                className={`hover:text-emerald-500 transition-colors ${pathname === link.path ? 'text-emerald-500' : ''}`}
+              >
+                {link.name}
               </Link>
-            )}
-            <button onClick={handleShare} className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full font-medium hover:bg-emerald-100 transition">
+            ))}
+          </nav>
+
+          {/* Right Side (Share + Mobile Menu) */}
+          <div className="flex items-center gap-3">
+            <button onClick={handleShare} className="hidden sm:flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full font-medium hover:bg-emerald-100 transition">
               <Share2 size={16} /> Share
             </button>
-          </nav>
+            
+            <button 
+              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-2 shadow-xl absolute w-full left-0">
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path} 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-4 py-3 rounded-xl font-medium ${pathname === link.path ? 'bg-emerald-50 text-emerald-600' : 'text-slate-600 hover:bg-slate-50'}`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            <button onClick={() => { handleShare(); setIsMobileMenuOpen(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-white rounded-xl font-medium mt-2">
+              <Share2 size={18} /> Share Site
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="flex-1"><Outlet /></main>
 
+      {/* Footer */}
       <footer className="mt-16 border-t border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             
             <div className="text-center md:text-left">
-              <Link to="/" className="flex items-center justify-center md:justify-start gap-2 font-bold text-2xl text-emerald-600 mb-2">
-                <span className="text-3xl">⚡</span> BanglaByteX
+              <Link to="/" className="flex items-center justify-center md:justify-start gap-2 font-bold text-2xl text-slate-900 mb-2">
+                <span className="text-3xl text-emerald-500">⚡</span> BanglaByte<span className="text-emerald-500">X</span>
               </Link>
               <p className="text-sm text-slate-500 max-w-xs">Your all-in-one digital tools hub. Fast, free, and forever growing.</p>
             </div>
