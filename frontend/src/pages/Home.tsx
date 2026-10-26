@@ -6,7 +6,6 @@ import { ArrowRight, Facebook, Youtube, Instagram, Send, Zap, Shield, Heart, Sma
 export default function Home() {
   return (
     <div className="bg-slate-50 min-h-screen overflow-x-hidden">
-      {/* HERO SECTION */}
       <section className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem] overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center text-center">
@@ -53,7 +52,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SOCIAL SECTION */}
       <section className="max-w-7xl mx-auto px-4 -mt-20 relative z-20">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -74,7 +72,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* TOOLS GRID */}
       <section id="tools" className="max-w-7xl mx-auto px-4 py-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Our Premium Tools</h2>
@@ -115,7 +112,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className="bg-white py-24 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
