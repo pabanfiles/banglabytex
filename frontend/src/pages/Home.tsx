@@ -1,12 +1,25 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { tools } from '@/config/toolsRegistry'
-import { ArrowRight, Sparkles, Zap, Shield, Heart, Search } from 'lucide-react'
-import { useState } from 'react'
+import { ArrowRight, Sparkles, Zap, Shield, Heart, Search, X } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
 import SocialLinks from '@/components/SocialLinks'
 
 export default function Home() {
   const [search, setSearch] = useState('')
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  // ক্লিক আউটসাইড করলে ড্রপডাউন বন্ধ হবে
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const filteredTools = tools.filter(t => 
     t.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -63,12 +76,13 @@ export default function Home() {
       {/* SEARCH & SOCIAL SECTION (Floating) */}
       <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
         
-        {/* Search Bar Card */}
+        {/* Search Bar Card with Auto-Suggest */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100"
+          className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100 relative"
+          ref={searchRef}
         >
           <div className="relative">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
@@ -76,10 +90,49 @@ export default function Home() {
               type="text" 
               placeholder="Search for tools (e.g. PDF, Video, Calculator...)" 
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors"
+              onChange={(e) => {
+                setSearch(e.target.value)
+                setShowSuggestions(true)
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              className="w-full pl-14 pr-12 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors"
             />
+            {search && (
+              <button 
+                onClick={() => setSearch('')}
+                className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X size={20} />
+              </button>
+            )}
           </div>
+
+          {/* Auto-Suggest Dropdown */}
+          {showSuggestions && search.length > 0 && (
+            <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
+              {filteredTools.length > 0 ? (
+                <div className="max-h-60 overflow-y-auto">
+                  {filteredTools.map((tool) => (
+                    <Link
+                      key={tool.slug}
+                      to={tool.externalLink || '/' + tool.slug}
+                      className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0"
+                    >
+                      <span className="text-2xl">{tool.icon}</span>
+                      <div>
+                        <p className="font-semibold text-slate-900">{tool.name}</p>
+                        <p className="text-xs text-slate-500 line-clamp-1">{tool.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-6 py-4 text-center text-slate-500 text-sm">
+                  No tools found for "{search}"
+                </div>
+              )}
+            </div>
+          )}
         </motion.div>
 
         {/* Social Card */}
@@ -132,11 +185,6 @@ export default function Home() {
               </Link>
             );
           })}
-          {filteredTools.length === 0 && (
-            <div className="col-span-3 text-center py-12">
-              <p className="text-xl text-slate-500">No tools found for "{search}"</p>
-            </div>
-          )}
         </div>
       </section>
 
