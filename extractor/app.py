@@ -32,9 +32,13 @@ if cookies_env:
         pass
 
 YDL_OPTS = {
-    "quiet": True, "no_warnings": True, "skip_download": True,
-    "noplaylist": True, "socket_timeout": 20,
+    "quiet": True, 
+    "no_warnings": True, 
+    "skip_download": True,
+    "noplaylist": True, 
+    "socket_timeout": 10, # টাইমআউট কমানো হয়েছে দ্রুত ফেইল করার জন্য
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "cachedir": False, # ক্যাশে বন্ধ করা হয়েছে মেমোরি বাঁচানোর জন্য
 }
 if COOKIE_FILE_PATH:
     YDL_OPTS["cookiefile"] = COOKIE_FILE_PATH
@@ -44,6 +48,8 @@ def extract_hashtags(text: str) -> list[str]:
 
 def extract_generic(url: str, platform: str) -> dict:
     opts = YDL_OPTS.copy()
+    opts["format"] = "bestvideo+bestaudio/best"
+    
     if platform == "instagram":
         opts["extractor_args"] = {"instagram": {"include": ["reel", "story", "photo"]}}
     
@@ -55,26 +61,35 @@ def extract_generic(url: str, platform: str) -> dict:
     seen = set()
     seen_audio = set()
 
+    best_audio_url = None
+    for f in info.get("formats", []):
+        if f.get("acodec") != "none" and f.get("vcodec") == "none":
+            if not best_audio_url:
+                best_audio_url = f.get("url")
+
     for f in info.get("formats", []):
         if not f.get("url"): continue
         
-        # Video formats
         if f.get("vcodec") != "none" and f.get("height"):
             ext = f.get("ext", "mp4")
             quality = f"{f.get('height')}p"
             key = f"{quality}-{ext}"
             if key not in seen:
                 seen.add(key)
+                has_audio = f.get("acodec") != "none"
+                audio_url = f["url"] if has_audio else best_audio_url
+                
                 formats.append({
                     "id": f.get("format_id", key),
                     "quality": quality,
                     "ext": ext,
                     "size": f.get("filesize") or f.get("filesize_approx") or 0,
                     "url": f["url"],
+                    "audio_url": audio_url,
                     "type": "video",
+                    "has_audio": has_audio
                 })
         
-        # Audio only formats (m4a, webm, etc.)
         if f.get("acodec") != "none" and f.get("vcodec") == "none":
             ext = f.get("ext", "m4a")
             abr = f.get("abr") or f.get("tbr") or 0
@@ -90,25 +105,6 @@ def extract_generic(url: str, platform: str) -> dict:
                     "url": f["url"],
                     "type": "audio",
                 })
-
-    # If no audio-only found, try to get a default audio using yt-dlp's bestaudio
-    if not audio_formats:
-        try:
-            audio_opts = opts.copy()
-            audio_opts["format"] = "bestaudio/best"
-            with yt_dlp.YoutubeDL(audio_opts) as ydl:
-                ainfo = ydl.extract_info(url, download=False)
-                if ainfo.get("url"):
-                    audio_formats.append({
-                        "id": "bestaudio",
-                        "quality": "Audio",
-                        "ext": ainfo.get("ext", "m4a"),
-                        "size": ainfo.get("filesize") or ainfo.get("filesize_approx") or 0,
-                        "url": ainfo["url"],
-                        "type": "audio",
-                    })
-        except Exception:
-            pass
 
     def sort_key(x):
         v = x["quality"].replace("p", "").replace("kbps", "")
@@ -139,8 +135,6 @@ async def extract(req: ExtractRequest):
         return result
     except yt_dlp.utils.DownloadError as e:
         msg = str(e)
-        if "login" in msg.lower() or "private" in msg.lower():
-            raise HTTPException(403, "Private content — login required or cookies expired.")
         raise HTTPException(400, f"Extraction failed: {msg[:200]}")
     except Exception as e:
         raise HTTPException(500, f"Server error: {str(e)[:200]}")
