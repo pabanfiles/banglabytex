@@ -4,6 +4,8 @@ import { toast } from 'sonner'
 import { Link2, Download, Loader2, ShieldCheck } from 'lucide-react'
 import { extractMedia, type MediaResult } from '@/lib/api'
 import ResultCard from './ResultCard'
+import { useUsageLimit } from '@/hooks/useUsageLimit'
+import SubscribeModal from '@/components/SubscribeModal'
 
 const SUPPORTED = ['Facebook', 'Instagram', 'TikTok', 'Twitter/X', 'Threads', 'Reddit', 'Pinterest', 'Vimeo', 'Snapchat', 'LinkedIn', 'Dailymotion']
 
@@ -11,11 +13,14 @@ export default function VideoDownloader() {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState<MediaResult | null>(null)
   const [agreed, setAgreed] = useState(false)
+  
+  const { showModal, setShowModal, checkLimit, incrementUsage, unlockAccess } = useUsageLimit(3)
 
   const { mutate, isPending } = useMutation({
     mutationFn: extractMedia,
     onSuccess: (data) => {
       setResult(data)
+      incrementUsage() // Success হলেই কাউন্ট হবে
       toast.success('Media found!')
     },
     onError: (err: any) => {
@@ -30,12 +35,16 @@ export default function VideoDownloader() {
       toast.error('Please agree to the Terms and Disclaimer before downloading.')
       return
     }
+    if (!checkLimit()) return // লিমিট শেষ হলে পপ-আপ দেখাবে
+
     setResult(null)
     mutate(url.trim())
   }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
+      <SubscribeModal isOpen={showModal} onClose={() => setShowModal(false)} onUnlock={unlockAccess} />
+
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-bold text-slate-900">🎬 Video Downloader</h1>
         <p className="mt-3 text-slate-600">Paste URL from any platform. Fast, free, no signup.</p>
@@ -63,7 +72,6 @@ export default function VideoDownloader() {
           </button>
         </div>
 
-        {/* Agree Checkbox */}
         <div className="mt-4 flex items-start gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <input 
             type="checkbox" 
@@ -73,10 +81,7 @@ export default function VideoDownloader() {
             className="mt-1 w-5 h-5 accent-emerald-500 cursor-pointer"
           />
           <label htmlFor="agree" className="text-sm text-slate-600 cursor-pointer">
-            I agree that I am solely responsible for the content I download and confirm that I have the right to download it. 
-            <span className="block mt-1 text-xs text-slate-500">
-              By checking this box, you agree to our <a href="/terms" className="text-brand-600 hover:underline">Terms of Use</a> and <a href="/privacy-policy" className="text-brand-600 hover:underline">Privacy Policy</a>.
-            </span>
+            I agree that I am solely responsible for the content I download.
           </label>
         </div>
 
@@ -89,15 +94,12 @@ export default function VideoDownloader() {
 
       {result && <ResultCard data={result} />}
 
-      {/* Disclaimer Section */}
       <div className="mt-10 bg-emerald-50 border border-emerald-100 rounded-xl p-5">
         <div className="flex items-center gap-2 mb-2 text-emerald-700 font-semibold">
           <ShieldCheck size={20} /> Disclaimer & Copyright Notice
         </div>
         <p className="text-sm text-emerald-800 leading-relaxed">
-          BanglaByteX does not host, store, or distribute any copyrighted media. All videos and audio files are fetched directly from third-party platforms (Facebook, Instagram, TikTok, etc.). 
-          We strictly do not support downloading private content or content without the owner's permission. Users are solely responsible for how they use the downloaded files. 
-          If you are a copyright owner and believe your content is being accessed improperly, please contact us at <strong>support@banglabytex.com</strong> for immediate removal.
+          BanglaByteX does not host, store, or distribute any copyrighted media. All videos and audio files are fetched directly from third-party platforms. Users are solely responsible for how they use the downloaded files.
         </p>
       </div>
     </div>
