@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { tools } from '@/config/toolsRegistry'
-import { ArrowRight, Facebook, Youtube, Instagram, Send, Zap, Shield, Heart, Smartphone, Sparkles, TrendingUp } from 'lucide-react'
+import { ArrowRight, Sparkles, Zap, Shield, Heart, Smartphone, TrendingUp } from 'lucide-react'
+import SocialLinks from '@/components/SocialLinks'
 
 export default function Home() {
   return (
@@ -45,9 +46,6 @@ export default function Home() {
             <a href="#tools" className="px-8 py-3.5 bg-white text-emerald-600 font-bold rounded-full transition-all shadow-xl hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center gap-2">
               Explore Tools <ArrowRight size={18} />
             </a>
-            <Link to="/about" className="px-8 py-3.5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white font-bold rounded-full transition-all flex items-center justify-center">
-              Learn More
-            </Link>
           </motion.div>
         </div>
       </section>
@@ -57,18 +55,11 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6"
+          className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-10 flex flex-col items-center justify-center gap-6 text-center"
         >
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">Stay Connected with BanglaByteX</h3>
-            <p className="text-slate-500 text-sm mt-1">Join our community for updates, tips, and new tool releases.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            <a href="#" className="flex items-center gap-2 px-6 py-2.5 bg-emerald-500 text-white rounded-full hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/30 font-medium text-sm"><Facebook size={18}/> Facebook</a>
-            <a href="#" className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors shadow-lg shadow-red-500/30 font-medium text-sm"><Youtube size={18}/> YouTube</a>
-            <a href="#" className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-pink-500 to-orange-500 text-white rounded-full hover:opacity-90 transition-opacity shadow-lg shadow-pink-500/30 font-medium text-sm"><Instagram size={18}/> Instagram</a>
-            <a href="#" className="flex items-center gap-2 px-6 py-2.5 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition-colors shadow-lg shadow-sky-500/30 font-medium text-sm"><Send size={18}/> Telegram</a>
-          </div>
+          <h3 className="text-2xl font-bold text-slate-900">Stay Connected with BanglaByteX</h3>
+          <p className="text-slate-500 text-sm max-w-lg">Join our community for updates, tips, and new tool releases.</p>
+          <SocialLinks />
         </motion.div>
       </section>
 

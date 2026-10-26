@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { Home as HomeIcon } from 'lucide-react'
+import SocialLinks from '../components/SocialLinks'
 
 export default function RootLayout() {
   const { pathname } = useLocation()
@@ -25,14 +26,22 @@ export default function RootLayout() {
       <main className="flex-1"><Outlet /></main>
 
       <footer className="mt-16 border-t border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-8 text-center text-sm text-slate-500">
-          <div className="mb-4 flex justify-center gap-6">
-            <Link to="/about" className="hover:text-emerald-600">About</Link>
-            <Link to="/contact" className="hover:text-emerald-600">Contact</Link>
-            <Link to="/privacy-policy" className="hover:text-emerald-600">Privacy</Link>
-            <Link to="/terms" className="hover:text-emerald-600">Terms</Link>
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          <div className="flex flex-col items-center gap-6">
+            <h3 className="text-xl font-bold text-slate-900">Stay Connected</h3>
+            <SocialLinks />
+            
+            <div className="flex justify-center gap-6 text-sm text-slate-600 mt-4">
+              <Link to="/about" className="hover:text-emerald-600">About</Link>
+              <Link to="/contact" className="hover:text-emerald-600">Contact</Link>
+              <Link to="/privacy-policy" className="hover:text-emerald-600">Privacy</Link>
+              <Link to="/terms" className="hover:text-emerald-600">Terms</Link>
+            </div>
+            
+            <p className="text-sm text-slate-500 mt-4">
+              © {new Date().getFullYear()} BanglaByteX. All rights reserved. Made with ❤️ in India
+            </p>
           </div>
-          © {new Date().getFullYear()} BanglaByteX. All rights reserved. Made with ❤️ in India
         </div>
       </footer>
     </div>
