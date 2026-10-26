@@ -94,14 +94,23 @@ $('#run').onclick=async()=>{const o={};$('#opts').querySelectorAll('[name]').for
   if(out.length===1&&(tool===T.comp||tool===T.compp))st(`${sz(t0)} → ${sz(out[0].blob.size)}`+(out[0].blob.size>=t0?' (no gain: this PDF is already small or text-based)':''));
   if(out.length>1){const b=document.createElement('button');b.className='pri';b.textContent='⬇ Download all (ZIP)';b.onclick=async()=>{const z=new JSZip();out.forEach(r=>z.file(r.name,r.blob));const u=URL.createObjectURL(await z.generateAsync({type:'blob'})),a=document.createElement('a');a.href=u;a.download='pdf-tools.zip';a.click()};R.append(b)}
  }catch(e){st('Failed: '+e.message+(/encrypt|password/i.test(e.message)?'':' (is the PDF password-protected or damaged?)'),'err')}finally{list()}};
-</script><script>
-  // Check URL parameter and open the specific tool automatically
-  setTimeout(() => {
-    const params = new URLSearchParams(window.location.search);
-    const toolId = params.get('tool');
-    if (toolId && typeof T !== 'undefined' && T[toolId]) {
-      open(toolId);
+</script>
+<script>
+  // Auto-open tool from URL parameter
+  document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const toolId = urlParams.get('tool');
+    
+    if (toolId) {
+      // Wait for everything to load properly
+      setTimeout(function() {
+        if (typeof T !== 'undefined' && T[toolId]) {
+          open(toolId);
+        } else {
+          console.error("Tool not found: " + toolId);
+        }
+      }, 200);
     }
-  }, 300);
+  });
 </script>
 </body></html>
