@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { tools } from '@/config/toolsRegistry'
-import { ArrowRight, Sparkles, Zap, Shield, Heart, Smartphone, TrendingUp, Search } from 'lucide-react'
+import { ArrowRight, Sparkles, Zap, Shield, Heart, Search } from 'lucide-react'
 import { useState } from 'react'
 import SocialLinks from '@/components/SocialLinks'
 
@@ -15,6 +15,7 @@ export default function Home() {
 
   return (
     <div className="bg-slate-50 min-h-screen overflow-x-hidden">
+      
       {/* HERO SECTION */}
       <section className="relative bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem] overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -37,22 +38,14 @@ export default function Home() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">In One Place</span>
           </motion.h1>
           
-          {/* Search Bar */}
-          <motion.div 
+          <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="w-full max-w-xl relative mb-8"
+            className="text-lg md:text-xl text-teal-50 max-w-2xl mb-10"
           >
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
-            <input 
-              type="text" 
-              placeholder="Search tools (e.g. PDF, Video, Calculator...)" 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-14 pr-6 py-4 rounded-full text-slate-900 text-lg outline-none shadow-2xl focus:ring-4 focus:ring-emerald-300 transition-all"
-            />
-          </motion.div>
+            Download videos, edit PDFs, and grab the best deals - all from one fast, free, and beautifully simple platform.
+          </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -67,23 +60,43 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SOCIAL SECTION */}
-      <section className="max-w-7xl mx-auto px-4 -mt-20 relative z-20">
+      {/* SEARCH & SOCIAL SECTION (Floating) */}
+      <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
+        
+        {/* Search Bar Card */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 md:p-10 flex flex-col items-center justify-center gap-6 text-center"
+          className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100"
         >
-          <h3 className="text-2xl font-bold text-slate-900">Stay Connected with BanglaByteX</h3>
-          <p className="text-slate-500 text-sm max-w-lg">Join our community for updates, tips, and new tool releases.</p>
+          <div className="relative">
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
+            <input 
+              type="text" 
+              placeholder="Search for tools (e.g. PDF, Video, Calculator...)" 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors"
+            />
+          </div>
+        </motion.div>
+
+        {/* Social Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center"
+        >
+          <h3 className="text-xl font-bold text-slate-900">Stay Connected</h3>
           <SocialLinks />
         </motion.div>
       </section>
 
       {/* TOOLS GRID */}
-      <section id="tools" className="max-w-7xl mx-auto px-4 py-24">
-        <div className="text-center mb-16">
+      <section id="tools" className="max-w-7xl mx-auto px-4 py-20">
+        <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Our Premium Tools</h2>
           <p className="text-slate-500 text-lg">Handcrafted tools to make your digital life easier.</p>
         </div>
