@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home as HomeIcon, Facebook, Youtube, Instagram, Send, Share2 } from 'lucide-react'
+import { Home as HomeIcon, Facebook, Youtube, Instagram, Send, Share2, ArrowUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
@@ -7,6 +7,7 @@ export default function RootLayout() {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
 
   // স্ক্রল পার্সেন্টেজ ট্র্যাকিং
   useEffect(() => {
@@ -14,10 +15,15 @@ export default function RootLayout() {
       const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
       const progress = (window.scrollY / totalHeight) * 100
       setScrollProgress(progress)
+      setIsVisible(window.scrollY > 200) // ২০০ পিক্সেল স্ক্রল করলে বাটন দেখাবে
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   // শেয়ার ফাংশন
   const handleShare = async () => {
@@ -46,10 +52,33 @@ export default function RootLayout() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col relative">
-      {/* Scroll Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 z-[100] bg-slate-200">
-        <div className="h-full bg-emerald-500 transition-all duration-150" style={{ width: `${scrollProgress}%` }}></div>
-      </div>
+      
+      {/* Circular Scroll Progress (Bottom Right) */}
+      {isVisible && (
+        <button 
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-[100] w-14 h-14 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer hover:-translate-y-1 transition-transform border border-slate-100"
+          title="Scroll to top"
+        >
+          {/* SVG Circular Progress */}
+          <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+            {/* Background Circle */}
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#f1f5f9" strokeWidth="6" />
+            {/* Progress Circle */}
+            <circle 
+              cx="50" cy="50" r="42" 
+              fill="none" 
+              stroke="#10b981" 
+              strokeWidth="6" 
+              strokeDasharray={`${2 * Math.PI * 42}`} 
+              strokeDashoffset={`${2 * Math.PI * 42 * (1 - scrollProgress / 100)}`} 
+              strokeLinecap="round"
+              className="transition-all duration-150 ease-out"
+            />
+          </svg>
+          <ArrowUp size={20} className="text-emerald-500 relative z-10" />
+        </button>
+      )}
 
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -75,7 +104,6 @@ export default function RootLayout() {
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             
-            {/* Left: Branding */}
             <div className="text-center md:text-left">
               <Link to="/" className="flex items-center justify-center md:justify-start gap-2 font-bold text-2xl text-emerald-600 mb-2">
                 <span className="text-3xl">⚡</span> BanglaByteX
@@ -83,7 +111,6 @@ export default function RootLayout() {
               <p className="text-sm text-slate-500 max-w-xs">Your all-in-one digital tools hub. Fast, free, and forever growing.</p>
             </div>
 
-            {/* Middle: Links */}
             <div className="flex gap-6 text-sm font-medium text-slate-600">
               <Link to="/about" className="hover:text-emerald-600 transition">About</Link>
               <Link to="/contact" className="hover:text-emerald-600 transition">Contact</Link>
@@ -91,7 +118,6 @@ export default function RootLayout() {
               <Link to="/terms" className="hover:text-emerald-600 transition">Terms</Link>
             </div>
 
-            {/* Right: Social Icons (Premium Style) */}
             <div className="flex gap-3">
               {socialLinks.map((social) => {
                 const Icon = social.icon
