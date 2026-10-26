@@ -14,33 +14,21 @@ export const tools: ToolDefinition[] = [
     component: lazy(() => import('../pages/tools/VideoDownloader')),
   },
   {
-    slug: 'pdf-tools', name: 'PDF Tools (14 in 1)',
+    slug: 'pdf-tools', name: 'PDF Tools',
     description: 'Edit, merge, split, compress, protect PDFs and more.',
     icon: '📄', category: 'Productivity',
     component: lazy(() => import('../pages/tools/PdfTools')),
   },
   {
-    slug: 'emi-calculator', name: 'EMI Calculator',
-    description: 'Calculate monthly loan payments, interest, and total amounts instantly.',
-    icon: '🧮', category: 'Finance',
-    component: lazy(() => import('../pages/tools/EmiCalculator')),
+    slug: 'image-tools', name: 'Image Tools',
+    description: 'Compress, resize, convert images easily.',
+    icon: '🖼️', category: 'Design',
+    component: lazy(() => import('../pages/tools/ImageTools')),
   },
   {
-    slug: 'text-case-converter', name: 'Text Case Converter',
-    description: 'Convert text to UPPERCASE, lowercase, Title Case, camelCase, and more.',
-    icon: '🔤', category: 'Text',
-    component: lazy(() => import('../pages/tools/TextCaseConverter')),
-  },
-  {
-    slug: 'color-picker', name: 'Color Picker',
-    description: 'Pick colors and copy HEX, RGB, HSL codes instantly.',
-    icon: '🎨', category: 'Design',
-    component: lazy(() => import('../pages/tools/ColorPicker')),
-  },
-  {
-    slug: 'word-counter', name: 'Word Counter',
-    description: 'Count words, characters, sentences, and reading time.',
-    icon: '📝', category: 'Text',
-    component: lazy(() => import('../pages/tools/WordCounter')),
-  },
+    slug: 'word-tools', name: 'Word / Office Tools',
+    description: 'Convert PDF to Word/Excel, Office to PDF and more.',
+    icon: '📝', category: 'Productivity',
+    component: lazy(() => import('../pages/tools/WordTools')),
+  }
 ]
