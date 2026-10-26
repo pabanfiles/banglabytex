@@ -17,21 +17,21 @@ h1{text-align:center;font-size:clamp(28px,5vw,44px);letter-spacing:-1px;margin:4
 .c h3{margin:0 0 8px 0;font-size:18px;font-weight:700;color:var(--tx)}.c:hover h3{color:var(--ac)}
 .c p{margin:0;color:var(--mut);font-size:14px;line-height:1.5;flex-grow:1}
 .c.off{opacity:.55;cursor:not-allowed}.c.off:hover{transform:none;border-color:var(--bd)}.tag{font-size:10px;background:var(--acbg);color:var(--ac);border-radius:99px;padding:2px 8px;margin-left:6px}
-#tool{display:none;max-width:800px;margin:0 auto;padding:20px 5vw 50px}
-button,.btn{font:inherit;font-size:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:10px 18px;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;gap:8px;align-items:center;transition:0.2s}
+#tool{display:none;max-width:860px;margin:0 auto;padding:30px 5vw 60px}
+button,.btn{font:inherit;font-size:14px;border:1px solid #cbd5e1;background:#fff;color:#334155;padding:12px 24px;border-radius:9999px;cursor:pointer;text-decoration:none;display:inline-flex;gap:8px;align-items:center;transition:0.2s;font-weight:500}
 button:hover,.btn:hover{border-color:var(--ac)}
-.pri{background:var(--ac);color:#fff;border:0}.pri:hover{background:var(--ac2)}button:disabled{opacity:.45;pointer-events:none}
-#dz{border:2px dashed var(--bd);background:var(--card);border-radius:20px;padding:40px 20px;text-align:center;cursor:pointer;margin:20px 0;transition:0.2s}#dz.over,#dz:hover{border-color:var(--ac);background:var(--acbg)}
+.pri{background:#10b981;color:#fff;border:0;padding:14px 32px;border-radius:9999px;font-size:16px;font-weight:600;width:100%;max-width:300px;display:block;margin:0 auto;box-shadow:0 10px 25px -5px rgba(16,185,129,0.4);transition:0.3s}.pri:hover{background:#059669;transform:translateY(-2px)}button:disabled{opacity:.45;pointer-events:none}
+#dz{border:2px dashed #cbd5e1;background:#f8fafc;border-radius:24px;padding:60px 20px;text-align:center;cursor:pointer;margin:30px 0;transition:0.3s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:16px;color:#64748b}#dz.over,#dz:hover{border-color:var(--ac);background:#ecfdf5;color:var(--ac)}
 .fl{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:14px}.fl span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fl button{padding:4px 10px}
-#opts{display:grid;gap:12px;margin:20px 0}#opts label{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--tx)}
-#opts input,#opts select{font:inherit;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+#opts{display:grid;gap:12px;margin:20px 0}#opts label{display:grid;gap:8px;font-size:15px;font-weight:600;color:#1e293b}
+#opts input,#opts select{font:inherit;padding:14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;color:#1e293b;width:100%;transition:0.2s}
 #st{margin:16px 0;font-size:14px;font-weight:500}.err{color:var(--err)}.note{color:var(--mut);font-size:14px;margin-bottom:20px}
 .rs{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--ac);border-radius:12px;padding:12px 16px;margin-bottom:8px;box-shadow:0 4px 6px -1px rgb(0 0 0 / 0.05)}.rs span{flex:1;overflow:hidden;text-overflow:ellipsis;font-weight:500}
 </style></head><body>
 <header><a class="logo" href="/">⚡ BanglaByte<b>X</b></a></header>
 <div id="home"><h1>All PDF tools in one place</h1><p class="sub">Free · files never leave your browser (except tools marked server)</p><div id="grid"></div></div>
 <div id="tool"><button id="back">← All tools</button><h2 id="tt" style="margin:24px 0 8px"></h2><div class="note" id="td"></div>
-<div id="dz"></div><input id="fi" type="file" hidden><div id="fl"></div><div id="opts"></div>
+<div id="dz"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg><br><span id="dz-text">Click or drop files here</span></div><input id="fi" type="file" hidden><div id="fl"></div><div id="opts"></div>
 <button id="run" class="pri" disabled>Run Tool</button><div id="st"></div><div id="res"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>

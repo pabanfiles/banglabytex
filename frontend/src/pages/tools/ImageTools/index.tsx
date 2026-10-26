@@ -3,9 +3,7 @@ import { ArrowRight, Image as ImageIcon, Minimize2, RotateCw } from 'lucide-reac
 const IMAGE_TOOLS = [
   { id: 'img2pdf', name: 'Image to PDF', desc: 'Convert JPG/PNG to PDF', icon: ImageIcon, href: '/pdf-tools.html?tool=img2pdf' },
   { id: 'pdf2img', name: 'PDF to Image', desc: 'Extract pages as JPG/PNG', icon: ImageIcon, href: '/pdf-tools.html?tool=pdf2img' },
-  { id: 'img-compress', name: 'Compress Image', desc: 'Reduce file size (Coming Soon)', icon: Minimize2, href: '#' },
-  { id: 'img-resize', name: 'Resize Image', desc: 'Change dimensions (Coming Soon)', icon: ImageIcon, href: '#' },
-  { id: 'img-convert', name: 'Image Converter', desc: 'PNG, JPG, WebP (Coming Soon)', icon: RotateCw, href: '#' },
+  { id: 'img-compress', name: 'Compress Image', desc: 'Reduce file size easily', icon: Minimize2, href: '/pdf-tools.html?tool=comp' },
 ]
 
 export default function ImageTools() {
@@ -18,18 +16,19 @@ export default function ImageTools() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {IMAGE_TOOLS.map((tool) => {
           const Icon = tool.icon
-          const isComingSoon = tool.href === '#'
-          const Wrapper = isComingSoon ? 'div' : 'a'
-          const props = isComingSoon ? {} : { href: tool.href }
           return (
-            <Wrapper key={tool.id} {...props} className={`group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 flex flex-col h-full ${isComingSoon ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl hover:-translate-y-1 hover:border-emerald-500'}`}>
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${isComingSoon ? 'bg-slate-100 text-slate-400' : 'bg-emerald-50 text-emerald-500 group-hover:scale-110 transition-transform'}`}>
-                <Icon size={24} />
+            <a key={tool.id} href={tool.href} className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-emerald-500 transition-all duration-300 flex flex-col h-full">
+              <div className="w-14 h-14 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
+                <Icon size={28} />
               </div>
-              <h3 className={`text-lg font-bold mb-2 ${isComingSoon ? 'text-slate-700' : 'text-slate-900 group-hover:text-emerald-600'}`}>{tool.name}</h3>
-              <p className="text-sm text-slate-500 flex-grow mb-4">{tool.desc}</p>
-              {!isComingSoon && <div className="flex items-center gap-2 text-emerald-500 font-semibold text-sm">Open Tool <ArrowRight size={16} /></div>}
-            </Wrapper>
+              <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-emerald-600">{tool.name}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow">{tool.desc}</p>
+              <div className="mt-auto">
+                <div className="inline-flex items-center justify-center gap-2 bg-emerald-500 group-hover:bg-emerald-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm transition-colors shadow-md shadow-emerald-500/20 w-full">
+                  Open Tool <ArrowRight size={16} />
+                </div>
+              </div>
+            </a>
           )
         })}
       </div>
