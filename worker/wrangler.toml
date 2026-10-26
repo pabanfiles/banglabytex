@@ -1,0 +1,11 @@
+name = "banglabutes-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[vars]
+EXTRACTOR_URL = "https://video-api-7xw7.onrender.com"
+RATE_LIMIT_PER_MIN = "10"
+RATE_LIMIT_PER_DAY = "100"
+
+[triggers]
+crons = ["*/10 * * * *"]

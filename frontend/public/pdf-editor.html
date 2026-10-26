@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BanglaByteX – PDF Editor</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#0f172a;--mut:#64748b;--bd:#e2e8f0;--ac:#059669;--ac2:#0d9488;--acbg:#d1fae5;--ok:#16a34a;--warn:#b45309;--warnbg:#fef3c7;--err:#dc2626}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1020;--card:#151b2e;--tx:#e8ecf5;--mut:#94a3b8;--bd:#273049;--acbg:#064e3b;--warnbg:#3b2a0a;--warn:#fbbf24}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Bengali",sans-serif}
+header.top{display:flex;align-items:center;justify-content:space-between;padding:14px 5vw}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.5px}.logo b{background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;color:transparent}
+button,.btn{font:inherit;font-size:13px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:7px 12px;border-radius:9px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+button:hover,.btn:hover{border-color:var(--ac)}button:disabled{opacity:.4;pointer-events:none}
+.pri{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;border:0}.ok{background:var(--ok);color:#fff;border:0}
+#hero{text-align:center;padding:5vh 5vw 3vh;max-width:820px;margin:auto}
+#hero h1{font-size:clamp(30px,6vw,52px);line-height:1.1;margin:0 0 12px;letter-spacing:-1.5px}
+#hero p{color:var(--mut);font-size:17px;margin:0 auto 26px;max-width:560px}
+#drop{border:2px dashed var(--bd);background:var(--card);border-radius:20px;padding:44px 20px;cursor:pointer;transition:.2s}
+#drop:hover,#drop.over{border-color:var(--ac);background:var(--acbg)}
+#drop .big{font-size:42px}#drop strong{display:block;font-size:18px;margin:6px 0 2px}#drop span{color:var(--mut)}
+#feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;max-width:1000px;margin:34px auto;padding:0 5vw}
+.f{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px}.f h3{margin:6px 0 4px;font-size:16px}.f p{margin:0;color:var(--mut);font-size:14px}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 5vw}
+</style></head>
+<body>
+<header class="top">
+  <div class="logo">📄 BanglaByte<b>X</b></div>
+  <div style="display:flex;gap:8px"><a class="btn" href="/pdf-tools.html">🧰 All tools</a><button id="gear">⚙ Backend</button></div>
+</header>
+
+<section id="hero">
+<h1>Edit text inside any PDF — <span style="background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;color:transparent">with live preview</span></h1>
+<p>Upload, click any text, type the new text and watch it change instantly — same size, same color, same position.</p>
+<div id="drop"><div class="big">📄</div><strong>Drop your PDF here</strong><span>or click to browse · files never leave your browser</span></div>
+</section>
+
+<div id="feat">
+<div class="f">⚡<h3>Live preview</h3><p>See every change on the page as you type.</p></div>
+<div class="f">🎯<h3>Same look</h3><p>Font size, color and position are matched to the original text.</p></div>
+<div class="f">✋<h3>Drag &amp; add</h3><p>Move any text, or click to add new text anywhere.</p></div>
+<div class="f">🔒<h3>Private</h3><p>Runs in your browser. Connect your own backend for true text replacement.</p></div>
+</div>
+
+<footer>© 2026 BanglaByteX. All rights reserved. Made with ❤️ in India</footer>
+</body>
+</html>
