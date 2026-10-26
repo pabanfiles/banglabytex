@@ -14,11 +14,10 @@ export const tools: ToolDefinition[] = [
     component: lazy(() => import('../pages/tools/VideoDownloader')),
   },
   {
-    slug: 'pdf-editor', name: 'PDF Editor & Tools',
-    description: 'Edit PDF text, merge, split, compress, and convert files easily.',
+    slug: 'pdf-tools', name: 'PDF Tools (14 in 1)',
+    description: 'Edit, merge, split, compress, protect PDFs and more.',
     icon: '📄', category: 'Productivity',
-    component: lazy(() => import('../pages/NotFound')),
-    externalLink: '/pdf-editor.html',
+    component: lazy(() => import('../pages/tools/PdfTools')),
   },
   {
     slug: 'emi-calculator', name: 'EMI Calculator',
