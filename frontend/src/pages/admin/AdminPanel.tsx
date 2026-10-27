@@ -172,12 +172,17 @@ export default function AdminPanel() {
           <div>
             <h1 className="text-3xl font-bold mb-6">Manage Tools</h1>
             <div className="grid gap-4">
-              {tools.map(tool => (
+              {tools.length > 0 ? tools.map(tool => (
                 <div key={tool.slug} className="bg-white p-4 rounded-xl border flex justify-between items-center">
-                  <div><p className="font-bold">{tool.h1_title}</p><p className="text-sm text-slate-500">/{tool.slug}</p></div>
-                  <button onClick={() => setEditingTool(tool)} className="px-4 py-2 bg-slate-100 rounded-lg">Edit</button>
+                  <div>
+                    <p className="font-bold text-slate-800">{tool.h1_title || tool.slug}</p>
+                    <p className="text-sm text-slate-500">/{tool.slug}</p>
+                  </div>
+                  <button onClick={() => setEditingTool(tool)} className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 font-medium">Edit</button>
                 </div>
-              ))}
+              )) : (
+                <p className="text-slate-500">No tools found in database. Make sure D1 is connected.</p>
+              )}
             </div>
           </div>
         )}
