@@ -1,0 +1,6 @@
+INSERT INTO posts (title, slug, content, status) VALUES 
+('How to Merge PDF Files Online for Free', 'merge-pdf-files-free', 'Merging PDF files has never been easier. With PPM Creator, you can combine multiple documents into one single file without paying a dime. Just upload your files, click merge, and download the final result.', 'published'),
+('How to Compress Images Without Losing Quality', 'compress-images-without-quality-loss', 'Slow website? Large images might be the problem. Our free image compressor reduces the file size significantly while keeping the quality intact. Perfect for bloggers and web developers.', 'published'),
+('Calculate Your Exact Age in Seconds', 'calculate-age-in-seconds', 'Whether you need your age for an official form or just for fun, our Age Calculator gives you the exact result in years, months, and days. It is fast, free, and accurate.', 'published'),
+('The Best Video Downloader for Social Media', 'best-video-downloader-social-media', 'Want to save a funny video from Facebook or Instagram? PPM Creator allows you to download videos from multiple platforms quickly and securely.', 'published'),
+('How to Convert PDF to Word Easily', 'convert-pdf-to-word', 'Need to edit a PDF document? Convert it to Word using our free tools. It retains the formatting and allows you to make changes easily.', 'published');
