@@ -10,6 +10,7 @@ import Privacy from './pages/legal/Privacy'
 import Terms from './pages/legal/Terms'
 import Blog from './pages/Blog'
 import Converters from './pages/tools/Converters'
+import PdfMerge from './pages/tools/PdfMerge'
 import SinglePost from './pages/Blog/SinglePost'
 import { tools } from './config/toolsRegistry'
 import PageLoader from './components/PageLoader'
@@ -26,6 +27,8 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'blog', element: <Blog /> },
       { path: 'converters', element: <Converters /> },
+      { path: 'pdf-merge', element: <PdfMerge /> },
+      { path: 'age-calculator', element: <AgeCalc /> },
       { path: 'blog/:slug', element: <SinglePost /> },
       { path: 'hellowsaipatit', element: <AdminPanel /> },
       { path: 'about', element: <About /> },
