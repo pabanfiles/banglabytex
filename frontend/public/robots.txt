@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ppmcreator.com/sitemap.xml

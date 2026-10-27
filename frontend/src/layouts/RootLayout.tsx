@@ -1,148 +1,71 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home as HomeIcon, Facebook, Youtube, Instagram, Send, Share2, ArrowUp, Menu, X } from 'lucide-react'
+import { Facebook, Youtube, Instagram, Send, Twitter, Share2, ArrowUp, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function RootLayout() {
   const { pathname } = useLocation()
-  const isHome = pathname === '/'
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // স্ক্রল পার্সেন্টেজ ট্র্যাকিং
   useEffect(() => {
     const handleScroll = () => {
       const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
-      const progress = (window.scrollY / totalHeight) * 100
-      setScrollProgress(progress)
+      setScrollProgress((window.scrollY / totalHeight) * 100)
       setIsVisible(window.scrollY > 200)
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // মেনু ওপেন থাকলে স্ক্রল বন্ধ রাখা
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-  }, [isMobileMenuOpen])
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  // শেয়ার ফাংশন
   const handleShare = async () => {
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'BanglaByteX - All-in-One Tools',
-          text: 'Check out BanglaByteX for free video downloading, PDF editing, and more!',
-          url: window.location.href,
-        })
-      } catch (err) {
-        console.log('Error sharing:', err)
-      }
+      try { await navigator.share({ title: 'PPM Creator Tools', url: window.location.href }) } catch (err) {}
     } else {
       navigator.clipboard.writeText(window.location.href)
-      toast.success('Link copied to clipboard!')
+      toast.success('Link copied!')
     }
   }
 
-  const socialLinks = [
-    { name: 'Facebook', url: 'https://www.facebook.com/banglabytex', icon: Facebook },
-    { name: 'YouTube', url: 'https://www.youtube.com/@banglabytex', icon: Youtube },
-    { name: 'Instagram', url: 'https://www.instagram.com/banglabytex', icon: Instagram },
-    { name: 'Telegram', url: 'https://t.me/banglabytex', icon: Send },
-  ]
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Tools', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
-  ]
-
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col relative">
-      
-      {/* Circular Scroll Progress */}
+    <div className="min-h-screen bg-[#FFF7ED] flex flex-col font-sans">
       {isVisible && (
-        <button 
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-[100] w-10 h-10 bg-white rounded-full shadow-2xl flex items-center justify-center cursor-pointer hover:-translate-y-1 transition-transform border border-slate-100"
-        >
+        <button onClick={scrollToTop} className="fixed bottom-6 right-6 z-50 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center border border-[#FFEDD5]">
           <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="42" fill="none" stroke="#f1f5f9" strokeWidth="6" />
-            <circle 
-              cx="50" cy="50" r="42" fill="none" stroke="#10b981" strokeWidth="6" 
-              strokeDasharray={`${2 * Math.PI * 42}`} 
-              strokeDashoffset={`${2 * Math.PI * 42 * (1 - scrollProgress / 100)}`} 
-              strokeLinecap="round"
-              className="transition-all duration-150 ease-out"
-            />
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#FFEDD5" strokeWidth="6" />
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#F97316" strokeWidth="6" strokeDasharray={`${2 * Math.PI * 42}`} strokeDashoffset={`${2 * Math.PI * 42 * (1 - scrollProgress / 100)}`} strokeLinecap="round" />
           </svg>
-          <ArrowUp size={16} className="text-emerald-500 relative z-10" />
+          <ArrowUp size={16} className="text-[#F97316] relative z-10" />
         </button>
       )}
 
-      {/* Header / Navbar */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#FFEDD5]">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-extrabold text-xl text-slate-900">
-            <span className="text-2xl text-emerald-500">⚡</span> BanglaByte<span className="text-emerald-500">X</span>
+          <Link to="/" className="flex items-center gap-2">
+            <svg width="32" height="32" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#F97316"/><rect x="14" y="16" width="6" height="32" rx="2" fill="#FFF"/><polygon points="26,16 26,48 50,32" fill="#FFF"/></svg>
+            <span className="font-bold text-xl"><span className="text-[#431407]">PPM</span><span className="text-[#F97316]"> Creator</span></span>
           </Link>
-
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                to={link.path} 
-                className={`hover:text-emerald-500 transition-colors ${pathname === link.path ? 'text-emerald-500' : ''}`}
-              >
-                {link.name}
-              </Link>
-            ))}
+          <nav className="hidden md:flex gap-6 text-sm font-semibold text-slate-600">
+            <Link to="/" className="hover:text-[#F97316]">Home</Link>
+            <Link to="/pdf-tools" className="hover:text-[#F97316]">PDF Tools</Link>
+            <Link to="/image-tools" className="hover:text-[#F97316]">Image Tools</Link>
+            <Link to="/converters" className="hover:text-[#F97316]">Converters</Link>
+            <Link to="/blog" className="hover:text-[#F97316]">Blog</Link>
           </nav>
-
-          {/* Right Side (Share + Mobile Menu) */}
-          <div className="flex items-center gap-3">
-            <button onClick={handleShare} className="hidden sm:flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-full font-medium hover:bg-emerald-100 transition">
-              <Share2 size={16} /> Share
-            </button>
-            
-            <button 
-              className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+          <div className="flex items-center gap-2">
+            <button onClick={handleShare} className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#FFF7ED] text-[#F97316] rounded-full font-medium hover:bg-[#FFEDD5]"><Share2 size={16}/> Share</button>
+            <button className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>{isMobileMenuOpen ? <X/> : <Menu/>}</button>
           </div>
         </div>
-
-        {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-2 shadow-xl absolute w-full left-0">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                to={link.path} 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 py-3 rounded-xl font-medium ${pathname === link.path ? 'bg-emerald-50 text-emerald-600' : 'text-slate-600 hover:bg-slate-50'}`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <button onClick={() => { handleShare(); setIsMobileMenuOpen(false); }} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-500 text-white rounded-xl font-medium mt-2">
-              <Share2 size={18} /> Share Site
-            </button>
+          <div className="md:hidden bg-white border-t px-4 py-2 space-y-2">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="block py-2">Home</Link>
+            <Link to="/pdf-tools" onClick={() => setIsMobileMenuOpen(false)} className="block py-2">PDF Tools</Link>
+            <Link to="/blog" onClick={() => setIsMobileMenuOpen(false)} className="block py-2">Blog</Link>
           </div>
         )}
       </header>
@@ -150,44 +73,41 @@ export default function RootLayout() {
       <main className="flex-1"><Outlet /></main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            
-            <div className="text-center md:text-left">
-              <Link to="/" className="flex items-center justify-center md:justify-start gap-2 font-bold text-2xl text-slate-900 mb-2">
-                <span className="text-3xl text-emerald-500">⚡</span> BanglaByte<span className="text-emerald-500">X</span>
-              </Link>
-              <p className="text-sm text-slate-500 max-w-xs">Your all-in-one digital tools hub. Fast, free, and forever growing.</p>
+      <footer className="bg-white border-t border-[#FFEDD5] pt-16 pb-8 px-6 mt-auto">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="text-2xl font-bold mb-4"><span className="text-[#431407]">PPM</span><span className="text-[#F97316]"> Creator</span></div>
+              <p className="text-slate-500 text-sm mb-6">A free collection of online tools and short trending videos in Bengali. Fast, private and no signup needed.</p>
+              <div className="flex gap-3">
+                <a href="https://facebook.com/ppmcreator" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"><Facebook size={18}/></a>
+                <a href="https://instagram.com/ppmcreator" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"><Instagram size={18}/></a>
+                <a href="https://youtube.com/@ppmcreator" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"><Youtube size={18}/></a>
+                <a href="https://t.me/ppmcreator" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition"><Send size={18}/></a>
+              </div>
             </div>
-
-            <div className="flex gap-6 text-sm font-medium text-slate-600">
-              <Link to="/about" className="hover:text-emerald-600 transition">About</Link>
-              <Link to="/contact" className="hover:text-emerald-600 transition">Contact</Link>
-              <Link to="/privacy-policy" className="hover:text-emerald-600 transition">Privacy</Link>
-              <Link to="/terms" className="hover:text-emerald-600 transition">Terms</Link>
+            <div>
+              <h4 className="font-bold text-[#431407] mb-4">Popular Tools</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li><Link to="/pdf-tools" className="hover:text-[#F97316]">Merge PDF</Link></li>
+                <li><Link to="/image-tools" className="hover:text-[#F97316]">Image Compressor</Link></li>
+                <li><Link to="/age-calc" className="hover:text-[#F97316]">Age Calculator</Link></li>
+              </ul>
             </div>
-
-            <div className="flex gap-3">
-              {socialLinks.map((social) => {
-                const Icon = social.icon
-                return (
-                  <a
-                    key={social.name}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm hover:shadow-md hover:-translate-y-1"
-                  >
-                    <Icon size={18} />
-                  </a>
-                )
-              })}
+            <div>
+              <h4 className="font-bold text-[#431407] mb-4">Quick Links</h4>
+              <ul className="space-y-2 text-sm text-slate-500">
+                <li><Link to="/about" className="hover:text-[#F97316]">About Us</Link></li>
+                <li><Link to="/contact" className="hover:text-[#F97316]">Contact</Link></li>
+                <li><Link to="/privacy-policy" className="hover:text-[#F97316]">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-[#F97316]">Terms of Use</Link></li>
+                <li><Link to="/disclaimer" className="hover:text-[#F97316]">Disclaimer</Link></li>
+              </ul>
             </div>
           </div>
-
-          <div className="border-t border-slate-100 mt-10 pt-6 text-center text-sm text-slate-400">
-            © {new Date().getFullYear()} BanglaByteX. All rights reserved. Made with ❤️ in India
+          <div className="border-t border-[#FFEDD5] pt-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400">
+            <p>© 2026 PPM Creator. All rights reserved.</p>
+            <p>Made with <span className="text-[#F97316]">❤</span> in India</p>
           </div>
         </div>
       </footer>
