@@ -12,20 +12,14 @@ import QrCodeGen from './pages/tools/QrCodeGen'
 import CvMaker from './pages/tools/CvMaker'
 import VideoDownloader from './pages/tools/VideoDownloader'
 import PdfMerge from './pages/tools/PdfMerge'
-import PdfSplit from './pages/tools/PdfTools/PdfSplit'
-import PdfCompress from './pages/tools/PdfTools/PdfCompress'
-import ImageCompress from './pages/tools/PdfTools/ImageCompress'
+import PdfSplit from './pages/tools/PdfSplit'
+import PdfCompress from './pages/tools/PdfCompress'
+import ImageCompress from './pages/tools/ImageCompress'
 import About from './pages/legal/About'
 import Contact from './pages/legal/Contact'
 import Privacy from './pages/legal/Privacy'
 import Terms from './pages/legal/Terms'
-import { tools } from './config/toolsRegistry'
 import PageLoader from './components/PageLoader'
-
-const toolRoutes = tools.map(tool => ({
-  path: tool.slug,
-  element: <Suspense fallback={<PageLoader />}><tool.component /></Suspense>,
-}))
 
 const router = createBrowserRouter([
   {
@@ -35,20 +29,19 @@ const router = createBrowserRouter([
       { path: 'blog', element: <Blog /> },
       { path: 'blog/:slug', element: <SinglePost /> },
       { path: 'hellowsaipatit', element: <AdminPanel /> },
+      { path: 'pdf-merge', element: <PdfMerge /> },
+      { path: 'pdf-split', element: <PdfSplit /> },
+      { path: 'pdf-compress', element: <PdfCompress /> },
+      { path: 'image-compress', element: <ImageCompress /> },
       { path: 'age-calculator', element: <AgeCalc /> },
       { path: 'percentage-calc', element: <PercentageCalc /> },
       { path: 'qr-code-gen', element: <QrCodeGen /> },
       { path: 'cv-maker', element: <CvMaker /> },
       { path: 'video-downloader', element: <VideoDownloader /> },
-      { path: 'pdf-merge', element: <PdfMerge /> },
-      { path: 'pdf-split', element: <PdfSplit /> },
-      { path: 'pdf-compress', element: <PdfCompress /> },
-      { path: 'image-compress', element: <ImageCompress /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
       { path: 'privacy-policy', element: <Privacy /> },
       { path: 'terms', element: <Terms /> },
-      ...toolRoutes,
       { path: '*', element: <NotFound /> },
     ],
   },
