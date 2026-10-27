@@ -1,0 +1,8 @@
+name = "ppmcreator"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ppmcreator-db"
+database_id = "77ea2467-6d65-4c38-a5a6-5d5e7c9d0821"
