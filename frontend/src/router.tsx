@@ -15,6 +15,9 @@ import PdfMerge from './pages/tools/PdfMerge'
 import PdfSplit from './pages/tools/PdfSplit'
 import PdfCompress from './pages/tools/PdfCompress'
 import ImageCompress from './pages/tools/ImageCompress'
+import CsvToJson from './pages/tools/CsvToJson'
+import HtmlToText from './pages/tools/HtmlToText'
+import OfficeToPdf from './pages/tools/OfficeToPdf'
 import About from './pages/legal/About'
 import Contact from './pages/legal/Contact'
 import Privacy from './pages/legal/Privacy'
@@ -33,6 +36,9 @@ const router = createBrowserRouter([
       { path: 'pdf-split', element: <PdfSplit /> },
       { path: 'pdf-compress', element: <PdfCompress /> },
       { path: 'image-compress', element: <ImageCompress /> },
+      { path: 'csv-to-json', element: <CsvToJson /> },
+      { path: 'html-to-text', element: <HtmlToText /> },
+      { path: 'office-to-pdf', element: <OfficeToPdf /> },
       { path: 'age-calculator', element: <AgeCalc /> },
       { path: 'percentage-calc', element: <PercentageCalc /> },
       { path: 'qr-code-gen', element: <QrCodeGen /> },

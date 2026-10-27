@@ -1,34 +1,29 @@
 import { useState } from 'react'
-import { Copy, Code2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Type, Download } from 'lucide-react'
+import ToolPageLayout from '@/components/ToolPageLayout'
+import { useToolData } from '@/hooks/useToolData'
 
 export default function HtmlToText() {
+  const { toolData, faqs, relatedPosts } = useToolData('html-to-text')
   const [html, setHtml] = useState('')
-  const [text, setText] = useState('')
 
-  const convert = () => {
+  const handleConvert = () => {
     const doc = new DOMParser().parseFromString(html, 'text/html')
-    setText(doc.body.textContent || '')
+    const text = doc.body.textContent || ''
+    setHtml(text)
+    toast.success('Converted!')
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-extrabold text-center mb-8">HTML to Text Converter</h1>
-      <div className="bg-white p-6 rounded-3xl shadow-sm border space-y-4">
-        <label className="font-semibold text-slate-700">Paste your HTML code:</label>
-        <textarea value={html} onChange={e => setHtml(e.target.value)} rows={6} className="w-full p-4 border rounded-xl font-mono text-sm bg-slate-50" placeholder="<h1>Hello</h1> <p>World</p>..." />
-        <button onClick={convert} className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl w-full">Extract Text</button>
-        
-        {text && (
-          <div className="mt-4">
-            <div className="flex justify-between items-center mb-2">
-              <label className="font-semibold text-slate-700">Extracted Text:</label>
-              <button onClick={() => { navigator.clipboard.writeText(text); toast.success('Copied!') }} className="text-emerald-600 text-sm flex items-center gap-1"><Copy size={14}/> Copy</button>
-            </div>
-            <textarea value={text} readOnly rows={6} className="w-full p-4 border rounded-xl bg-slate-50" />
-          </div>
-        )}
+    <ToolPageLayout title={toolData?.h1_title || 'HTML to Text Converter'} description={toolData?.intro_text || 'Remove HTML tags and extract clean text.'} category="Converters" faqs={faqs} relatedPosts={relatedPosts}>
+      <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 max-w-3xl mx-auto">
+        <label className="block mb-2 font-semibold text-slate-700 dark:text-slate-300">Paste HTML Code:</label>
+        <textarea rows={8} value={html} onChange={e => setHtml(e.target.value)} className="w-full p-4 border rounded-xl mb-4 font-mono text-sm" placeholder="<h1>Hello</h1> <p>World</p>"></textarea>
+        <button onClick={handleConvert} className="w-full py-4 bg-[#F97316] text-white font-bold rounded-full">
+          <Type size={18} className="inline mr-2"/> Extract Text
+        </button>
       </div>
-    </div>
+    </ToolPageLayout>
   )
 }
