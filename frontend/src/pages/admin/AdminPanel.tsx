@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye, Menu, Save, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Type } from 'lucide-react'
+import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye, Menu, Save, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Type, Trash2 } from 'lucide-react'
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -15,7 +15,10 @@ export default function AdminPanel() {
   const [stats, setStats] = useState({ visitors: 0, toolUsage: 0 })
   
   const [formData, setFormData] = useState({ title: '', slug: '', content: '', excerpt: '' })
+  
+  // Tool Editing State
   const [editingTool, setEditingTool] = useState<any>(null)
+  const [toolFaqs, setToolFaqs] = useState<{q: string, a: string}[]>([])
   const [newPassword, setNewPassword] = useState('')
 
   const handleLogin = (e: React.FormEvent) => {
@@ -45,23 +48,44 @@ export default function AdminPanel() {
     fetch('/api/posts').then(r => r.json()).then(d => { if(Array.isArray(d)) setPosts(d) })
   }
 
+  // Edit Tool Click (Parse JSON to Array)
+  const handleEditToolClick = (tool: any) => {
+    setEditingTool(tool)
+    try {
+      const parsed = JSON.parse(tool.faq_json || '[]')
+      setToolFaqs(Array.isArray(parsed) ? parsed : [])
+    } catch {
+      setToolFaqs([])
+    }
+  }
+
+  // Save Tool (Stringify Array to JSON)
   const handleUpdateTool = async (e: React.FormEvent) => {
     e.preventDefault()
-    await fetch('/api/tools', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(editingTool) })
+    const dataToSave = {
+      ...editingTool,
+      faq_json: JSON.stringify(toolFaqs)
+    }
+    await fetch('/api/tools', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(dataToSave) })
     toast.success('Tool updated!')
     setEditingTool(null)
+    fetch('/api/tools').then(r => r.json()).then(d => { if(Array.isArray(d)) setTools(d) })
   }
+
+  // FAQ Dynamic Handlers
+  const addFaq = () => setToolFaqs([...toolFaqs, { q: '', a: '' }])
+  const updateFaq = (index: number, field: 'q' | 'a', value: string) => {
+    const newFaqs = [...toolFaqs]
+    newFaqs[index][field] = value
+    setToolFaqs(newFaqs)
+  }
+  const removeFaq = (index: number) => setToolFaqs(toolFaqs.filter((_, i) => i !== index))
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault()
     await fetch('/api/update-password', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ newPassword }) })
     toast.success('Password updated!')
     setNewPassword('')
-  }
-
-  // Rich Text Helper
-  const insertTag = (tag: string) => {
-    setFormData(prev => ({ ...prev, content: prev.content + ` <${tag}></${tag}> ` }))
   }
 
   if (!isLoggedIn) {
@@ -151,18 +175,7 @@ export default function AdminPanel() {
             <form onSubmit={handleCreatePost} className="space-y-4">
               <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" required />
               <input type="text" placeholder="Slug" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" required />
-              
-              <div>
-                <div className="flex gap-2 p-2 bg-slate-50 border border-b-0 rounded-t-lg">
-                  <button type="button" onClick={() => insertTag('h1')} className="p-1 hover:bg-slate-200 rounded"><Type size={18}/></button>
-                  <button type="button" onClick={() => insertTag('b')} className="p-1 hover:bg-slate-200 rounded font-bold"><Bold size={18}/></button>
-                  <button type="button" onClick={() => insertTag('i')} className="p-1 hover:bg-slate-200 rounded italic"><Italic size={18}/></button>
-                  <button type="button" onClick={() => insertTag('a href=""')} className="p-1 hover:bg-slate-200 rounded"><LinkIcon size={18}/></button>
-                  <button type="button" onClick={() => insertTag('img src="" alt="image"')} className="p-1 hover:bg-slate-200 rounded"><ImageIcon size={18}/></button>
-                </div>
-                <textarea rows={10} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded-b-xl font-mono text-sm" required />
-              </div>
-              
+              <textarea rows={8} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded font-mono text-sm" placeholder="Content (HTML/Text)" required />
               <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Publish</button>
             </form>
           </div>
@@ -178,10 +191,10 @@ export default function AdminPanel() {
                     <p className="font-bold text-slate-800">{tool.h1_title || tool.slug}</p>
                     <p className="text-sm text-slate-500">/{tool.slug}</p>
                   </div>
-                  <button onClick={() => setEditingTool(tool)} className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 font-medium">Edit</button>
+                  <button onClick={() => handleEditToolClick(tool)} className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 font-medium">Edit</button>
                 </div>
               )) : (
-                <p className="text-slate-500">No tools found in database. Make sure D1 is connected.</p>
+                <p className="text-slate-500">No tools found in database.</p>
               )}
             </div>
           </div>
@@ -195,18 +208,39 @@ export default function AdminPanel() {
             </div>
             <form onSubmit={handleUpdateTool} className="space-y-4">
               <div>
-                <label className="font-semibold">H1 Title</label>
-                <input type="text" value={editingTool.h1_title} onChange={e => setEditingTool({...editingTool, h1_title: e.target.value})} className="w-full p-2 border rounded mt-1" />
+                <label className="font-semibold text-sm">H1 Title</label>
+                <input type="text" value={editingTool.h1_title || ''} onChange={e => setEditingTool({...editingTool, h1_title: e.target.value})} className="w-full p-2 border rounded mt-1" />
               </div>
               <div>
-                <label className="font-semibold">Intro Text</label>
-                <textarea rows={4} value={editingTool.intro_text} onChange={e => setEditingTool({...editingTool, intro_text: e.target.value})} className="w-full p-2 border rounded mt-1" />
+                <label className="font-semibold text-sm">Intro Text</label>
+                <textarea rows={3} value={editingTool.intro_text || ''} onChange={e => setEditingTool({...editingTool, intro_text: e.target.value})} className="w-full p-2 border rounded mt-1" />
               </div>
-              <div>
-                <label className="font-semibold">FAQ (JSON Format)</label>
-                <textarea rows={4} value={editingTool.faq_json || '[]'} onChange={e => setEditingTool({...editingTool, faq_json: e.target.value})} className="w-full p-2 border rounded mt-1 font-mono text-sm" />
+              
+              {/* FAQ Editor */}
+              <div className="border-t pt-4 mt-4">
+                <div className="flex justify-between items-center mb-3">
+                  <label className="font-semibold text-sm">Frequently Asked Questions (FAQ)</label>
+                  <button type="button" onClick={addFaq} className="text-xs flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-1 rounded"><Plus size={14}/> Add FAQ</button>
+                </div>
+                {toolFaqs.map((faq, index) => (
+                  <div key={index} className="bg-slate-50 p-3 rounded-xl mb-3 border relative">
+                    <button type="button" onClick={() => removeFaq(index)} className="absolute top-2 right-2 text-red-500 hover:bg-red-50 p-1 rounded"><Trash2 size={16}/></button>
+                    <div className="mb-2 pr-8">
+                      <label className="text-xs text-slate-500">Question</label>
+                      <input type="text" value={faq.q} onChange={e => updateFaq(index, 'q', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="e.g. Is it free?" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-slate-500">Answer</label>
+                      <textarea rows={2} value={faq.a} onChange={e => updateFaq(index, 'a', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="e.g. Yes, 100% free." />
+                    </div>
+                  </div>
+                ))}
+                {toolFaqs.length === 0 && <p className="text-xs text-slate-400 mb-2">No FAQs added yet.</p>}
               </div>
-              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Save Changes</button>
+
+              <div className="pt-4 border-t">
+                <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded font-bold flex items-center gap-2"><Save size={18}/> Save Changes</button>
+              </div>
             </form>
           </div>
         )}
