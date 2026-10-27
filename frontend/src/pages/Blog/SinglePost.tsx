@@ -6,7 +6,7 @@ export default function SinglePost() {
   const [post, setPost] = useState<any>(null)
 
   useEffect(() => {
-    fetch(`/api/posts`) // In a real app, fetch `/api/posts/${slug}`
+    fetch(`/api/posts`)
       .then(res => res.json())
       .then(data => {
         const found = data.find((p: any) => p.slug === slug)
@@ -21,9 +21,12 @@ export default function SinglePost() {
       <Link to="/blog" className="text-[#F97316] font-semibold mb-6 inline-block hover:underline">&larr; Back to Blog</Link>
       <h1 className="text-4xl font-extrabold text-[#431407] mb-4">{post.title}</h1>
       <p className="text-sm text-slate-500 mb-8">{new Date(post.created_at).toLocaleDateString()}</p>
-      <div className="prose prose-lg text-slate-700 leading-relaxed whitespace-pre-wrap">
-        {post.content}
-      </div>
+      
+      {/* HTML রেন্ডার করার জন্য dangerouslySetInnerHTML */}
+      <div 
+        className="prose prose-lg text-slate-700 leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: post.content }} 
+      />
     </div>
   )
 }

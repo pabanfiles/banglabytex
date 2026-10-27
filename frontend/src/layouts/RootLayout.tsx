@@ -4,7 +4,19 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function RootLayout() {
-    const { pathname } = useLocation()
+      const { pathname } = useLocation()
+  
+  if (pathname === '/hellowsaipatit') {
+    return <Outlet />
+  }
+
+  useEffect(() => {
+    fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url: pathname })
+    }).catch(() => {})
+  }, [pathname])
   
   if (pathname === '/hellowsaipatit') {
     return <Outlet />

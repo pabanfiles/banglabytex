@@ -1,3 +1,4 @@
+import { useToolsData } from '@/hooks/useToolsData'
 import { ArrowRight, FileText, Layers, Scissors, RotateCw, Trash2, Minimize2, Droplets, Hash, Lock, Unlock, ScanText, Type } from 'lucide-react'
 
 const PDF_TOOLS = [
@@ -16,6 +17,8 @@ const PDF_TOOLS = [
 ]
 
 export default function PdfTools() {
+  const { getToolBySlug, loading } = useToolsData()`n  const tool = getToolBySlug('pdf-tools')`n  const dynamicTitle = tool?.h1_title || 'PDF Tools'`n  const dynamicIntro = tool?.intro_text || 'All your PDF needs in one place.'
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="text-center mb-12">
