@@ -253,8 +253,27 @@ export default function AdminPanel() {
               <button onClick={() => setIsCreatingPost(false)}><X size={24}/></button>
             </div>
             <form onSubmit={handleCreatePost} className="space-y-4">
-              <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" required />
-              <input type="text" placeholder="Slug" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" required />
+              <div>
+                <label className="text-sm font-semibold text-slate-700">Title</label>
+                <input type="text" placeholder="Post Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded mt-1" required />
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-slate-700">Slug (URL)</label>
+                <input type="text" placeholder="url-slug" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded mt-1" required />
+              </div>
+              <div className="bg-slate-50 p-4 rounded-xl border">
+                <h4 className="text-sm font-bold text-slate-700 mb-2">SEO Optimization</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-slate-500">Meta Title (Max 60 chars)</label>
+                    <input type="text" placeholder="SEO Title" maxLength={60} className="w-full p-2 border rounded mt-1 text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-slate-500">Meta Description (Max 160 chars)</label>
+                    <textarea rows={2} placeholder="SEO Description" maxLength={160} className="w-full p-2 border rounded mt-1 text-sm" />
+                  </div>
+                </div>
+              </div>
               
               {/* Thumbnail Upload */}
               <div>
