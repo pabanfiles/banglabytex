@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ArrowRight, Search, Sparkles } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { ArrowRight, Search, Sparkles, X } from 'lucide-react'
 
 const ALL_TOOLS = [
   { name: 'PDF Editor', icon: '📝', link: '/pdf-editor.html' },
@@ -19,43 +19,81 @@ const ALL_TOOLS = [
 
 export default function Home() {
   const [search, setSearch] = useState('')
-  
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const searchRef = useRef<HTMLDivElement>(null)
+
+  // ক্লিক আউটসাইড করলে সাজেশন বন্ধ হবে
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
   const filteredTools = ALL_TOOLS.filter(t => 
     t.name.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen">
-      {/* HERO SECTION with Animation */}
+      {/* HERO SECTION */}
       <section className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 pt-24 pb-32 text-center px-4 transition-colors duration-300">
         <div className="max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF7ED] dark:bg-slate-700 text-[#F97316] text-sm font-medium mb-6 animate-bounce">
             <Sparkles size={16} /> All-in-One Digital Hub
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-slate-900 dark:text-white tracking-tight animate-[fadeIn_1s_ease-in-out]">
-            Free Online Tools <br />
-            <span className="text-[#F97316]">for Everyone</span>
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-slate-900 dark:text-white tracking-tight">
+            PPM Creator Tools
           </h1>
           
           <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-10">
-            PDF, image, document and file tools that work fast in your browser. No signup required.
+            Explore our growing collection of fast, secure, and free online tools for PDF, images, videos, and everyday tasks.
           </p>
 
-          <div className="max-w-xl mx-auto relative">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" />
+          {/* Search Bar with Auto Suggest */}
+          <div className="max-w-xl mx-auto relative" ref={searchRef}>
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22}/>
             <input 
               type="text" 
-              placeholder="Search tools..." 
+              placeholder="Search tools (e.g. PDF, Image...)" 
               value={search} 
-              onChange={e => setSearch(e.target.value)} 
-              className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm focus:ring-2 focus:ring-[#F97316] outline-none transition-all" 
+              onChange={e => { setSearch(e.target.value); setShowSuggestions(true) }} 
+              onFocus={() => setShowSuggestions(true)}
+              className="w-full pl-14 pr-12 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 shadow-sm focus:ring-2 focus:ring-[#F97316] outline-none transition-all" 
             />
+            {search && (
+              <button onClick={() => setSearch('')} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <X size={20}/>
+              </button>
+            )}
+
+            {/* Auto Suggest Dropdown */}
+            {showSuggestions && search.length > 0 && (
+              <div className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden text-left z-50">
+                {filteredTools.length > 0 ? (
+                  <div className="max-h-64 overflow-y-auto">
+                    {filteredTools.map(tool => (
+                      <a key={tool.name} href={tool.link} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
+                        <span className="text-2xl">{tool.icon}</span>
+                        <span className="font-semibold text-slate-800 dark:text-white">{tool.name}</span>
+                        <ArrowRight size={16} className="ml-auto text-slate-400" />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="px-6 py-6 text-center text-slate-500 text-sm">No tools found for "{search}"</div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* TOOLS GRID with Animation */}
+      {/* TOOLS GRID */}
       <section className="max-w-7xl mx-auto px-4 py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredTools.map((tool, index) => (
@@ -82,12 +120,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Tailwind Animation Keyframes */}
+      {/* Keyframes for Animation */}
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
