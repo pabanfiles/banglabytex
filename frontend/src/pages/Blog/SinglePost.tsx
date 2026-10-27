@@ -19,14 +19,14 @@ export default function SinglePost() {
   return (
     <div className="max-w-3xl mx-auto py-16 px-4">
       <Link to="/blog" className="text-[#F97316] font-semibold mb-6 inline-block hover:underline">&larr; Back to Blog</Link>
+      
       <h1 className="text-4xl font-extrabold text-[#431407] mb-4">{post.title}</h1>
       <p className="text-sm text-slate-500 mb-8">{new Date(post.created_at).toLocaleDateString()}</p>
       
-      {/* HTML রেন্ডার করার জন্য dangerouslySetInnerHTML */}
-      <div 
-        className="prose prose-lg text-slate-700 leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: post.content }} 
-      />
+      {/* HTML ট্যাগ ছাড়া শুধু সাধারণ টেক্সট (Newline সাপোর্ট করবে) */}
+      <div className="text-slate-700 leading-relaxed text-lg whitespace-pre-wrap font-sans">
+        {post.content}
+      </div>
     </div>
   )
 }
