@@ -71,9 +71,8 @@ export default function RootLayout() {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'PDF Tools', path: '/pdf-tools' },
-    { name: 'Image Tools', path: '/image-tools' },
-    { name: 'Converters', path: '/converters' },
+    { name: 'PDF Merge', path: '/pdf-merge' },
+    { name: 'Image Compress', path: '/image-compress' },
     { name: 'Blog', path: '/blog' },
   ]
 
