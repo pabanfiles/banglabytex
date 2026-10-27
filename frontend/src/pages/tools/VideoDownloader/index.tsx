@@ -37,7 +37,7 @@ export default function VideoDownloader() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#431407] dark:text-white">PPM Creator All Video Downloader</h1>
+        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium mb-2"><span className="text-2xl">⚡</span> PPM Creator Tools <span className="text-[#F97316]">| All Video Downloader</span></div><h1 className="text-3xl md:text-4xl font-bold text-[#431407] dark:text-white">All Video Downloader</h1>
         <p className="mt-3 text-slate-600 dark:text-slate-400">Download videos from all platforms instantly. Fast, free, and safe.</p>
       </div>
 

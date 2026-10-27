@@ -94,7 +94,7 @@ export default function RootLayout() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <svg width="32" height="32" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="16" fill="#F97316"/><rect x="14" y="16" width="6" height="32" rx="2" fill="#FFF"/><polygon points="26,16 26,48 50,32" fill="#FFF"/></svg>
-            <span className="font-bold text-xl"><span className="text-[#431407] dark:text-white">PPM</span><span className="text-[#F97316]"> Creator</span></span>
+            <span className="font-bold text-xl"><span className="text-[#431407] dark:text-white">PPM Creator Tools</span></span>
           </Link>
           
           <nav className="hidden md:flex gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
@@ -131,7 +131,7 @@ export default function RootLayout() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
-              <div className="text-2xl font-bold mb-4"><span className="text-[#431407] dark:text-white">PPM</span><span className="text-[#F97316]"> Creator Tools</span></div>
+              <div className="text-2xl font-bold mb-4 text-[#431407] dark:text-white">PPM Creator Tools</div>
               <p className="text-slate-500 dark:text-slate-400 text-sm mb-6 max-w-xs">A free collection of online tools and short trending videos in Bengali. Fast, private and no signup needed.</p>
               <div className="flex gap-3">
                 {socialLinks.map(social => (

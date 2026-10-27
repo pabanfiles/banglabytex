@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { ChevronRight, BookOpen } from 'lucide-react'
+import { ChevronRight, BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
+import { useState } from 'react'
 
 interface ToolPageLayoutProps {
   title: string
@@ -11,6 +12,12 @@ interface ToolPageLayoutProps {
 }
 
 export default function ToolPageLayout({ title, description, category, faqs, relatedPosts, children }: ToolPageLayoutProps) {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0) // Default first open
+
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index)
+  }
+
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
       {/* Breadcrumb */}
@@ -23,23 +30,39 @@ export default function ToolPageLayout({ title, description, category, faqs, rel
       </div>
 
       {/* Header */}
-      <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-[#431407] dark:text-white">{title}</h1>
-      <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">{description}</p>
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 font-medium mb-2">
+          <span className="text-2xl">⚡</span> PPM Creator Tools 
+          <span className="text-[#F97316]">| {title}</span>
+        </div>
+        <h1 className="text-3xl md:text-5xl font-extrabold mb-4 text-[#431407] dark:text-white">{title}</h1>
+        <p className="text-lg text-slate-600 dark:text-slate-300">{description}</p>
+      </div>
 
       {/* Main Tool UI */}
       <div className="mb-16">
         {children}
       </div>
 
-      {/* FAQ Section */}
+      {/* FAQ Section (Dropdown Accordion) */}
       {faqs.length > 0 && (
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl border border-[#FFEDD5] dark:border-slate-700 shadow-sm mb-12 transition-colors">
+        <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-3xl border border-[#FFEDD5] dark:border-slate-700 shadow-sm mb-12 transition-colors">
           <h2 className="text-2xl font-bold text-[#431407] dark:text-white mb-6">Frequently Asked Questions</h2>
-          <div className="space-y-6">
+          <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div key={index} className="border-b border-slate-100 dark:border-slate-700 pb-4 last:border-0">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">{faq.q}</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{faq.a}</p>
+              <div key={index} className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                <button 
+                  onClick={() => toggleFaq(index)}
+                  className="w-full flex justify-between items-center p-4 text-left font-bold text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+                >
+                  <span>{faq.q}</span>
+                  {openFaqIndex === index ? <ChevronUp size={20} className="text-[#F97316]"/> : <ChevronDown size={20} className="text-slate-400"/>}
+                </button>
+                {openFaqIndex === index && (
+                  <div className="p-4 pt-0 text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                    {faq.a}
+                  </div>
+                )}
               </div>
             ))}
           </div>
