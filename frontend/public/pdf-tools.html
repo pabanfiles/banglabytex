@@ -16,8 +16,8 @@ h1{text-align:center;font-size:clamp(28px,5vw,44px);letter-spacing:-1px;margin:3
 .c.off{opacity:.55;cursor:not-allowed}.c.off:hover{transform:none;border-color:var(--bd)}.tag{font-size:10px;background:var(--acbg);border-radius:99px;padding:1px 8px;margin-left:4px}
 #tool{display:none;max-width:720px;margin:0 auto;padding:0 5vw 50px}
 button,.btn{font:inherit;font-size:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-flex;gap:6px;align-items:center}
-.pri{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;border:0}button:disabled{opacity:.45;pointer-events:none}
-#dz{border:2px dashed var(--bd);background:var(--card);border-radius:16px;padding:32px 16px;text-align:center;cursor:pointer;margin:14px 0}#dz.over,#dz:hover{border-color:var(--ac);background:var(--acbg)}
+.pri{background:#F97316;color:#fff;border:0;padding:16px 40px;border-radius:9999px;font-size:18px;font-weight:700;width:100%;max-width:350px;display:block;margin:20px auto 0;box-shadow:0 10px 25px -5px rgba(249,115,22,0.4);transition:0.3s}button:disabled{opacity:0.5;pointer-events:none}
+#dz{border:2px dashed var(--bd);background:var(--card);border-radius:16px;padding:32px 16px;text-align:center;cursor:pointer;margin:14px 0}#dz.over,#dz:hover{border-color:var(--ac);background:#ecfdf5}
 .fl{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:6px 10px;margin-bottom:6px;font-size:14px}.fl span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fl button{padding:2px 8px}
 #opts{display:grid;gap:10px;margin:14px 0}#opts label{display:grid;gap:3px;font-size:13px;color:var(--mut)}
 #opts input,#opts select{font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
@@ -27,7 +27,7 @@ button,.btn{font:inherit;font-size:14px;border:1px solid var(--bd);background:va
 <header><a class="logo" href="tools.html">🧰 PDF<b>Edit</b></a></header>
 <div id="home"><h1>All PDF tools in one place</h1><p class="sub">Free · files never leave your browser (except tools marked server)</p><p class="sub"><input id="burl" placeholder="Backend URL (for Protect / Unlock / Pro Compress)" style="padding:7px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);width:min(380px,80vw)"> <button id="bsv">Save</button></p><div id="grid"></div></div>
 <div id="tool"><button id="back">← All tools</button><h2 id="tt" style="margin:14px 0 2px"></h2><div class="note" id="td"></div>
-<div id="dz"></div><input id="fi" type="file" hidden><div id="fl"></div><div id="opts"></div>
+<div id="dz"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg><br><span style="font-size:18px;font-weight:600;color:#334155">Click or drop your files here</span><br><span style="color:#64748b;font-size:14px">Maximum file size: 50MB</span></div><input id="fi" type="file" hidden><div id="fl"></div><div id="opts"></div>
 <button id="run" class="pri" disabled>Run</button><div id="st"></div><div id="res"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -108,4 +108,57 @@ $('#run').onclick=async()=>{const o={};$('#opts').querySelectorAll('[name]').for
       }, 100);
     }
   });
-</script></body></html>
+</script><script>
+  // ফাইল সিলেক্ট করার সাথে সাথে লাইভ সাইজ দেখানো
+  document.addEventListener("DOMContentLoaded", function() {
+    const originalAdd = window.add; // Assuming the existing function is global
+    
+    window.updateLiveSize = function(files) {
+      const liveEl = document.getElementById('live-size');
+      if(!liveEl || !files || files.length === 0) return;
+      
+      const file = files[0];
+      const origSize = (file.size / 1024 / 1024).toFixed(2);
+      
+      // Simulated size (due to browser limitation)
+      const rangeEl = document.querySelector('input[name="l"]');
+      const percent = rangeEl ? parseInt(rangeEl.value) : 50;
+      const newSize = (file.size * (1 - (percent / 100)) / 1024 / 1024).toFixed(2);
+      
+      liveEl.innerHTML = `
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+          <span>Original Size:</span> <b>${origSize} MB</b>
+        </div>
+        <div style="display:flex;justify-content:space-between;color:#059669;">
+          <span>Estimated New Size:</span> <b>~${newSize} MB</b>
+        </div>
+      `;
+      
+      // Bind change event to slider
+      if(rangeEl) {
+        rangeEl.oninput = function() {
+          const newPercent = parseInt(this.value);
+          document.getElementById('comp-val').innerText = newPercent;
+          const recalculated = (file.size * (1 - (newPercent / 100)) / 1024 / 1024).toFixed(2);
+          liveEl.innerHTML = `
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+              <span>Original Size:</span> <b>${origSize} MB</b>
+            </div>
+            <div style="display:flex;justify-content:space-between;color:#059669;">
+              <span>Estimated New Size:</span> <b>~${recalculated} MB</b>
+            </div>
+          `;
+        };
+      }
+    };
+    
+    // Hook into the existing file input change
+    const fileInput = document.getElementById('fi');
+    if(fileInput) {
+      fileInput.addEventListener('change', function(e) {
+        if(e.target.files.length) window.updateLiveSize([...e.target.files]);
+      });
+    }
+  });
+</script>
+</body></html>
