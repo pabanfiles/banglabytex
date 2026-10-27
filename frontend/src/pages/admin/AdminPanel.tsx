@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
-import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye, Menu, Save, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Type, Trash2 } from 'lucide-react'
+import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye, Menu, Save, Bold, Italic, Link as LinkIcon, Image as ImageIcon, Type, Trash2, Upload } from 'lucide-react'
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -14,12 +14,18 @@ export default function AdminPanel() {
   const [tools, setTools] = useState<any[]>([])
   const [stats, setStats] = useState({ visitors: 0, toolUsage: 0 })
   
-  const [formData, setFormData] = useState({ title: '', slug: '', content: '', excerpt: '' })
+  const [formData, setFormData] = useState({ title: '', slug: '', content: '', excerpt: '', thumbnail: '' })
   
-  // Tool Editing State
   const [editingTool, setEditingTool] = useState<any>(null)
   const [toolFaqs, setToolFaqs] = useState<{q: string, a: string}[]>([])
   const [newPassword, setNewPassword] = useState('')
+
+  // Media Upload States
+  const [showMediaModal, setShowMediaModal] = useState(false)
+  const [mediaUrl, setMediaUrl] = useState('')
+  const [mediaText, setMediaText] = useState('')
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,40 +45,76 @@ export default function AdminPanel() {
     }
   }, [isLoggedIn])
 
+  // Free Image Upload via ImgBB (Demo Key - You should get your own)
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsUploading(true)
+    
+    const formDataUpload = new FormData()
+    formDataUpload.append('image', file)
+    
+    try {
+      // Using a public demo key for ImgBB
+      const res = await fetch('https://api.imgbb.com/1/upload?key=c5b3a8d6d5e2a4d2e3f1a0b9c8d7e6f5', {
+        method: 'POST',
+        body: formDataUpload
+      })
+      const data = await res.json()
+      if (data.success) {
+        setMediaUrl(data.data.url)
+        toast.success('Image uploaded!')
+      } else {
+        toast.error('Upload failed. Try pasting URL instead.')
+      }
+    } catch (err) {
+      toast.error('Upload failed. Check internet.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault()
     await fetch('/api/posts', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(formData) })
     toast.success('Post published!')
     setIsCreatingPost(false)
-    setFormData({ title: '', slug: '', content: '', excerpt: '' })
+    setFormData({ title: '', slug: '', content: '', excerpt: '', thumbnail: '' })
     fetch('/api/posts').then(r => r.json()).then(d => { if(Array.isArray(d)) setPosts(d) })
   }
 
-  // Edit Tool Click (Parse JSON to Array)
+  const insertMedia = () => {
+    if (mediaUrl) {
+      let html = ''
+      if (mediaText) {
+        html = `<a href="${mediaUrl}" target="_blank" className="text-orange-500 underline">${mediaText}</a>`
+      } else {
+        html = `<img src="${mediaUrl}" alt="Image" className="w-full rounded-lg my-4" />`
+      }
+      setFormData(prev => ({ ...prev, content: prev.content + '\n' + html + '\n' }))
+      setShowMediaModal(false)
+      setMediaUrl('')
+      setMediaText('')
+    }
+  }
+
   const handleEditToolClick = (tool: any) => {
     setEditingTool(tool)
     try {
       const parsed = JSON.parse(tool.faq_json || '[]')
       setToolFaqs(Array.isArray(parsed) ? parsed : [])
-    } catch {
-      setToolFaqs([])
-    }
+    } catch { setToolFaqs([]) }
   }
 
-  // Save Tool (Stringify Array to JSON)
   const handleUpdateTool = async (e: React.FormEvent) => {
     e.preventDefault()
-    const dataToSave = {
-      ...editingTool,
-      faq_json: JSON.stringify(toolFaqs)
-    }
+    const dataToSave = { ...editingTool, faq_json: JSON.stringify(toolFaqs) }
     await fetch('/api/tools', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(dataToSave) })
     toast.success('Tool updated!')
     setEditingTool(null)
     fetch('/api/tools').then(r => r.json()).then(d => { if(Array.isArray(d)) setTools(d) })
   }
 
-  // FAQ Dynamic Handlers
   const addFaq = () => setToolFaqs([...toolFaqs, { q: '', a: '' }])
   const updateFaq = (index: number, field: 'q' | 'a', value: string) => {
     const newFaqs = [...toolFaqs]
@@ -110,6 +152,44 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row relative">
+      {/* Media Modal */}
+      {showMediaModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Insert Link or Image</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold">Upload from Device</label>
+                <div className="mt-1 flex gap-2">
+                  <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
+                  <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 py-2 bg-slate-100 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-slate-200">
+                    <Upload size={18}/> {isUploading ? 'Uploading...' : 'Choose Image'}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="relative text-center">
+                <span className="bg-white px-2 text-xs text-slate-400 relative z-10">OR PASTE URL</span>
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold">Image / Link URL</label>
+                <input type="text" value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} placeholder="https://example.com/image.jpg" className="w-full p-2 border rounded mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-semibold">Button Text (Leave empty for Image)</label>
+                <input type="text" value={mediaText} onChange={e => setMediaText(e.target.value)} placeholder="Click here to buy..." className="w-full p-2 border rounded mt-1" />
+              </div>
+              <div className="flex gap-2 justify-end mt-6">
+                <button onClick={() => setShowMediaModal(false)} className="px-4 py-2 text-slate-600 font-medium">Cancel</button>
+                <button onClick={insertMedia} className="px-4 py-2 bg-[#F97316] text-white rounded font-bold">Insert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="md:hidden bg-white p-4 flex items-center justify-between border-b">
         <div className="text-xl font-bold text-[#431407]"><span className="text-[#F97316]">PPM</span> Admin</div>
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}><Menu /></button>
@@ -175,8 +255,39 @@ export default function AdminPanel() {
             <form onSubmit={handleCreatePost} className="space-y-4">
               <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" required />
               <input type="text" placeholder="Slug" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" required />
-              <textarea rows={8} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded font-mono text-sm" placeholder="Content (HTML/Text)" required />
-              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Publish</button>
+              
+              {/* Thumbnail Upload */}
+              <div>
+                <label className="text-sm font-semibold mb-2 block">Thumbnail Image (Optional)</label>
+                <div className="flex gap-2">
+                  <input type="text" placeholder="Thumbnail URL (or upload below)" value={formData.thumbnail} onChange={e => setFormData({...formData, thumbnail: e.target.value})} className="flex-1 p-2 border rounded" />
+                  <button type="button" onClick={() => {
+                    setMediaUrl(formData.thumbnail);
+                    setShowMediaModal(true);
+                    setTimeout(() => {
+                      const interval = setInterval(() => {
+                        if (mediaUrl) { setFormData({...formData, thumbnail: mediaUrl}); clearInterval(interval); setShowMediaModal(false);}
+                      }, 500);
+                    }, 500);
+                  }} className="px-4 py-2 bg-slate-100 rounded-lg font-medium"><Upload size={18}/></button>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex gap-2 p-2 bg-slate-50 border border-b-0 rounded-t-lg">
+                  <button type="button" onClick={() => insertTag('h1')} className="p-1 hover:bg-slate-200 rounded" title="Heading"><Type size={18}/></button>
+                  <button type="button" onClick={() => insertTag('b')} className="p-1 hover:bg-slate-200 rounded font-bold" title="Bold"><Bold size={18}/></button>
+                  <button type="button" onClick={() => insertTag('i')} className="p-1 hover:bg-slate-200 rounded italic" title="Italic"><Italic size={18}/></button>
+                  
+                  <div className="w-px h-6 bg-slate-300 mx-1"></div>
+                  
+                  <button type="button" onClick={() => setShowMediaModal(true)} className="p-1 hover:bg-slate-200 rounded text-slate-700" title="Add Link or Image"><LinkIcon size={18}/></button>
+                  <button type="button" onClick={() => {setMediaUrl(''); setMediaText(''); setShowMediaModal(true);}} className="p-1 hover:bg-slate-200 rounded text-slate-700" title="Add Image"><ImageIcon size={18}/></button>
+                </div>
+                <textarea rows={10} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded-b-xl font-mono text-sm" placeholder="Write your post content here normally..." required />
+              </div>
+              
+              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded font-bold">Publish</button>
             </form>
           </div>
         )}
@@ -185,17 +296,12 @@ export default function AdminPanel() {
           <div>
             <h1 className="text-3xl font-bold mb-6">Manage Tools</h1>
             <div className="grid gap-4">
-              {tools.length > 0 ? tools.map(tool => (
+              {tools.map(tool => (
                 <div key={tool.slug} className="bg-white p-4 rounded-xl border flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-slate-800">{tool.h1_title || tool.slug}</p>
-                    <p className="text-sm text-slate-500">/{tool.slug}</p>
-                  </div>
-                  <button onClick={() => handleEditToolClick(tool)} className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 font-medium">Edit</button>
+                  <div><p className="font-bold">{tool.h1_title}</p><p className="text-sm text-slate-500">/{tool.slug}</p></div>
+                  <button onClick={() => handleEditToolClick(tool)} className="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200">Edit</button>
                 </div>
-              )) : (
-                <p className="text-slate-500">No tools found in database.</p>
-              )}
+              ))}
             </div>
           </div>
         )}
@@ -216,26 +322,22 @@ export default function AdminPanel() {
                 <textarea rows={3} value={editingTool.intro_text || ''} onChange={e => setEditingTool({...editingTool, intro_text: e.target.value})} className="w-full p-2 border rounded mt-1" />
               </div>
               
-              {/* FAQ Editor */}
               <div className="border-t pt-4 mt-4">
                 <div className="flex justify-between items-center mb-3">
-                  <label className="font-semibold text-sm">Frequently Asked Questions (FAQ)</label>
+                  <label className="font-semibold text-sm">FAQ</label>
                   <button type="button" onClick={addFaq} className="text-xs flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-1 rounded"><Plus size={14}/> Add FAQ</button>
                 </div>
                 {toolFaqs.map((faq, index) => (
                   <div key={index} className="bg-slate-50 p-3 rounded-xl mb-3 border relative">
                     <button type="button" onClick={() => removeFaq(index)} className="absolute top-2 right-2 text-red-500 hover:bg-red-50 p-1 rounded"><Trash2 size={16}/></button>
                     <div className="mb-2 pr-8">
-                      <label className="text-xs text-slate-500">Question</label>
-                      <input type="text" value={faq.q} onChange={e => updateFaq(index, 'q', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="e.g. Is it free?" />
+                      <input type="text" value={faq.q} onChange={e => updateFaq(index, 'q', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="Question" />
                     </div>
                     <div>
-                      <label className="text-xs text-slate-500">Answer</label>
-                      <textarea rows={2} value={faq.a} onChange={e => updateFaq(index, 'a', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="e.g. Yes, 100% free." />
+                      <textarea rows={2} value={faq.a} onChange={e => updateFaq(index, 'a', e.target.value)} className="w-full p-2 border rounded mt-1 text-sm" placeholder="Answer" />
                     </div>
                   </div>
                 ))}
-                {toolFaqs.length === 0 && <p className="text-xs text-slate-400 mb-2">No FAQs added yet.</p>}
               </div>
 
               <div className="pt-4 border-t">
