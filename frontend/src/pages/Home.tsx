@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Zap, Shield, Heart, Search } from 'lucide-react'
+import { ArrowRight, Sparkles, Zap, Shield, Heart, Search, Facebook, Youtube, Instagram, Send } from 'lucide-react'
 import { useState } from 'react'
-import SocialLinks from '@/components/SocialLinks'
 
 const ALL_TOOLS = [
   { slug: 'pdf-editor', name: 'PDF Editor', description: 'Edit PDF text, images, and links.', icon: '📝', link: '/pdf-editor.html' },
@@ -25,46 +23,65 @@ export default function Home() {
     t.description.toLowerCase().includes(search.toLowerCase())
   )
 
+  const socialLinks = [
+    { url: 'https://facebook.com/ppmcreator', icon: Facebook },
+    { url: 'https://youtube.com/@ppmcreator', icon: Youtube },
+    { url: 'https://instagram.com/ppmcreator', icon: Instagram },
+    { url: 'https://t.me/ppmcreator', icon: Send },
+  ]
+
   return (
     <div className="bg-[#FFF7ED] min-h-screen overflow-x-hidden">
-      <section className="relative bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem] overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+      {/* HERO SECTION */}
+      <section className="relative bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem]">
         <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center text-center">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-sm font-medium mb-6 border border-white/30">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-sm font-medium mb-6 border border-white/30">
             <Sparkles size={16} /> All-in-One Digital Hub
-          </motion.div>
+          </div>
           
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl leading-tight drop-shadow-sm">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl leading-tight drop-shadow-sm">
             Free Online Tools <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">for Everyone</span>
-          </motion.h1>
+          </h1>
           
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-lg md:text-xl text-orange-50 max-w-2xl mb-10">
+          <p className="text-lg md:text-xl text-orange-50 max-w-2xl mb-10">
             PDF, image, document and file tools that work fast in your browser. No signup. No limits.
-          </motion.p>
+          </p>
           
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <a href="#tools" className="px-8 py-3.5 bg-white text-[#F97316] font-bold rounded-full transition-all shadow-xl hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center gap-2">
-              Explore Tools <ArrowRight size={18} />
-            </a>
-          </motion.div>
+          <a href="#tools" className="px-8 py-3.5 bg-white text-[#F97316] font-bold rounded-full transition-all shadow-xl hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center gap-2">
+            Explore Tools <ArrowRight size={18} />
+          </a>
         </div>
       </section>
 
+      {/* SEARCH & SOCIAL SECTION */}
       <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100">
+        <div className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100">
           <div className="relative">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
-            <input type="text" placeholder="Search for tools (e.g. PDF, Video...)" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors" />
+            <input 
+              type="text" 
+              placeholder="Search for tools..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors"
+            />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center">
+        <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center">
           <h3 className="text-xl font-bold text-slate-900">Stay Connected</h3>
-          <SocialLinks />
-        </motion.div>
+          <div className="flex gap-3">
+            {socialLinks.map((social, i) => (
+              <a key={i} href={social.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition">
+                <social.icon size={18}/>
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
 
+      {/* TOOLS GRID */}
       <section id="tools" className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#431407] mb-3">PPM Creator Tools</h2>
@@ -72,14 +89,10 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredTools.map((tool, i) => (
-            <motion.a 
+          {filteredTools.map((tool) => (
+            <a 
               key={tool.slug}
               href={tool.link}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
               className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#F97316] transition-all duration-300 flex flex-col h-full"
             >
               <div className="w-14 h-14 bg-[#FFF7ED] text-[#F97316] rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">{tool.icon}</div>
@@ -90,7 +103,7 @@ export default function Home() {
                   Open Tool <ArrowRight size={16} />
                 </div>
               </div>
-            </motion.a>
+            </a>
           ))}
           {filteredTools.length === 0 && (
             <p className="col-span-full text-center text-slate-500 py-10">No tools found for "{search}"</p>
@@ -98,6 +111,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FEATURES */}
       <section className="bg-white py-24 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
