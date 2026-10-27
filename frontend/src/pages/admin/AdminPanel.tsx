@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, ToolCase, Eye, Menu, Bold, Italic, Heading1, Heading2, Link as LinkIcon, Image as ImageIcon, Save } from 'lucide-react'
+import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye, Menu, Bold, Italic, Type, Link as LinkIcon, Image as ImageIcon, Save } from 'lucide-react'
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -101,7 +101,7 @@ export default function AdminPanel() {
           {[
             { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
             { id: 'posts', icon: FileText, label: 'Blog Posts' },
-            { id: 'tools', icon: ToolCase, label: 'Manage Tools' },
+            { id: 'tools', icon: Wrench, label: 'Manage Tools' },
             { id: 'settings', icon: Settings, label: 'Settings' },
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id); setIsCreatingPost(false); setIsSidebarOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium ${activeTab === item.id ? 'bg-[#FFF7ED] text-[#F97316]' : 'text-slate-600 hover:bg-slate-50'}`}>
@@ -125,7 +125,7 @@ export default function AdminPanel() {
               </div>
               <div className="bg-white p-6 rounded-2xl border shadow-sm flex items-center justify-between">
                 <div><p className="text-slate-500">Total Tool Usage</p><p className="text-3xl font-bold text-[#F97316]">{stats.toolUsage}</p></div>
-                <ToolCase size={40} className="text-[#FFEDD5]"/>
+                <Wrench size={40} className="text-[#FFEDD5]"/>
               </div>
             </div>
           </div>
