@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, ToolCase, Eye, Menu, Image as ImageIcon, Bold, Italic, Heading1, Heading2, Link as LinkIcon } from 'lucide-react'
+import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, ToolCase, Eye, Menu, Bold, Italic, Heading1, Heading2, Link as LinkIcon, Image as ImageIcon, Save } from 'lucide-react'
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -10,54 +10,60 @@ export default function AdminPanel() {
   const [isCreatingPost, setIsCreatingPost] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   
+  // States
   const [posts, setPosts] = useState<any[]>([])
-  const [stats, setStats] = useState({ visitors: 1245, toolUsage: 847 })
-  
-  const [formData, setFormData] = useState({ title: '', slug: '', content: '', excerpt: '', meta_title: '', meta_description: '' })
+  const [tools, setTools] = useState<any[]>([])
+  const [stats, setStats] = useState({ visitors: 0, toolUsage: 0 })
+  const [editingTool, setEditingTool] = useState<any>(null)
+  const [newPassword, setNewPassword] = useState('')
+  const [formData, setFormData] = useState({ title: '', slug: '', content: '' })
 
   // Login
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     if (username === 'admin' && password === 'Ppm@Demo2026') {
       setIsLoggedIn(true)
-      toast.success('Welcome back, Admin!')
+      toast.success('Welcome Admin!')
     } else {
       toast.error('Invalid credentials')
     }
   }
 
-  // Fetch Posts
+  // Fetch Data
   useEffect(() => {
     if (isLoggedIn) {
+      // Analytics
+      fetch('/api/analytics').then(r => r.json()).then(d => { if(d.visitors !== undefined) setStats(d) }).catch(()=>{})
+      // Posts
       fetch('/api/posts').then(r => r.json()).then(d => { if(Array.isArray(d)) setPosts(d) })
+      // Tools
+      fetch('/api/tools').then(r => r.json()).then(d => { if(Array.isArray(d)) setTools(d) })
     }
   }, [isLoggedIn])
 
   // Create Post
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault()
-    try {
-      const res = await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      if (res.ok) {
-        toast.success('Post published successfully!')
-        setIsCreatingPost(false)
-        setFormData({ title: '', slug: '', content: '', excerpt: '', meta_title: '', meta_description: '' })
-        fetch('/api/posts').then(r => r.json()).then(d => { if(Array.isArray(d)) setPosts(d) })
-      } else {
-        toast.error('Failed to save post')
-      }
-    } catch (err) {
-      toast.error('Network error')
-    }
+    await fetch('/api/posts', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(formData) })
+    toast.success('Post published!')
+    setIsCreatingPost(false)
+    setFormData({ title: '', slug: '', content: '' })
   }
 
-  // Insert HTML tag into content (Rich text simulation)
-  const insertTag = (tag: string) => {
-    setFormData(prev => ({ ...prev, content: prev.content + ` <${tag}></${tag}> ` }))
+  // Update Tool
+  const handleUpdateTool = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await fetch('/api/tools', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(editingTool) })
+    toast.success('Tool updated!')
+    setEditingTool(null)
+  }
+
+  // Change Password
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await fetch('/api/update-password', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ newPassword }) })
+    toast.success('Password updated!')
+    setNewPassword('')
   }
 
   if (!isLoggedIn) {
@@ -82,7 +88,6 @@ export default function AdminPanel() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row relative">
-      
       {/* Mobile Top Bar */}
       <div className="md:hidden bg-white p-4 flex items-center justify-between border-b">
         <div className="text-xl font-bold text-[#431407]"><span className="text-[#F97316]">PPM</span> Admin</div>
@@ -91,9 +96,7 @@ export default function AdminPanel() {
 
       {/* Sidebar */}
       <div className={`w-full md:w-64 bg-white border-r border-slate-200 p-4 shrink-0 absolute md:relative top-16 md:top-0 h-[calc(100vh-64px)] md:h-screen z-30 transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        <div className="hidden md:block text-xl font-bold text-[#431407] mb-8 px-4 flex items-center gap-2">
-          <span className="text-[#F97316]">PPM</span> Admin
-        </div>
+        <div className="hidden md:block text-xl font-bold text-[#431407] mb-8 px-4"><span className="text-[#F97316]">PPM</span> Admin</div>
         <nav className="space-y-2">
           {[
             { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -115,10 +118,15 @@ export default function AdminPanel() {
         {activeTab === 'dashboard' && (
           <div>
             <h1 className="text-3xl font-bold text-slate-800 mb-6">Dashboard Overview</h1>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-2xl border shadow-sm"><p className="text-slate-500">Total Visitors</p><p className="text-3xl font-bold text-[#F97316]">{stats.visitors}</p></div>
-              <div className="bg-white p-6 rounded-2xl border shadow-sm"><p className="text-slate-500">Tool Usage</p><p className="text-3xl font-bold text-[#F97316]">{stats.toolUsage}</p></div>
-              <div className="bg-white p-6 rounded-2xl border shadow-sm"><p className="text-slate-500">Published Posts</p><p className="text-3xl font-bold text-[#F97316]">{posts.length}</p></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-2xl border shadow-sm flex items-center justify-between">
+                <div><p className="text-slate-500">Total Live Visitors</p><p className="text-3xl font-bold text-[#F97316]">{stats.visitors}</p></div>
+                <BarChart3 size={40} className="text-[#FFEDD5]"/>
+              </div>
+              <div className="bg-white p-6 rounded-2xl border shadow-sm flex items-center justify-between">
+                <div><p className="text-slate-500">Total Tool Usage</p><p className="text-3xl font-bold text-[#F97316]">{stats.toolUsage}</p></div>
+                <ToolCase size={40} className="text-[#FFEDD5]"/>
+              </div>
             </div>
           </div>
         )}
@@ -129,16 +137,13 @@ export default function AdminPanel() {
               <h1 className="text-3xl font-bold text-slate-800">Blog Posts</h1>
               <button onClick={() => setIsCreatingPost(true)} className="flex items-center gap-2 px-4 py-2 bg-[#F97316] text-white rounded-xl font-medium"><Plus size={18}/> New Post</button>
             </div>
-            <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
-              <table className="w-full text-left">
-                <thead className="bg-slate-50 border-b"><tr><th className="p-4">Title</th><th className="p-4">Slug</th></tr></thead>
-                <tbody>
-                  {posts.map(post => (
-                    <tr key={post.id} className="border-b hover:bg-slate-50"><td className="p-4 font-medium">{post.title}</td><td className="p-4 text-slate-500">/{post.slug}</td></tr>
-                  ))}
-                  {posts.length === 0 && <tr><td colSpan={2} className="p-6 text-center text-slate-500">No posts yet.</td></tr>}
-                </tbody>
-              </table>
+            <div className="grid gap-4">
+              {posts.map(post => (
+                <div key={post.id} className="bg-white p-4 rounded-xl border flex justify-between items-center">
+                  <div><p className="font-bold">{post.title}</p><p className="text-sm text-slate-500">/{post.slug}</p></div>
+                  <button className="text-blue-500"><Eye size={18}/></button>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -147,67 +152,61 @@ export default function AdminPanel() {
           <div className="bg-white p-6 rounded-2xl shadow-sm border">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-slate-800">Write New Post</h1>
-              <button onClick={() => setIsCreatingPost(false)} className="text-slate-400 hover:text-red-500"><X size={24}/></button>
+              <button onClick={() => setIsCreatingPost(false)}><X size={24}/></button>
             </div>
             <form onSubmit={handleCreatePost} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-semibold">Post Title</label>
-                  <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded-lg mt-1" required />
-                </div>
-                <div>
-                  <label className="text-sm font-semibold">URL Slug</label>
-                  <input type="text" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-')})} className="w-full p-2 border rounded-lg mt-1" required />
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-semibold mb-2 block">Post Content (Rich Text / HTML)</label>
-                
-                {/* Fake Rich Text Toolbar */}
-                <div className="flex gap-2 p-2 bg-slate-50 border border-b-0 rounded-t-lg flex-wrap">
-                  <button type="button" onClick={() => insertTag('h1')} className="p-1 hover:bg-slate-200 rounded" title="Heading 1"><Heading1 size={18}/></button>
-                  <button type="button" onClick={() => insertTag('h2')} className="p-1 hover:bg-slate-200 rounded" title="Heading 2"><Heading2 size={18}/></button>
-                  <div className="w-px h-6 bg-slate-300 mx-1"></div>
-                  <button type="button" onClick={() => insertTag('b')} className="p-1 hover:bg-slate-200 rounded font-bold" title="Bold"><Bold size={18}/></button>
-                  <button type="button" onClick={() => insertTag('i')} className="p-1 hover:bg-slate-200 rounded italic" title="Italic"><Italic size={18}/></button>
-                  <div className="w-px h-6 bg-slate-300 mx-1"></div>
-                  <button type="button" onClick={() => insertTag('a href=""')} className="p-1 hover:bg-slate-200 rounded" title="Link"><LinkIcon size={18}/></button>
-                  <button type="button" onClick={() => insertTag('img src="" alt="image"')} className="p-1 hover:bg-slate-200 rounded" title="Image"><ImageIcon size={18}/></button>
-                </div>
-
-                <textarea rows={12} value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded-b-xl font-mono text-sm focus:ring-2 focus:ring-[#F97316] outline-none" placeholder="Write your blog content here..."></textarea>
-              </div>
-
-              <div className="pt-4">
-                <button type="submit" className="px-6 py-3 bg-[#F97316] text-white font-bold rounded-lg hover:bg-[#ea580c]">Publish Post</button>
-              </div>
+              <input type="text" placeholder="Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-2 border rounded" required />
+              <input type="text" placeholder="Slug" value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="w-full p-2 border rounded" required />
+              <textarea rows={8} placeholder="Content here..." value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-4 border rounded" required />
+              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Publish</button>
             </form>
           </div>
         )}
 
-        {activeTab === 'tools' && (
+        {activeTab === 'tools' && !editingTool && (
           <div>
             <h1 className="text-3xl font-bold text-slate-800 mb-6">Manage Tools</h1>
-            <div className="bg-white rounded-2xl shadow-sm border p-6">
-              <p className="text-slate-500 mb-4">Edit tool titles and descriptions.</p>
-              <div className="space-y-4">
-                {['PDF Tools', 'Image Tools', 'Video Downloader'].map(tool => (
-                  <div key={tool} className="flex justify-between items-center p-4 border rounded-xl">
-                    <span className="font-bold">{tool}</span>
-                    <button className="px-4 py-2 bg-slate-100 font-medium rounded-lg hover:bg-slate-200">Edit</button>
-                  </div>
-                ))}
-              </div>
+            <div className="space-y-4">
+              {tools.map(tool => (
+                <div key={tool.slug} className="bg-white p-4 rounded-xl border flex justify-between items-center">
+                  <div><p className="font-bold">{tool.h1_title}</p><p className="text-sm text-slate-500">/{tool.slug}</p></div>
+                  <button onClick={() => setEditingTool(tool)} className="px-4 py-2 bg-slate-100 font-medium rounded-lg hover:bg-slate-200">Edit</button>
+                </div>
+              ))}
             </div>
+          </div>
+        )}
+
+        {activeTab === 'tools' && editingTool && (
+          <div className="bg-white p-6 rounded-2xl shadow-sm border">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-slate-800">Edit Tool: {editingTool.slug}</h1>
+              <button onClick={() => setEditingTool(null)}><X size={24}/></button>
+            </div>
+            <form onSubmit={handleUpdateTool} className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold">H1 Title</label>
+                <input type="text" value={editingTool.h1_title} onChange={e => setEditingTool({...editingTool, h1_title: e.target.value})} className="w-full p-2 border rounded mt-1" />
+              </div>
+              <div>
+                <label className="text-sm font-semibold">Intro Text</label>
+                <textarea rows={4} value={editingTool.intro_text} onChange={e => setEditingTool({...editingTool, intro_text: e.target.value})} className="w-full p-2 border rounded mt-1" />
+              </div>
+              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Save Changes</button>
+            </form>
           </div>
         )}
 
         {activeTab === 'settings' && (
           <div className="bg-white p-6 rounded-2xl shadow-sm border max-w-lg">
-            <h1 className="text-2xl font-bold mb-6">Settings</h1>
-            <input type="password" placeholder="New Password" className="w-full p-2 border rounded mb-4" />
-            <button className="px-6 py-2 bg-[#F97316] text-white rounded">Update</button>
+            <h1 className="text-2xl font-bold mb-6">Account Settings</h1>
+            <form onSubmit={handleChangePassword} className="space-y-4">
+              <div>
+                <label className="text-sm font-semibold">Change Password</label>
+                <input type="password" placeholder="Enter new password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full p-2 border rounded mt-1" required />
+              </div>
+              <button type="submit" className="px-6 py-2 bg-[#F97316] text-white rounded">Update Password</button>
+            </form>
           </div>
         )}
 
