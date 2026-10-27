@@ -9,6 +9,7 @@ import Contact from './pages/legal/Contact'
 import Privacy from './pages/legal/Privacy'
 import Terms from './pages/legal/Terms'
 import Blog from './pages/Blog'
+import Converters from './pages/tools/Converters'
 import SinglePost from './pages/Blog/SinglePost'
 import { tools } from './config/toolsRegistry'
 import PageLoader from './components/PageLoader'
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'blog', element: <Blog /> },
+      { path: 'converters', element: <Converters /> },
       { path: 'blog/:slug', element: <SinglePost /> },
       { path: 'hellowsaipatit', element: <AdminPanel /> },
       { path: 'about', element: <About /> },
