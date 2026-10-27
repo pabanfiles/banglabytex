@@ -1,9 +1,15 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-brand-50: #f0f9ff; --color-brand-100: #e0f2fe; --color-brand-500: #0ea5e9;
-  --color-brand-600: #0284c7; --color-brand-700: #0369a1; --color-brand-900: #0c4a6e;
+  --color-brand-50: #FFF7ED;
+  --color-brand-100: #FFEDD5;
+  --color-brand-500: #F97316;
+  --color-brand-600: #EA580C;
+  --color-brand-700: #C2410C;
+  --color-brand-900: #431407;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
+body { margin: 0; font-family: 'Poppins', system-ui, sans-serif; background-color: #f8fafc; }

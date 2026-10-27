@@ -3,16 +3,26 @@ import { ArrowRight, Sparkles, Zap, Shield, Heart, Search, Facebook, Youtube, In
 import { useState, useEffect } from 'react'
 
 const ALL_TOOLS = [
-  { slug: 'pdf-editor', name: 'PDF Editor', description: 'Edit PDF text, images, and links.', icon: '📝', link: '/pdf-editor.html' },
-  { slug: 'pdf-merge', name: 'Merge PDF', description: 'Combine multiple PDFs into one.', icon: '🔗', link: '/pdf-merge' },
-  { slug: 'pdf-compress', name: 'Compress PDF', description: 'Reduce PDF file size instantly.', icon: '📉', link: '/pdf-tools.html?tool=comp' },
-  { slug: 'pdf-split', name: 'Split PDF', description: 'Separate one PDF into multiple files.', icon: '✂️', link: '/pdf-tools.html?tool=split' },
-  { slug: 'image-compress', name: 'Image Compressor', description: 'Reduce JPG, PNG, WebP file size.', icon: '🖼️', link: '/pdf-tools.html?tool=comp' },
-  { slug: 'image-convert', name: 'Image Converter', description: 'Convert PNG to JPG, WebP, and more.', icon: '🔄', link: '/pdf-tools.html?tool=img2pdf' },
-  { slug: 'age-calculator', name: 'Age Calculator', description: 'Calculate your exact age easily.', icon: '🎂', link: '/age-calculator' },
-  { slug: 'percentage-calculator', name: 'Percentage Calculator', description: 'Find percentages instantly.', icon: '🧮', link: '/percentage-calc' },
-  { slug: 'qr-generator', name: 'QR Code Generator', description: 'Create custom QR codes for free.', icon: '📱', link: '/qr-code-gen' },
-  { slug: 'video-downloader', name: 'Video Downloader', description: 'Download social media videos.', icon: '🎬', link: '/video-downloader' },
+  // PDF Tools (যেগুলো public ফোল্ডারে HTML ফাইল হিসেবে আছে)
+  { slug: 'pdf-editor', name: 'PDF Editor', description: 'Edit PDF text, images, and links directly in your browser.', icon: '📝', link: '/pdf-editor.html' },
+  { slug: 'pdf-merge', name: 'Merge PDF', description: 'Combine multiple PDF documents into one single file.', icon: '🔗', link: '/pdf-tools.html?tool=merge' },
+  { slug: 'pdf-compress', name: 'Compress PDF', description: 'Reduce the size of your PDF without losing quality.', icon: '📉', link: '/pdf-tools.html?tool=comp' },
+  { slug: 'pdf-split', name: 'Split PDF', description: 'Separate one PDF into multiple smaller files.', icon: '✂️', link: '/pdf-tools.html?tool=split' },
+  
+  // Image Tools (public ফোল্ডারে)
+  { slug: 'image-compress', name: 'Image Compressor', description: 'Reduce JPG, PNG, WebP file sizes for web use.', icon: '🖼️', link: '/pdf-tools.html?tool=comp' },
+  { slug: 'image-convert', name: 'Image to PDF', description: 'Convert your images into a PDF document.', icon: '🔄', link: '/pdf-tools.html?tool=img2pdf' },
+  
+  // React Tools
+  { slug: 'age-calculator', name: 'Age Calculator', description: 'Find out your exact age in years, months, and days.', icon: '🎂', link: '/age-calculator' },
+  { slug: 'percentage-calc', name: 'Percentage Calculator', description: 'Calculate percentages of any number instantly.', icon: '🧮', link: '/percentage-calc' },
+  { slug: 'qr-code-gen', name: 'QR Code Generator', description: 'Create custom QR codes for your links and text.', icon: '📱', link: '/qr-code-gen' },
+  { slug: 'video-downloader', name: 'Video Downloader', description: 'Download public videos from social media safely.', icon: '🎬', link: '/video-downloader' },
+  { slug: 'cv-maker', name: 'CV Maker', description: 'Create professional CVs with live preview.', icon: '📋', link: '/cv-maker' },
+  { slug: 'youtube-meta', name: 'YouTube Metadata', description: 'Extract titles, thumbnails, and tags from YouTube.', icon: '📺', link: '/youtube-meta' },
+  { slug: 'html-to-text', name: 'HTML to Text', description: 'Remove HTML tags and extract clean text.', icon: '💻', link: '/html-to-text' },
+  { slug: 'csv-to-json', name: 'CSV to JSON', description: 'Convert CSV data to JSON format easily.', icon: '📊', link: '/csv-to-json' },
+  { slug: 'social-checker', name: 'Social Checker', description: 'Check if your username is available everywhere.', icon: '🔍', link: '/social-checker' },
 ]
 
 export default function Home() {
@@ -22,9 +32,7 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/posts')
       .then(res => res.json())
-      .then(data => {
-        if(Array.isArray(data)) setRecentPosts(data.slice(0, 5))
-      })
+      .then(data => { if(Array.isArray(data)) setRecentPosts(data.slice(0, 3)) })
       .catch(() => {})
   }, [])
 
@@ -41,7 +49,7 @@ export default function Home() {
   ]
 
   return (
-    <div className="bg-[#FFF7ED] min-h-screen overflow-x-hidden">
+    <div className="bg-[#FFF7ED] dark:bg-slate-900 min-h-screen overflow-x-hidden transition-colors duration-300">
       {/* HERO SECTION */}
       <section className="relative bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem]">
         <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center text-center">
@@ -63,17 +71,17 @@ export default function Home() {
 
       {/* SEARCH & SOCIAL */}
       <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
-        <div className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100">
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-2 border border-slate-100 dark:border-slate-700 transition-colors">
           <div className="relative">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
-            <input type="text" placeholder="Search for tools..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors" />
+            <input type="text" placeholder="Search for tools..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 dark:text-white bg-transparent outline-none focus:bg-slate-50 dark:focus:bg-slate-700 transition-colors" />
           </div>
         </div>
-        <div className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center">
-          <h3 className="text-xl font-bold text-slate-900">Stay Connected</h3>
+        <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 p-6 flex flex-col items-center gap-4 text-center transition-colors">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">Stay Connected</h3>
           <div className="flex gap-3">
             {socialLinks.map((social, i) => (
-              <a key={i} href={social.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition">
+              <a key={i} href={social.url} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-[#FFF7ED] dark:bg-slate-700 text-[#F97316] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition">
                 <social.icon size={18}/>
               </a>
             ))}
@@ -84,15 +92,15 @@ export default function Home() {
       {/* TOOLS GRID */}
       <section id="tools" className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#431407] mb-3">PPM Creator Tools</h2>
-          <p className="text-slate-500 text-lg">Handcrafted tools to make your digital life easier.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#431407] dark:text-white mb-3">PPM Creator Tools</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-lg">Handcrafted tools to make your digital life easier.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredTools.map((tool) => (
-            <a key={tool.slug} href={tool.link} className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#F97316] transition-all duration-300 flex flex-col h-full">
-              <div className="w-14 h-14 bg-[#FFF7ED] text-[#F97316] rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">{tool.icon}</div>
-              <h3 className="text-lg font-bold text-[#431407] group-hover:text-[#F97316] transition-colors mb-2">{tool.name}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow">{tool.description}</p>
+            <a key={tool.slug} href={tool.link} className="group bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#F97316] transition-all duration-300 flex flex-col h-full">
+              <div className="w-14 h-14 bg-[#FFF7ED] dark:bg-slate-700 text-[#F97316] rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">{tool.icon}</div>
+              <h3 className="text-lg font-bold text-[#431407] dark:text-white group-hover:text-[#F97316] transition-colors mb-2">{tool.name}</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6 flex-grow">{tool.description}</p>
               <div className="mt-auto">
                 <div className="inline-flex items-center justify-center gap-2 bg-[#F97316] group-hover:bg-[#EA580C] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-md w-full">
                   Open Tool <ArrowRight size={16} />
@@ -100,22 +108,22 @@ export default function Home() {
               </div>
             </a>
           ))}
-          {filteredTools.length === 0 && <p className="col-span-full text-center text-slate-500 py-10">No tools found for "{search}"</p>}
+          {filteredTools.length === 0 && <p className="col-span-full text-center text-slate-500 dark:text-slate-400 py-10">No tools found for "{search}"</p>}
         </div>
       </section>
 
       {/* LATEST BLOG POSTS */}
       {recentPosts.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 py-16 border-t border-slate-200">
+        <section className="max-w-7xl mx-auto px-4 py-16 border-t border-slate-200 dark:border-slate-800">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-[#431407] mb-2">Latest Articles</h2>
-            <p className="text-slate-500">Read our latest tips and guides.</p>
+            <h2 className="text-3xl font-bold text-[#431407] dark:text-white mb-2">Latest Articles</h2>
+            <p className="text-slate-500 dark:text-slate-400">Read our latest tips and guides.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {recentPosts.map((post) => (
-              <Link key={post.id} to={`/blog/${post.slug}`} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition">
-                <h3 className="text-xl font-bold text-[#431407] mb-2">{post.title}</h3>
-                <p className="text-slate-500 text-sm line-clamp-3">{post.content.substring(0, 100)}...</p>
+              <Link key={post.id} to={`/blog/${post.slug}`} className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition group">
+                <h3 className="text-xl font-bold text-[#431407] dark:text-white mb-2 group-hover:text-[#F97316] transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm line-clamp-3">{post.content.substring(0, 100)}...</p>
               </Link>
             ))}
           </div>
@@ -123,27 +131,27 @@ export default function Home() {
       )}
 
       {/* FEATURES */}
-      <section className="bg-white py-24 border-t border-slate-100 mt-12">
+      <section className="bg-white dark:bg-slate-900 py-24 border-t border-slate-100 dark:border-slate-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#431407] mb-3">Why PPM Creator?</h2>
-            <p className="text-slate-500 text-lg">Built with care, powered by modern tech.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#431407] dark:text-white mb-3">Why PPM Creator?</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-lg">Built with care, powered by modern tech.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
+            <div className="p-8 rounded-3xl bg-[#FFF7ED] dark:bg-slate-800 border border-[#FFEDD5] dark:border-slate-700 hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Zap className="text-[#F97316]" size={36}/></div>
-              <h3 className="text-lg font-bold text-[#431407] mb-2">Lightning Fast</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">Optimized for speed - every tool loads instantly.</p>
+              <h3 className="text-lg font-bold text-[#431407] dark:text-white mb-2">Lightning Fast</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Optimized for speed - every tool loads instantly.</p>
             </div>
-            <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
+            <div className="p-8 rounded-3xl bg-[#FFF7ED] dark:bg-slate-800 border border-[#FFEDD5] dark:border-slate-700 hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Shield className="text-[#F97316]" size={36}/></div>
-              <h3 className="text-lg font-bold text-[#431407] mb-2">Privacy First</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">Your data stays yours. We do not store your files.</p>
+              <h3 className="text-lg font-bold text-[#431407] dark:text-white mb-2">Privacy First</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Your data stays yours. We do not store your files.</p>
             </div>
-            <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
+            <div className="p-8 rounded-3xl bg-[#FFF7ED] dark:bg-slate-800 border border-[#FFEDD5] dark:border-slate-700 hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Heart className="text-[#F97316]" size={36}/></div>
-              <h3 className="text-lg font-bold text-[#431407] mb-2">100% Free</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">All tools are free to use - no hidden charges.</p>
+              <h3 className="text-lg font-bold text-[#431407] dark:text-white mb-2">100% Free</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">All tools are free to use - no hidden charges.</p>
             </div>
           </div>
         </div>

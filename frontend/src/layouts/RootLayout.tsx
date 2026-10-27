@@ -12,12 +12,22 @@ export default function RootLayout() {
 
   // ডার্ক মোড টগল লজিক
   useEffect(() => {
-    if (isDarkMode) {
+    // Check local storage for dark mode preference
+    const savedMode = localStorage.getItem('darkMode') === 'true'
+    setIsDarkMode(savedMode)
+    if (savedMode) document.documentElement.classList.add('dark')
+  }, [])
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    localStorage.setItem('darkMode', String(newMode))
+    if (newMode) {
       document.documentElement.classList.add('dark')
     } else {
       document.documentElement.classList.remove('dark')
     }
-  }, [isDarkMode])
+  }
 
   // স্ক্রল প্রোগ্রেস
   useEffect(() => {
@@ -95,7 +105,7 @@ export default function RootLayout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
+            <button onClick={toggleDarkMode} className="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition">
               {isDarkMode ? <Sun size={20}/> : <Moon size={20}/>}
             </button>
             <button onClick={handleShare} className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#FFF7ED] dark:bg-slate-800 text-[#F97316] rounded-full font-medium hover:bg-[#FFEDD5] dark:hover:bg-slate-700 transition">
