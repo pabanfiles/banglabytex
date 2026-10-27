@@ -1,4 +1,4 @@
-﻿import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createHashRouter, RouterProvider } from 'react-router-dom'
 import { Suspense } from 'react'
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
@@ -16,7 +16,7 @@ const toolRoutes = tools.map(tool => ({
   element: <Suspense fallback={<PageLoader />}><tool.component /></Suspense>,
 }))
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/', element: <RootLayout />,
     children: [
