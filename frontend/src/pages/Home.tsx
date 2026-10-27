@@ -1,25 +1,24 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, Zap, Shield, Heart, Search, X } from 'lucide-react'
+import { ArrowRight, Sparkles, Zap, Shield, Heart, Search } from 'lucide-react'
 import { useState } from 'react'
 import SocialLinks from '@/components/SocialLinks'
 
 const ALL_TOOLS = [
   { slug: 'pdf-editor', name: 'PDF Editor', description: 'Edit PDF text, images, and links.', icon: '📝', link: '/pdf-editor.html' },
   { slug: 'pdf-merge', name: 'Merge PDF', description: 'Combine multiple PDFs into one.', icon: '🔗', link: '/pdf-merge' },
-  { slug: 'pdf-compress', name: 'Compress PDF', description: 'Reduce PDF file size instantly.', icon: '📉', link: '/pdf-compress' },
-  { slug: 'pdf-split', name: 'Split PDF', description: 'Separate one PDF into multiple files.', icon: '✂️', link: '/pdf-split' },
-  { slug: 'image-compress', name: 'Image Compressor', description: 'Reduce JPG, PNG, WebP file size.', icon: '🖼️', link: '/image-compress' },
-  { slug: 'image-convert', name: 'Image Converter', description: 'Convert PNG to JPG, WebP, and more.', icon: '🔄', link: '/image-convert' },
+  { slug: 'pdf-compress', name: 'Compress PDF', description: 'Reduce PDF file size instantly.', icon: '📉', link: '/pdf-tools.html?tool=comp' },
+  { slug: 'pdf-split', name: 'Split PDF', description: 'Separate one PDF into multiple files.', icon: '✂️', link: '/pdf-tools.html?tool=split' },
+  { slug: 'image-compress', name: 'Image Compressor', description: 'Reduce JPG, PNG, WebP file size.', icon: '🖼️', link: '/pdf-tools.html?tool=comp' },
+  { slug: 'image-convert', name: 'Image Converter', description: 'Convert PNG to JPG, WebP, and more.', icon: '🔄', link: '/pdf-tools.html?tool=img2pdf' },
   { slug: 'age-calculator', name: 'Age Calculator', description: 'Calculate your exact age easily.', icon: '🎂', link: '/age-calculator' },
-  { slug: 'percentage-calculator', name: 'Percentage Calculator', description: 'Find percentages instantly.', icon: '🧮', link: '/percentage-calculator' },
-  { slug: 'qr-generator', name: 'QR Code Generator', description: 'Create custom QR codes for free.', icon: '📱', link: '/qr-generator' },
+  { slug: 'percentage-calculator', name: 'Percentage Calculator', description: 'Find percentages instantly.', icon: '🧮', link: '/percentage-calc' },
+  { slug: 'qr-generator', name: 'QR Code Generator', description: 'Create custom QR codes for free.', icon: '📱', link: '/qr-code-gen' },
   { slug: 'video-downloader', name: 'Video Downloader', description: 'Download social media videos.', icon: '🎬', link: '/video-downloader' },
 ]
 
 export default function Home() {
   const [search, setSearch] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
 
   const filteredTools = ALL_TOOLS.filter(t => 
     t.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -27,44 +26,24 @@ export default function Home() {
   )
 
   return (
-    <div className="bg-slate-50 min-h-screen overflow-x-hidden">
-      {/* HERO SECTION */}
+    <div className="bg-[#FFF7ED] min-h-screen overflow-x-hidden">
       <section className="relative bg-gradient-to-br from-[#F97316] via-[#EA580C] to-[#C2410C] text-white pt-24 pb-40 rounded-b-[3rem] md:rounded-b-[5rem] overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="max-w-7xl mx-auto px-4 relative z-10 flex flex-col items-center text-center">
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-sm font-medium mb-6 border border-white/30"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-sm font-medium mb-6 border border-white/30">
             <Sparkles size={16} /> All-in-One Digital Hub
           </motion.div>
           
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl leading-tight drop-shadow-sm"
-          >
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl leading-tight drop-shadow-sm">
             Free Online Tools <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-400">for Everyone</span>
           </motion.h1>
           
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-orange-50 max-w-2xl mb-10"
-          >
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-lg md:text-xl text-orange-50 max-w-2xl mb-10">
             PDF, image, document and file tools that work fast in your browser. No signup. No limits.
           </motion.p>
           
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <a href="#tools" className="px-8 py-3.5 bg-white text-[#F97316] font-bold rounded-full transition-all shadow-xl hover:-translate-y-1 hover:shadow-2xl flex items-center justify-center gap-2">
               Explore Tools <ArrowRight size={18} />
             </a>
@@ -72,70 +51,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEARCH & SOCIAL SECTION */}
       <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100 relative"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100">
           <div className="relative">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
-            <input 
-              type="text" 
-              placeholder="Search for tools..." 
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setShowSuggestions(true); }}
-              onFocus={() => setShowSuggestions(true)}
-              className="w-full pl-14 pr-12 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors"
-            />
-            {search && (
-              <button onClick={() => setSearch('')} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                <X size={20} />
-              </button>
-            )}
+            <input type="text" placeholder="Search for tools (e.g. PDF, Video...)" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full pl-14 pr-6 py-4 rounded-2xl text-slate-900 text-lg outline-none focus:bg-slate-50 transition-colors" />
           </div>
-
-          {showSuggestions && search.length > 0 && (
-            <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
-              {filteredTools.length > 0 ? (
-                <div className="max-h-60 overflow-y-auto">
-                  {filteredTools.map((tool) => (
-                    <a key={tool.slug} href={tool.link} className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
-                      <span className="text-2xl">{tool.icon}</span>
-                      <div>
-                        <p className="font-semibold text-slate-900">{tool.name}</p>
-                        <p className="text-xs text-slate-500 line-clamp-1">{tool.description}</p>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <div className="px-6 py-4 text-center text-slate-500 text-sm">No tools found for "{search}"</div>
-              )}
-            </div>
-          )}
         </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="bg-white rounded-3xl shadow-lg border border-slate-100 p-6 md:p-8 flex flex-col items-center justify-center gap-4 text-center">
           <h3 className="text-xl font-bold text-slate-900">Stay Connected</h3>
           <SocialLinks />
         </motion.div>
       </section>
 
-      {/* TOOLS GRID */}
       <section id="tools" className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[#431407] mb-3">PPM Creator Tools</h2>
           <p className="text-slate-500 text-lg">Handcrafted tools to make your digital life easier.</p>
         </div>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredTools.map((tool, i) => (
             <motion.a 
@@ -157,10 +92,12 @@ export default function Home() {
               </div>
             </motion.a>
           ))}
+          {filteredTools.length === 0 && (
+            <p className="col-span-full text-center text-slate-500 py-10">No tools found for "{search}"</p>
+          )}
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className="bg-white py-24 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
@@ -171,17 +108,17 @@ export default function Home() {
             <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Zap className="text-[#F97316]" size={36}/></div>
               <h3 className="text-lg font-bold text-[#431407] mb-2">Lightning Fast</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">Optimized for speed - every tool loads instantly, no waiting.</p>
+              <p className="text-slate-500 text-sm leading-relaxed">Optimized for speed - every tool loads instantly.</p>
             </div>
             <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Shield className="text-[#F97316]" size={36}/></div>
               <h3 className="text-lg font-bold text-[#431407] mb-2">Privacy First</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">Your data stays yours. We do not store, sell, or share your files.</p>
+              <p className="text-slate-500 text-sm leading-relaxed">Your data stays yours. We do not store your files.</p>
             </div>
             <div className="p-8 rounded-3xl bg-[#FFF7ED] border border-[#FFEDD5] hover:shadow-md transition text-center">
               <div className="flex justify-center mb-4"><Heart className="text-[#F97316]" size={36}/></div>
               <h3 className="text-lg font-bold text-[#431407] mb-2">100% Free</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">All tools are free to use - no hidden charges, no premium traps.</p>
+              <p className="text-slate-500 text-sm leading-relaxed">All tools are free to use - no hidden charges.</p>
             </div>
           </div>
         </div>
