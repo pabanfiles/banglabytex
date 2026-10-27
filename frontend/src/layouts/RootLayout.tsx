@@ -4,7 +4,22 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function RootLayout() {
-  const { pathname } = useLocation()
+    const { pathname } = useLocation()
+  
+  if (pathname === '/hellowsaipatit') {
+    return <Outlet />
+  }
+
+  useEffect(() => {
+    // ভিজিটর ট্র্যাকিং (একবার পেজ লোড হলে)
+    if (pathname !== '/hellowsaipatit') {
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: pathname })
+      }).catch(() => {})
+    }
+  }, [pathname])
   const [scrollProgress, setScrollProgress] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
