@@ -1,0 +1,22 @@
+UPDATE tool_pages SET faq_json = '[
+  {"q":"Is this PDF merge tool free?","a":"Yes, our tool is 100% free with no limits."},
+  {"q":"Do I need to create an account?","a":"No signup is required. You can merge PDFs instantly."},
+  {"q":"Are my PDF files safe?","a":"Yes, your files are processed securely and are not stored on our servers."},
+  {"q":"How many PDFs can I merge at once?","a":"You can merge as many PDF files as you need in one go."},
+  {"q":"Will the quality be reduced?","a":"No, the original quality and formatting of your PDFs are preserved."},
+  {"q":"Can I reorder the PDF files before merging?","a":"Yes, you can easily drag and drop or use the arrows to set the order."},
+  {"q":"Does it work on mobile phones?","a":"Yes, the tool is fully responsive and works on all devices."},
+  {"q":"Is there a file size limit?","a":"There is no strict limit, but very large files may take longer to process."},
+  {"q":"Can I merge password-protected PDFs?","a":"You will need to unlock the PDFs first before merging them."},
+  {"q":"Do you keep a copy of my merged PDF?","a":"No, your files are deleted immediately after the merge is complete."},
+  {"q":"Can I use this tool offline?","a":"You need an internet connection to load the tool initially."},
+  {"q":"Does it add a watermark?","a":"No, we do not add any watermarks to your files."},
+  {"q":"Can I merge PDFs on a Mac?","a":"Yes, it works on Mac, Windows, Linux, and any modern browser."},
+  {"q":"How long does the merging process take?","a":"Merging usually takes just a few seconds depending on file size."},
+  {"q":"Is it legal to merge PDFs?","a":"Yes, as long as you have the rights to the documents."},
+  {"q":"Can I merge images into the PDF?","a":"This tool is for PDFs only. Use our Image to PDF tool for images."},
+  {"q":"What if the merge fails?","a":"Try refreshing the page and uploading the files again."},
+  {"q":"Do I need to install software?","a":"No, everything is done directly in your web browser."},
+  {"q":"Can I merge PDFs from Google Drive?","a":"You can download them from Drive first, then upload them here."},
+  {"q":"Is there a limit to how many times I can use it?","a":"No, you can use the tool unlimited times for free."}
+]' WHERE slug = 'pdf-merge';
