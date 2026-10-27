@@ -1,48 +1,27 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { tools } from '@/config/toolsRegistry'
 import { ArrowRight, Sparkles, Zap, Shield, Heart, Search, X } from 'lucide-react'
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import SocialLinks from '@/components/SocialLinks'
+
+const ALL_TOOLS = [
+  { slug: 'pdf-editor', name: 'PDF Editor', description: 'Edit PDF text, images, and links.', icon: '📝', link: '/pdf-editor.html' },
+  { slug: 'pdf-merge', name: 'Merge PDF', description: 'Combine multiple PDFs into one.', icon: '🔗', link: '/pdf-merge' },
+  { slug: 'pdf-compress', name: 'Compress PDF', description: 'Reduce PDF file size instantly.', icon: '📉', link: '/pdf-compress' },
+  { slug: 'pdf-split', name: 'Split PDF', description: 'Separate one PDF into multiple files.', icon: '✂️', link: '/pdf-split' },
+  { slug: 'image-compress', name: 'Image Compressor', description: 'Reduce JPG, PNG, WebP file size.', icon: '🖼️', link: '/image-compress' },
+  { slug: 'image-convert', name: 'Image Converter', description: 'Convert PNG to JPG, WebP, and more.', icon: '🔄', link: '/image-convert' },
+  { slug: 'age-calculator', name: 'Age Calculator', description: 'Calculate your exact age easily.', icon: '🎂', link: '/age-calculator' },
+  { slug: 'percentage-calculator', name: 'Percentage Calculator', description: 'Find percentages instantly.', icon: '🧮', link: '/percentage-calculator' },
+  { slug: 'qr-generator', name: 'QR Code Generator', description: 'Create custom QR codes for free.', icon: '📱', link: '/qr-generator' },
+  { slug: 'video-downloader', name: 'Video Downloader', description: 'Download social media videos.', icon: '🎬', link: '/video-downloader' },
+]
 
 export default function Home() {
   const [search, setSearch] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const searchRef = useRef<HTMLDivElement>(null)
-  const [dynamicTools, setDynamicTools] = useState<any[]>(tools)
 
-  // Fetch Dynamic Tools from D1 Database
-  useEffect(() => {
-    fetch('/api/tools')
-      .then(res => res.json())
-      .then(data => {
-        if(Array.isArray(data) && data.length > 0) {
-          // ম্যাপ করা যাতে ডাটাবেসের ডেটা এবং লোকাল কম্পোনেন্ট মিলে যায়
-          const merged = tools.map(localTool => {
-            const dbTool = data.find((t: any) => t.slug === localTool.slug)
-            if(dbTool) {
-              return { ...localTool, name: dbTool.h1_title, description: dbTool.intro_text || localTool.description }
-            }
-            return localTool
-          })
-          setDynamicTools(merged)
-        }
-      })
-      .catch(() => {})
-  }, [])
-
-  // Click outside to close suggestions
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-
-  const filteredTools = dynamicTools.filter(t => 
+  const filteredTools = ALL_TOOLS.filter(t => 
     t.name.toLowerCase().includes(search.toLowerCase()) || 
     t.description.toLowerCase().includes(search.toLowerCase())
   )
@@ -96,19 +75,17 @@ export default function Home() {
       {/* SEARCH & SOCIAL SECTION */}
       <section className="max-w-4xl mx-auto px-4 -mt-20 relative z-20 space-y-6">
         
-        {/* Search Bar Card */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           className="bg-white rounded-3xl shadow-2xl p-2 border border-slate-100 relative"
-          ref={searchRef}
         >
           <div className="relative">
             <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={22} />
             <input 
               type="text" 
-              placeholder="Search for tools (e.g. PDF, Video, Calculator...)" 
+              placeholder="Search for tools..." 
               value={search}
               onChange={(e) => { setSearch(e.target.value); setShowSuggestions(true); }}
               onFocus={() => setShowSuggestions(true)}
@@ -121,19 +98,18 @@ export default function Home() {
             )}
           </div>
 
-          {/* Auto-Suggest */}
           {showSuggestions && search.length > 0 && (
             <div className="absolute top-full left-0 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50">
               {filteredTools.length > 0 ? (
                 <div className="max-h-60 overflow-y-auto">
                   {filteredTools.map((tool) => (
-                    <Link key={tool.slug} to={tool.externalLink || '/' + tool.slug} className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
+                    <a key={tool.slug} href={tool.link} className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 border-b border-slate-50 last:border-0">
                       <span className="text-2xl">{tool.icon}</span>
                       <div>
                         <p className="font-semibold text-slate-900">{tool.name}</p>
                         <p className="text-xs text-slate-500 line-clamp-1">{tool.description}</p>
                       </div>
-                    </Link>
+                    </a>
                   ))}
                 </div>
               ) : (
@@ -143,7 +119,6 @@ export default function Home() {
           )}
         </motion.div>
 
-        {/* Social Card */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -161,38 +136,27 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold text-[#431407] mb-3">PPM Creator Tools</h2>
           <p className="text-slate-500 text-lg">Handcrafted tools to make your digital life easier.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredTools.map((tool, i) => {
-            const cardContent = (
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="group bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
-              >
-                <div className="w-16 h-16 bg-[#FFF7ED] text-[#F97316] rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform">{tool.icon}</div>
-                <h3 className="text-xl font-bold text-[#431407] group-hover:text-[#F97316] transition-colors mb-2">{tool.name}</h3>
-                <p className="text-slate-500 mt-2 text-sm leading-relaxed mb-6 flex-grow">{tool.description}</p>
-                
-                <div className="mt-auto pt-4">
-                  <div className="inline-flex items-center justify-center gap-2 bg-[#F97316] group-hover:bg-[#EA580C] text-white px-6 py-2.5 rounded-full font-semibold text-sm transition-colors shadow-md w-full">
-                    Launch Tool <ArrowRight size={16} />
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredTools.map((tool, i) => (
+            <motion.a 
+              key={tool.slug}
+              href={tool.link}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#F97316] transition-all duration-300 flex flex-col h-full"
+            >
+              <div className="w-14 h-14 bg-[#FFF7ED] text-[#F97316] rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform">{tool.icon}</div>
+              <h3 className="text-lg font-bold text-[#431407] group-hover:text-[#F97316] transition-colors mb-2">{tool.name}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed mb-6 flex-grow">{tool.description}</p>
+              <div className="mt-auto">
+                <div className="inline-flex items-center justify-center gap-2 bg-[#F97316] group-hover:bg-[#EA580C] text-white px-5 py-2 rounded-full font-semibold text-sm transition-colors shadow-md w-full">
+                  Open Tool <ArrowRight size={16} />
                 </div>
-              </motion.div>
-            );
-
-            return tool.externalLink ? (
-              <a key={tool.slug} href={tool.externalLink} target="_blank" rel="noopener noreferrer" className="h-full">
-                {cardContent}
-              </a>
-            ) : (
-              <Link key={tool.slug} to={'/' + tool.slug} className="h-full">
-                {cardContent}
-              </Link>
-            );
-          })}
+              </div>
+            </motion.a>
+          ))}
         </div>
       </section>
 
