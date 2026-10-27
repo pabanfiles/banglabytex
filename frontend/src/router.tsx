@@ -15,6 +15,10 @@ import PdfMerge from './pages/tools/PdfTools/PdfMerge'
 import PdfSplit from './pages/tools/PdfTools/PdfSplit'
 import PdfCompress from './pages/tools/PdfTools/PdfCompress'
 import ImageCompress from './pages/tools/PdfTools/ImageCompress'
+import About from './pages/legal/About'
+import Contact from './pages/legal/Contact'
+import Privacy from './pages/legal/Privacy'
+import Terms from './pages/legal/Terms'
 import { tools } from './config/toolsRegistry'
 import PageLoader from './components/PageLoader'
 
@@ -40,10 +44,14 @@ const router = createBrowserRouter([
       { path: 'pdf-split', element: <PdfSplit /> },
       { path: 'pdf-compress', element: <PdfCompress /> },
       { path: 'image-compress', element: <ImageCompress /> },
+      { path: 'about', element: <About /> },
+      { path: 'contact', element: <Contact /> },
+      { path: 'privacy-policy', element: <Privacy /> },
+      { path: 'terms', element: <Terms /> },
       ...toolRoutes,
       { path: '*', element: <NotFound /> },
     ],
   },
 ])
 
-export default function Router() { return <RouterProvider router={newRouter} /> }
+export default function Router() { return <RouterProvider router={router} /> }
