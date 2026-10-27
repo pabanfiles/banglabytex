@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, ToolCase, Eye } from 'lucide-react'
+import { Lock, LogOut, FileText, Settings, LayoutDashboard, Plus, X, BarChart3, Wrench, Eye } from 'lucide-react'
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -85,7 +85,7 @@ export default function AdminPanel() {
           {[
             { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
             { id: 'posts', icon: FileText, label: 'Blog Posts' },
-            { id: 'tools', icon: ToolCase, label: 'Manage Tools' },
+            { id: 'tools', icon: Wrench, label: 'Manage Tools' },
             { id: 'settings', icon: Settings, label: 'Settings' },
           ].map(item => (
             <button key={item.id} onClick={() => { setActiveTab(item.id); setIsCreatingPost(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium ${activeTab === item.id ? 'bg-[#FFF7ED] text-[#F97316]' : 'text-slate-600 hover:bg-slate-50'}`}>
