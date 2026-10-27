@@ -45,7 +45,14 @@ canvas{display:block}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 5vw}
 .inl{position:absolute;z-index:5;border:0;padding:0;margin:0;outline:0;box-shadow:0 1px 0 var(--ac)}#wrap.ann .ov{pointer-events:none}.ov.im:hover{outline:2px dashed #f59e0b;background:#f59e0b22}
 </style></head><body>
-<header class="top"><div class="logo">📄 BanglaByte<b>X</b></div></header>
+<header class="top" style="display:flex;justify-content:space-between;align-items:center;">
+  <div class="logo" style="display:flex;align-items:center;gap:8px;">
+    <svg width="28" height="28" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#F97316"/><rect x="14" y="16" width="6" height="32" rx="2" fill="#FFF"/><polygon points="26,16 26,48 50,32" fill="#FFF"/></svg>
+    <span style="color:#431407;font-weight:800;font-size:20px;">PPM Creator Tools</span>
+    <span style="color:#F97316;font-weight:500;font-size:20px;margin-left:8px;">| PDF Editor</span>
+  </div>
+  <a href="/" style="font-size:14px;color:#64748b;text-decoration:none;">← Back to Home</a>
+</header>
 <div id="set"><span>Backend URL (optional, for real in-place edit):</span><input id="burl" placeholder="https://bangla-pdf-backend.onrender.com"><button id="bsave" class="pri">Save</button><span class="chip" id="chip">Browser mode</span></div>
 
 <section id="hero">
@@ -73,7 +80,33 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:30px 5vw}
 <div class="work"><aside id="side"></aside><div id="main"><div id="wrap"><canvas id="cv"></canvas></div></div></div>
 </section>
 <div id="sgm" style="display:none;position:fixed;inset:0;background:#0008;z-index:50;align-items:center;justify-content:center"><div style="background:var(--card);padding:16px;border-radius:14px"><b>Draw your signature</b><canvas id="sgc" width="420" height="160" style="background:#fff;border:1px solid var(--bd);touch-action:none;display:block;margin:10px 0;max-width:80vw"></canvas><button id="sgx">Clear</button> <button id="sgd" class="pri">Done</button> <button id="sgn">Cancel</button></div></div>
-<footer>© 2026 BanglaByteX. All rights reserved. Made with ❤️ in India</footer>
+<!-- SEO Content & FAQ Section -->
+<div style="max-width: 800px; margin: 60px auto; padding: 0 5vw; font-family: inherit;">
+  <div style="margin-bottom: 40px;">
+    <h2 style="font-size: 28px; font-weight: bold; color: #431407; margin-bottom: 15px;">Edit PDF Text Online Free</h2>
+    <p style="color: #64748b; line-height: 1.6;">Our PDF Editor allows you to change text, images, and links directly in your browser. It is fast, secure, and completely free. No signup or installation required. Your files never leave your device.</p>
+  </div>
+
+  <div style="background: #fff; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <h2 style="font-size: 24px; font-weight: bold; color: #431407; margin-bottom: 20px;">Frequently Asked Questions</h2>
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+      <div><h3 style="font-weight: bold; color: #1e293b; margin-bottom: 5px;">1. Is this PDF Editor free?</h3><p style="color: #64748b; font-size: 14px;">Yes, our PDF Editor is 100% free to use with no hidden charges.</p></div>
+      <div><h3 style="font-weight: bold; color: #1e293b; margin-bottom: 5px;">2. Do I need to create an account?</h3><p style="color: #64748b; font-size: 14px;">No, you can edit PDFs instantly without signing up.</p></div>
+      <div><h3 style="font-weight: bold; color: #1e293b; margin-bottom: 5px;">3. Are my files safe?</h3><p style="color: #64748b; font-size: 14px;">Yes, all processing happens locally in your browser. We do not upload or store your files.</p></div>
+    </div>
+  </div>
+
+  <div>
+    <h2 style="font-size: 24px; font-weight: bold; color: #431407; margin-bottom: 20px;">Related Articles</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+      <a href="/blog/merge-pdf-files-free" style="display: block; padding: 15px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; text-decoration: none;">
+        <h3 style="font-weight: bold; color: #1e293b; margin-bottom: 5px;">How to Merge PDF Files for Free</h3>
+        <p style="font-size: 12px; color: #64748b;">Read more →</p>
+      </a>
+    </div>
+  </div>
+</div>
+<footer style="border-top:1px solid #e2e8f0; margin-top:40px; padding:20px;">© 2026 PPM Creator Tools. All rights reserved.</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
