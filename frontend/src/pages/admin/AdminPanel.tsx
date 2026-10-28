@@ -6,6 +6,8 @@ export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [totpCode, setTotpCode] = useState('')
+  const [show2FA, setShow2FA] = useState(false)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [isCreatingPost, setIsCreatingPost] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -143,7 +145,16 @@ export default function AdminPanel() {
           <div className="space-y-4">
             <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} className="w-full p-3 border border-[#FFEDD5] rounded-xl outline-none" required />
             <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="w-full p-3 border border-[#FFEDD5] rounded-xl outline-none" required />
-            <button type="submit" className="w-full py-3 bg-[#F97316] text-white font-bold rounded-xl hover:bg-[#ea580c]">Login</button>
+            
+            {show2FA && (
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+                <p className="text-sm font-semibold mb-2">Scan this QR Code with Google Authenticator</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/PPM%20Admin?secret=JBSWY3DPEHPK3PXP&issuer=PPMCreator" alt="2FA QR" className="mx-auto rounded-lg mb-3" />
+                <input type="text" placeholder="Enter 6-digit code" value={totpCode} onChange={e => setTotpCode(e.target.value)} maxLength={6} className="w-full p-3 border border-slate-300 rounded-xl text-center font-mono text-lg tracking-widest outline-none" required />
+              </div>
+            )}
+            
+            <button type="submit" className="w-full py-3 bg-[#F97316] text-white font-bold rounded-xl hover:bg-[#ea580c]">{show2FA ? 'Verify & Login' : 'Login'}</button>
           </div>
         </form>
       </div>
