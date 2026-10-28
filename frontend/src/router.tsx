@@ -15,6 +15,8 @@ import PdfMerge from './pages/tools/PdfMerge'
 import PdfSplit from './pages/tools/PdfSplit'
 import PdfCompress from './pages/tools/PdfCompress'
 import ImageCompress from './pages/tools/ImageCompress'
+import PdfProtect from './pages/tools/PdfProtect'
+import PdfUnlock from './pages/tools/PdfUnlock'
 import CsvToJson from './pages/tools/CsvToJson'
 import HtmlToText from './pages/tools/HtmlToText'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
@@ -36,6 +38,8 @@ const router = createBrowserRouter([
       { path: 'pdf-split', element: <PdfSplit /> },
       { path: 'pdf-compress', element: <PdfCompress /> },
       { path: 'image-compress', element: <ImageCompress /> },
+      { path: 'pdf-protect', element: <PdfProtect /> },
+      { path: 'pdf-unlock', element: <PdfUnlock /> },
       { path: 'csv-to-json', element: <CsvToJson /> },
       { path: 'html-to-text', element: <HtmlToText /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },

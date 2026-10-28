@@ -6,6 +6,8 @@ const ALL_TOOLS = [
   { name: 'Merge PDF', icon: '🔗', link: '/pdf-merge' },
   { name: 'Split PDF', icon: '✂️', link: '/pdf-split' },
   { name: 'Compress PDF', icon: '📉', link: '/pdf-compress' },
+  { name: 'Protect PDF', icon: '🔒', link: '/pdf-protect' },
+  { name: 'Unlock PDF', icon: '🔓', link: '/pdf-unlock' },
   { name: 'Image Compressor', icon: '🖼️', link: '/image-compress' },
   { name: 'CSV to JSON', icon: '📊', link: '/csv-to-json' },
   { name: 'HTML to Text', icon: '💻', link: '/html-to-text' },
