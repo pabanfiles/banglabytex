@@ -14,12 +14,26 @@ import VideoDownloader from './pages/tools/VideoDownloader'
 import PdfMerge from './pages/tools/PdfMerge'
 import PdfSplit from './pages/tools/PdfSplit'
 import PdfCompress from './pages/tools/PdfCompress'
-import ImageCompress from './pages/tools/ImageCompress'
 import PdfProtect from './pages/tools/PdfProtect'
 import PdfUnlock from './pages/tools/PdfUnlock'
+import ImageCompress from './pages/tools/ImageCompress'
 import CsvToJson from './pages/tools/CsvToJson'
 import HtmlToText from './pages/tools/HtmlToText'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
+import PdfToWord from './pages/tools/PdfToWord'
+import PdfToExcel from './pages/tools/PdfToExcel'
+import PdfToPpt from './pages/tools/PdfToPpt'
+import PdfToCsv from './pages/tools/PdfToCsv'
+import PdfToHtml from './pages/tools/PdfToHtml'
+import WordToPdf from './pages/tools/WordToPdf'
+import WordToExcel from './pages/tools/WordToExcel'
+import WordToPpt from './pages/tools/WordToPpt'
+import WordToHtml from './pages/tools/WordToHtml'
+import ExcelToPdf from './pages/tools/ExcelToPdf'
+import ExcelToWord from './pages/tools/ExcelToWord'
+import ExcelToCsv from './pages/tools/ExcelToCsv'
+import PptToPdf from './pages/tools/PptToPdf'
+import CsvToPdf from './pages/tools/CsvToPdf'
 import About from './pages/legal/About'
 import Contact from './pages/legal/Contact'
 import Privacy from './pages/legal/Privacy'
@@ -37,12 +51,26 @@ const router = createBrowserRouter([
       { path: 'pdf-merge', element: <PdfMerge /> },
       { path: 'pdf-split', element: <PdfSplit /> },
       { path: 'pdf-compress', element: <PdfCompress /> },
-      { path: 'image-compress', element: <ImageCompress /> },
       { path: 'pdf-protect', element: <PdfProtect /> },
       { path: 'pdf-unlock', element: <PdfUnlock /> },
+      { path: 'image-compress', element: <ImageCompress /> },
       { path: 'csv-to-json', element: <CsvToJson /> },
       { path: 'html-to-text', element: <HtmlToText /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },
+      { path: 'pdf-to-word', element: <PdfToWord /> },
+      { path: 'pdf-to-excel', element: <PdfToExcel /> },
+      { path: 'pdf-to-ppt', element: <PdfToPpt /> },
+      { path: 'pdf-to-csv', element: <PdfToCsv /> },
+      { path: 'pdf-to-html', element: <PdfToHtml /> },
+      { path: 'word-to-pdf', element: <WordToPdf /> },
+      { path: 'word-to-excel', element: <WordToExcel /> },
+      { path: 'word-to-ppt', element: <WordToPpt /> },
+      { path: 'word-to-html', element: <WordToHtml /> },
+      { path: 'excel-to-pdf', element: <ExcelToPdf /> },
+      { path: 'excel-to-word', element: <ExcelToWord /> },
+      { path: 'excel-to-csv', element: <ExcelToCsv /> },
+      { path: 'ppt-to-pdf', element: <PptToPdf /> },
+      { path: 'csv-to-pdf', element: <CsvToPdf /> },
       { path: 'age-calculator', element: <AgeCalc /> },
       { path: 'percentage-calc', element: <PercentageCalc /> },
       { path: 'qr-code-gen', element: <QrCodeGen /> },
