@@ -12,7 +12,7 @@ interface ToolPageLayoutProps {
 }
 
 export default function ToolPageLayout({ title, description, category, faqs, relatedPosts, children }: ToolPageLayoutProps) {
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0) // Default first open
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index)
@@ -42,6 +42,24 @@ export default function ToolPageLayout({ title, description, category, faqs, rel
       {/* Main Tool UI */}
       <div className="mb-16">
         {children}
+      </div>
+
+      {/* SEO Content Block (Replaces the blog system for tools) */}
+      <div className="prose prose-slate dark:prose-invert max-w-none mb-16 bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
+        <h2 className="text-2xl font-bold text-[#431407] dark:text-white mb-4">Why Choose PPM Creator for {title}?</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-4">
+          At PPM Creator Tools, we prioritize your privacy and speed. Our {title} processes your files directly in your browser (or securely via our optimized servers), ensuring your data never gets leaked. Whether you are a student, a professional, or just someone looking to get things done quickly, this tool is designed for you.
+        </p>
+        <h3 className="text-xl font-bold text-[#431407] dark:text-white mb-2">How to use {title}?</h3>
+        <ol className="list-decimal pl-5 text-slate-600 dark:text-slate-400 mb-4 space-y-2">
+          <li>Select or drop your file into the designated area above.</li>
+          <li>Adjust the settings or parameters if applicable.</li>
+          <li>Click the action button to process your file.</li>
+          <li>Download your final result instantly.</li>
+        </ol>
+        <p className="text-slate-600 dark:text-slate-400">
+          Looking for other tools? Try our <Link to="/pdf-merge" className="text-[#F97316] hover:underline">Merge PDF</Link>, <Link to="/image-compress" className="text-[#F97316] hover:underline">Image Compressor</Link>, or <Link to="/video-downloader" className="text-[#F97316] hover:underline">Video Downloader</Link> for all your daily needs. 
+        </p>
       </div>
 
       {/* FAQ Section (Dropdown Accordion) */}
