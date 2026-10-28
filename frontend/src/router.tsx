@@ -20,6 +20,11 @@ import ImageCompress from './pages/tools/ImageCompress'
 import ImageResize from './pages/tools/ImageResize'
 import ImageConvert from './pages/tools/ImageConvert'
 import ImageCrop from './pages/tools/ImageCrop'
+import ImageToPdf from './pages/tools/ImageToPdf'
+import ImageColorPicker from './pages/tools/ImageColorPicker'
+import ImageWatermark from './pages/tools/ImageWatermark'
+import FaviconGenerator from './pages/tools/FaviconGenerator'
+import BgRemover from './pages/tools/BgRemover'
 import CsvToJson from './pages/tools/CsvToJson'
 import HtmlToText from './pages/tools/HtmlToText'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
@@ -60,6 +65,11 @@ const router = createBrowserRouter([
       { path: 'image-resize', element: <ImageResize /> },
       { path: 'image-convert', element: <ImageConvert /> },
       { path: 'image-crop', element: <ImageCrop /> },
+      { path: 'image-to-pdf', element: <ImageToPdf /> },
+      { path: 'image-color-picker', element: <ImageColorPicker /> },
+      { path: 'image-watermark', element: <ImageWatermark /> },
+      { path: 'favicon-generator', element: <FaviconGenerator /> },
+      { path: 'bg-remover', element: <BgRemover /> },
       { path: 'csv-to-json', element: <CsvToJson /> },
       { path: 'html-to-text', element: <HtmlToText /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },
