@@ -41,7 +41,7 @@ export async function onRequestPost(context) {
     // ডেমো অ্যাডমিনের জন্য সিক্রেট (প্রোডাকশনে ডাটাবেসে সেভ করবেন)
     const ADMIN_SECRET = 'JBSWY3DPEHPK3PXP'; // Google Authenticator এ এই সিক্রেটটি ব্যবহার করবেন
 
-    if (username === 'admin' && password === 'Ppm@Demo2026') {
+    if (username === 'hellowsai' && password === 'Ppm@Demo2026') {
       // ২এফএ চেক (যদি ক্লায়েন্ট 2FA রিকোয়েস্ট করে)
       if (totpCode) {
         const isValid = await verifyTOTP(ADMIN_SECRET, totpCode);

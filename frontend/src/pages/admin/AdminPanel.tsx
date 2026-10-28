@@ -31,7 +31,7 @@ export default function AdminPanel() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (username === 'admin' && password === 'Ppm@Demo2026') {
+    if (username === 'hellowsai' && password === 'Ppm@Demo2026') {
       setIsLoggedIn(true)
       toast.success('Welcome Admin!')
     } else {
