@@ -20,6 +20,8 @@ const ALL_TOOLS = [
   { name: 'Rotate & Flip', icon: '🔄', link: '/image-rotate' },
   { name: 'Passport Photo', icon: '👤', link: '/passport-photo' },
   { name: 'To Base64', icon: '💻', link: '/image-to-base64' },
+  { name: 'Meme Generator', icon: '😂', link: '/meme-generator' },
+  { name: 'Image to Text', icon: '🔍', link: '/image-to-text' },
     { name: 'PDF to Word', icon: '📄', link: '/pdf-to-word' },
   { name: 'PDF to Excel', icon: '📊', link: '/pdf-to-excel' },
   { name: 'Word to PDF', icon: '📝', link: '/word-to-pdf' },

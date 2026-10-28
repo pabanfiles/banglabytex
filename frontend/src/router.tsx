@@ -23,6 +23,8 @@ import ImageCrop from './pages/tools/ImageCrop'
 import ImageRotate from './pages/tools/ImageRotate'
 import PassportPhoto from './pages/tools/PassportPhoto'
 import ImageToBase64 from './pages/tools/ImageToBase64'
+import MemeGenerator from './pages/tools/MemeGenerator'
+import ImageToText from './pages/tools/ImageToText'
 import ImageToPdf from './pages/tools/ImageToPdf'
 import ImageColorPicker from './pages/tools/ImageColorPicker'
 import ImageWatermark from './pages/tools/ImageWatermark'
@@ -71,6 +73,8 @@ const router = createBrowserRouter([
       { path: 'image-rotate', element: <ImageRotate /> },
       { path: 'passport-photo', element: <PassportPhoto /> },
       { path: 'image-to-base64', element: <ImageToBase64 /> },
+      { path: 'meme-generator', element: <MemeGenerator /> },
+      { path: 'image-to-text', element: <ImageToText /> },
       { path: 'image-to-pdf', element: <ImageToPdf /> },
       { path: 'image-color-picker', element: <ImageColorPicker /> },
       { path: 'image-watermark', element: <ImageWatermark /> },

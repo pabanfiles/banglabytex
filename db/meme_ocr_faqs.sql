@@ -1,0 +1,3 @@
+INSERT OR IGNORE INTO tool_pages (slug, h1_title, intro_text, faq_json, is_active) VALUES 
+('meme-generator', 'Meme Generator', 'Create funny memes instantly.', '[{"q":"Is it free?","a":"Yes."},{"q":"Can I add custom text?","a":"Yes, top and bottom."}]', 1),
+('image-to-text', 'Image to Text (OCR)', 'Extract text from images using OCR.', '[{"q":"Does it support Bengali?","a":"Yes, Beta support."},{"q":"Is it free?","a":"Yes."}]', 1);
