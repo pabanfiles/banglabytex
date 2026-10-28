@@ -18,6 +18,23 @@ export default function ToolPageLayout({ title, description, category, faqs, rel
     setOpenFaqIndex(openFaqIndex === index ? null : index)
   }
 
+  // টুলের নাম অনুযায়ী কন্টেন্ট পরিবর্তন
+  const getToolContent = () => {
+    const t = title.toLowerCase()
+    if(t.includes('protect')) {
+      return { h2: 'Why Protect Your PDFs?', p: 'Adding a password to your PDF is the easiest way to keep your sensitive data secure. Whether it is a financial report, a personal ID, or a confidential contract, our free Protect PDF tool ensures that only authorized individuals can open the document. Unlike other services, we do not store your password, giving you complete peace of mind.' }
+    }
+    if(t.includes('unlock')) {
+      return { h2: 'Regain Access to Your Documents', p: 'If you have a PDF that is locked with a password that you own, our Unlock PDF tool can remove the restriction instantly. This is especially useful if you need to edit a document but the original password is preventing you from doing so. Simply upload the file, enter the current password, and download the unlocked version.' }
+    }
+    if(t.includes('merge')) {
+      return { h2: 'Combine PDFs Effortlessly', p: 'Merging PDFs is essential for organizing your digital life. Instead of sending multiple attachments, combine them into a single, professional-looking file. Our Merge PDF tool is built to handle large files quickly, all within your browser, ensuring your data never leaves your computer.' }
+    }
+    return { h2: `Why Choose PPM Creator for ${title}?`, p: 'At PPM Creator Tools, we prioritize your privacy and speed. Our tools process your files securely and instantly. Whether you are a student, a professional, or just someone looking to get things done quickly, this tool is designed for you.' }
+  }
+
+  const content = getToolContent()
+
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
       {/* Breadcrumb */}
@@ -44,12 +61,11 @@ export default function ToolPageLayout({ title, description, category, faqs, rel
         {children}
       </div>
 
-      {/* SEO Content Block (Replaces the blog system for tools) */}
+      {/* SEO Content Block */}
       <div className="prose prose-slate dark:prose-invert max-w-none mb-16 bg-white dark:bg-slate-800 p-8 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm">
-        <h2 className="text-2xl font-bold text-[#431407] dark:text-white mb-4">Why Choose PPM Creator for {title}?</h2>
-        <p className="text-slate-600 dark:text-slate-400 mb-4">
-          At PPM Creator Tools, we prioritize your privacy and speed. Our {title} processes your files directly in your browser (or securely via our optimized servers), ensuring your data never gets leaked. Whether you are a student, a professional, or just someone looking to get things done quickly, this tool is designed for you.
-        </p>
+        <h2 className="text-2xl font-bold text-[#431407] dark:text-white mb-4">{content.h2}</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-4">{content.p}</p>
+        
         <h3 className="text-xl font-bold text-[#431407] dark:text-white mb-2">How to use {title}?</h3>
         <ol className="list-decimal pl-5 text-slate-600 dark:text-slate-400 mb-4 space-y-2">
           <li>Select or drop your file into the designated area above.</li>
@@ -69,10 +85,7 @@ export default function ToolPageLayout({ title, description, category, faqs, rel
           <div className="space-y-3">
             {faqs.map((faq, index) => (
               <div key={index} className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
-                <button 
-                  onClick={() => toggleFaq(index)}
-                  className="w-full flex justify-between items-center p-4 text-left font-bold text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition"
-                >
+                <button onClick={() => toggleFaq(index)} className="w-full flex justify-between items-center p-4 text-left font-bold text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 transition">
                   <span>{faq.q}</span>
                   {openFaqIndex === index ? <ChevronUp size={20} className="text-[#F97316]"/> : <ChevronDown size={20} className="text-slate-400"/>}
                 </button>
