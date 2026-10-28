@@ -17,6 +17,9 @@ import PdfCompress from './pages/tools/PdfCompress'
 import PdfProtect from './pages/tools/PdfProtect'
 import PdfUnlock from './pages/tools/PdfUnlock'
 import ImageCompress from './pages/tools/ImageCompress'
+import ImageResize from './pages/tools/ImageResize'
+import ImageConvert from './pages/tools/ImageConvert'
+import ImageCrop from './pages/tools/ImageCrop'
 import CsvToJson from './pages/tools/CsvToJson'
 import HtmlToText from './pages/tools/HtmlToText'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
@@ -54,6 +57,9 @@ const router = createBrowserRouter([
       { path: 'pdf-protect', element: <PdfProtect /> },
       { path: 'pdf-unlock', element: <PdfUnlock /> },
       { path: 'image-compress', element: <ImageCompress /> },
+      { path: 'image-resize', element: <ImageResize /> },
+      { path: 'image-convert', element: <ImageConvert /> },
+      { path: 'image-crop', element: <ImageCrop /> },
       { path: 'csv-to-json', element: <CsvToJson /> },
       { path: 'html-to-text', element: <HtmlToText /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },

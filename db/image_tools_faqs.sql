@@ -1,0 +1,4 @@
+INSERT OR IGNORE INTO tool_pages (slug, h1_title, intro_text, faq_json, is_active) VALUES 
+('image-resize', 'Image Resizer Online Free', 'Resize images to exact dimensions instantly.', '[{"q":"Is it free?","a":"Yes."},{"q":"Can I set custom dimensions?","a":"Yes."}]', 1),
+('image-convert', 'Image Converter (JPG, PNG, WebP)', 'Convert images between formats quickly.', '[{"q":"Which formats?","a":"JPG, PNG, WebP."},{"q":"Is it safe?","a":"Yes, runs in browser."}]', 1),
+('image-crop', 'Image Cropper Online Free', 'Crop unwanted parts from your photos.', '[{"q":"Is it free?","a":"Yes."},{"q":"Does it work on mobile?","a":"Yes."}]', 1);
