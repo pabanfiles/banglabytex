@@ -1,0 +1,4 @@
+INSERT OR IGNORE INTO tool_pages (slug, h1_title, intro_text, faq_json, is_active) VALUES 
+('image-rotate', 'Image Rotate & Flip Tool', 'Rotate or flip your images instantly in your browser.', '[{"q":"Is it free?","a":"Yes."},{"q":"Does it work on mobile?","a":"Yes."}]', 1),
+('passport-photo', 'Passport Size Photo Maker', 'Create standard 35x45mm passport photos.', '[{"q":"Is it free?","a":"Yes."},{"q":"What size is the output?","a":"413x531 pixels (35x45mm at 300dpi)."}]', 1),
+('image-to-base64', 'Image to Base64 Converter', 'Convert your images to Base64 strings.', '[{"q":"What is Base64?","a":"A text representation of binary data."},{"q":"Is it safe?","a":"Yes, runs entirely in your browser."}]', 1);
