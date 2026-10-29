@@ -61,6 +61,7 @@ import Terms from './pages/legal/Terms'
 import Disclaimer from './pages/legal/Disclaimer'
 import SitemapPage from './pages/legal/SitemapPage'
 import PageLoader from './components/PageLoader'
+import CategoryHub from './pages/CategoryHub'
 
 const router = createBrowserRouter([
   {
@@ -116,6 +117,10 @@ const router = createBrowserRouter([
       { path: 'qr-code-gen', element: <QrCodeGen /> },
       { path: 'cv-maker', element: <CvMaker /> },
       { path: 'video-downloader', element: <VideoDownloader /> },
+      { path: 'image-tools', element: <CategoryHub /> },
+      { path: 'pdf-tools', element: <CategoryHub /> },
+      { path: 'calculators', element: <CategoryHub /> },
+      { path: 'text-tools', element: <CategoryHub /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
       { path: 'privacy-policy', element: <Privacy /> },
