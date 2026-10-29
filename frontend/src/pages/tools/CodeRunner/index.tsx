@@ -6,44 +6,35 @@ const DEFAULT_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="utf-8" />
   <style>
-    body { font-family: system-ui, sans-serif; padding: 24px; background: #fafaf9; }
-    h1 { color: #F97316; }
+    body { font-family: system-ui, sans-serif; padding: 24px; background: #fafaf9; margin: 0; }
+    h1 { color: #F97316; margin: 0 0 8px; }
+    p { color: #6b7280; margin: 0 0 16px; }
     button { padding: 10px 20px; background: #F97316; color: white; border: 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
-    button:hover { background: #EA580C; }
   </style>
 </head>
 <body>
   <h1>Hello, PPM Creator!</h1>
-  <p>Edit this code and see the result instantly.</p>
+  <p>Edit the HTML above. The preview updates automatically.</p>
   <button onclick="alert('It works!')">Click me</button>
 </body>
 </html>`
 
 export default function CodeRunner() {
   const [html, setHtml] = useState(DEFAULT_HTML)
-  const [tab, setTab] = useState<'html' | 'css' | 'js'>('html')
+  const [srcDoc, setSrcDoc] = useState(DEFAULT_HTML)
   const [autoRun, setAutoRun] = useState(true)
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const debounceRef = useRef<number | null>(null)
 
-  const run = () => {
-    const iframe = iframeRef.current
-    if (!iframe) return
-    const doc = iframe.contentDocument
-    if (!doc) return
-    doc.open()
-    doc.write(html)
-    doc.close()
-  }
+  const run = () => setSrcDoc(html)
 
   useEffect(() => {
     if (!autoRun) return
     if (debounceRef.current) window.clearTimeout(debounceRef.current)
-    debounceRef.current = window.setTimeout(run, 500)
+    debounceRef.current = window.setTimeout(() => setSrcDoc(html), 500)
     return () => { if (debounceRef.current) window.clearTimeout(debounceRef.current) }
   }, [html, autoRun])
 
-  const reset = () => { setHtml(DEFAULT_HTML); setTimeout(run, 50) }
+  const reset = () => { setHtml(DEFAULT_HTML); setSrcDoc(DEFAULT_HTML) }
 
   const faqGroups = [
     { heading: 'Basics', items: [
@@ -54,14 +45,14 @@ export default function CodeRunner() {
     ]},
     { heading: 'Using the editor', items: [
       { q: 'How do I run my code?', a: 'Turn auto-run on for a 500 millisecond delay after each edit, or turn it off and use the Run button. Both modes show the result in the preview panel below the editor.' },
-      { q: 'How do I split HTML, CSS and JS?', a: 'Keep everything in one HTML file with <style> and <script> tags, or use the HTML tab for markup, the CSS tab for styles and the JS tab for scripts. The current version uses a single HTML file so external libraries load cleanly.' },
+      { q: 'How do I add CSS and JS?', a: 'Add a <style> tag inside <head> and a <script> tag before </body>. The iframe runs the page like a real browser, so both work normally.' },
       { q: 'Can I load external libraries?', a: 'Yes. Add <script src="https://..."> tags in the HTML. The preview loads scripts the same way a browser does, so CDN links work.' },
       { q: 'What happens to my code after I close the tab?', a: 'The code is not saved. Keep a copy in your own file if you want to continue later.' },
     ]},
     { heading: 'Limits and safety', items: [
       { q: 'Can the code access my browser data?', a: 'No. The iframe runs in a sandboxed context, so scripts cannot read cookies, localStorage from this site, or parent document data.' },
-      { q: 'Can the code make network requests?', a: 'Inline scripts can fetch public URLs. Requests are subject to the same CORS rules as any browser page. The tool does not proxy or relay requests.' },
-      { q: 'Why does my alert() not appear?', a: 'Some browsers block alert() inside sandboxed iframes. Use console.log() and open DevTools, or show messages with a custom DOM element instead.' },
+      { q: 'Can the code make network requests?', a: 'Inline scripts can fetch public URLs. Requests follow the same CORS rules as any browser page. The tool does not proxy or relay requests.' },
+      { q: 'Why does my alert() not appear?', a: 'Some browsers block alert() inside sandboxed iframes without allow-modals. The default sandbox includes allow-modals, so alert() works in most browsers.' },
       { q: 'Is the preview isolated from this site?', a: 'Yes. The preview uses a separate iframe with its own document. Styles and scripts in the preview do not affect this site.' },
     ]},
     { heading: 'Troubleshooting', items: [
@@ -75,7 +66,7 @@ export default function CodeRunner() {
     <>
       <h2>How to use the code runner</h2>
       <ol>
-        <li>Type or paste your HTML, CSS and JavaScript into the editor.</li>
+        <li>Type or paste your HTML into the editor.</li>
         <li>Turn auto-run on, or click Run to render the code in the preview panel.</li>
         <li>Edit and repeat. The result updates after each change.</li>
         <li>Copy your final code into your own file when you are done.</li>
@@ -86,7 +77,7 @@ export default function CodeRunner() {
       <h2>What you can build</h2>
       <p>Small demos, prototypes, learning exercises, interactive widgets and snippets for a blog post all fit well. If you need a full framework, download the code and run it in your own development environment.</p>
       <h2>Limits</h2>
-      <p>The sandbox restricts access to cookies, localStorage of this site, and the parent page. Some browsers also block alert() inside sandboxed iframes. External libraries load normally, and network requests follow the same CORS rules as any browser page.</p>
+      <p>The sandbox restricts access to cookies, localStorage of this site, and the parent page. External libraries load normally, and network requests follow the same CORS rules as any browser page.</p>
       <h2>Privacy</h2>
       <p>Your code stays in your browser. It is never sent to a server, never stored, and it disappears when you close the tab.</p>
     </>
@@ -116,11 +107,7 @@ export default function CodeRunner() {
     >
       <section style={{ border: '1px solid #e7e5e4', borderRadius: 16, padding: 18, background: '#fafaf9', margin: '20px 0 8px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
-          <div style={{ display: 'flex', gap: 4, background: '#fff', padding: 4, borderRadius: 8, border: '1px solid #e7e5e4' }}>
-            <button type="button" onClick={() => setTab('html')} style={{ padding: '6px 12px', border: 0, borderRadius: 6, background: tab === 'html' ? '#FFF7ED' : 'transparent', color: tab === 'html' ? '#F97316' : '#6b7280', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>HTML</button>
-            <button type="button" onClick={() => setTab('css')} style={{ padding: '6px 12px', border: 0, borderRadius: 6, background: tab === 'css' ? '#FFF7ED' : 'transparent', color: tab === 'css' ? '#F97316' : '#6b7280', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>CSS</button>
-            <button type="button" onClick={() => setTab('js')} style={{ padding: '6px 12px', border: 0, borderRadius: 6, background: tab === 'js' ? '#FFF7ED' : 'transparent', color: tab === 'js' ? '#F97316' : '#6b7280', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>JS</button>
-          </div>
+          <div style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>HTML Editor</div>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <label style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280' }}>
               <input type="checkbox" checked={autoRun} onChange={(e) => setAutoRun(e.target.checked)} />
@@ -131,29 +118,21 @@ export default function CodeRunner() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 10, marginBottom: 10 }}>
-          {tab === 'html' && (
-            <textarea value={html} onChange={(e) => setHtml(e.target.value)} rows={20} spellCheck={false} style={{ gridColumn: '1 / -1', width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 12, lineHeight: 1.6, background: '#fff', minHeight: 320 }} />
-          )}
-          {tab === 'css' && (
-            <div style={{ gridColumn: '1 / -1', padding: 16, border: '1px dashed #e7e5e4', borderRadius: 10, background: '#fff', color: '#6b7280', fontSize: 13, textAlign: 'center' }}>
-              CSS à¦Ÿà§à¦¯à¦¾à¦¬ à¦¶à§€à¦˜à§à¦°à¦‡ à¦†à¦¸à¦›à§‡à¥¤ à¦à¦–à¦¨ HTML tab à¦ <code style={{ background: '#fafaf9', padding: '2px 6px', borderRadius: 4 }}>&lt;style&gt;</code> tag à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à§à¦¨à¥¤
-            </div>
-          )}
-          {tab === 'js' && (
-            <div style={{ gridColumn: '1 / -1', padding: 16, border: '1px dashed #e7e5e4', borderRadius: 10, background: '#fff', color: '#6b7280', fontSize: 13, textAlign: 'center' }}>
-              JS à¦Ÿà§à¦¯à¦¾à¦¬ à¦¶à§€à¦˜à§à¦°à¦‡ à¦†à¦¸à¦›à§‡à¥¤ à¦à¦–à¦¨ HTML tab à¦ <code style={{ background: '#fafaf9', padding: '2px 6px', borderRadius: 4 }}>&lt;script&gt;</code> tag à¦¬à§à¦¯à¦¬à¦¹à¦¾à¦° à¦•à¦°à§à¦¨à¥¤
-            </div>
-          )}
-        </div>
+        <textarea
+          value={html}
+          onChange={(e) => setHtml(e.target.value)}
+          rows={18}
+          spellCheck={false}
+          style={{ width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 12, lineHeight: 1.6, background: '#fff', boxSizing: 'border-box', marginBottom: 12 }}
+        />
 
         <div style={{ border: '1px solid #e7e5e4', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
           <div style={{ padding: '8px 12px', background: '#fafaf9', borderBottom: '1px solid #e7e5e4', fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Preview</div>
           <iframe
-            ref={iframeRef}
             title="Code preview"
+            srcDoc={srcDoc}
             sandbox="allow-scripts allow-modals allow-forms allow-popups"
-            style={{ width: '100%', height: 360, border: 0, display: 'block', background: '#fff' }}
+            style={{ width: '100%', height: 400, border: 0, display: 'block', background: '#fff' }}
           />
         </div>
 
