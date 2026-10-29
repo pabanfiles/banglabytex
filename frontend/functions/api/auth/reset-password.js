@@ -21,7 +21,7 @@ function randomToken(len = 32) {
   const arr = crypto.getRandomValues(new Uint8Array(len));
   return Array.from(arr).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-function validEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+\$/.test(e || ''); }
+function validEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e || ''); }
 async function sendEmail(env, to, subject, html) {
   const key = env.RESEND_API_KEY;
   if (!key) return { ok: false, error: 'RESEND_API_KEY is not set. Add it in Cloudflare Pages env vars.' };
