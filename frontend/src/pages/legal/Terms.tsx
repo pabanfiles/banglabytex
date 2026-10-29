@@ -1,22 +1,46 @@
+import Seo from '../../components/Seo'
 export default function Terms() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold text-slate-900 mb-6">Terms of Use</h1>
-      <div className="prose prose-slate text-slate-600 space-y-4">
-        <p>By using BanglaByteX, you agree to the following terms:</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">1. Acceptable Use</h3>
-        <p>You agree to use our tools only for lawful purposes. You must not use BanglaByteX to download copyrighted material without permission or to distribute illegal content.</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">2. User Responsibility</h3>
-        <p>You are solely responsible for how you use the content you download. BanglaByteX does not host, store, or distribute any video or audio files on its servers. All media is streamed directly from third-party platforms (Instagram, Facebook, TikTok, etc.).</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">3. YouTube Compliance</h3>
-        <p>Our YouTube tools strictly provide metadata, thumbnails, and links. We do not facilitate the direct download of copyrighted YouTube videos.</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">4. DMCA / Copyright</h3>
-        <p>If you are a copyright holder and believe your content is being accessed improperly, please contact us at support@banglabytex.com. We will respond within 48 hours and cooperate fully.</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">5. Disclaimer</h3>
-        <p>BanglaByteX is provided "as is" without any guarantees. We are not responsible for how you use the downloaded content. We are not affiliated with Instagram, Facebook, TikTok, or any other platform.</p>
-        <h3 className="text-xl font-bold text-slate-900 mt-6">6. Policy Changes</h3>
-        <p>We reserve the right to modify these terms at any time. Continued use of the site means you accept any updated terms.</p>
-      </div>
-    </div>
+    <>
+      <Seo title="Terms of Use | PPM Creator" description="Terms under which PPM Creator tools are provided." path="/terms" />
+      <main style={{ maxWidth: 760, margin: '0 auto', padding: '48px 18px', lineHeight: 1.75, color: '#374151' }}>
+        <h1 style={{ fontSize: 32, margin: '0 0 8px', color: '#1c1917' }}>Terms of Use</h1>
+        <p style={{ color: '#6b7280', margin: '0 0 32px' }}>Last updated: October 2026</p>
+
+        <h2 style={h2}>1. Acceptance</h2>
+        <p>By using ppmcreator.pages.dev or any tool on it, you agree to these terms. If you do not agree, please do not use the site.</p>
+
+        <h2 style={h2}>2. Service</h2>
+        <p>The tools are provided free of charge, as is, without any guarantee of availability, accuracy or fitness for a particular purpose. We may change, suspend or remove a tool at any time.</p>
+
+        <h2 style={h2}>3. Acceptable use</h2>
+        <p>You agree not to use the site to:</p>
+        <ul style={{ paddingLeft: 22 }}>
+          <li>Upload or process any file that you do not have the right to use.</li>
+          <li>Attempt to break, overload or interfere with the site or its infrastructure.</li>
+          <li>Use the site to break any law in your country.</li>
+          <li>Resell the tools as your own.</li>
+        </ul>
+
+        <h2 style={h2}>4. Your files</h2>
+        <p>Most tools process files inside your browser. You keep full ownership of any file you use. We do not claim any rights over your content. For tools that require a server (rare), the file is deleted from the temporary store as soon as the result is delivered.</p>
+
+        <h2 style={h2}>5. Accounts</h2>
+        <p>You are responsible for keeping your password and email secure. If you notice unauthorized access, write to <a href="mailto:hello@ppmcreator.com" style={{ color: '#F97316' }}>hello@ppmcreator.com</a> immediately. We may suspend an account that breaks these terms.</p>
+
+        <h2 style={h2}>6. No warranty</h2>
+        <p>The tools are provided without warranty of any kind, express or implied. We are not responsible for any loss caused by using the site, including loss of data, missed deadlines or incorrect output. Always keep a copy of the original file.</p>
+
+        <h2 style={h2}>7. Limitation of liability</h2>
+        <p>To the maximum extent permitted by law, we are not liable for indirect, incidental or consequential damages arising from the use of the site.</p>
+
+        <h2 style={h2}>8. Changes</h2>
+        <p>We may update these terms. The date at the top shows the latest version. Continued use after a change means you accept the new terms.</p>
+
+        <h2 style={h2}>9. Contact</h2>
+        <p>Questions? Write to <a href="mailto:hello@ppmcreator.com" style={{ color: '#F97316' }}>hello@ppmcreator.com</a>.</p>
+      </main>
+    </>
   )
 }
+const h2: React.CSSProperties = { fontSize: 20, color: '#1c1917', margin: '32px 0 12px' }
