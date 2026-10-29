@@ -3,6 +3,10 @@ import { Suspense } from 'react'
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
+import VerifyEmail from './pages/VerifyEmail'
 import Profile from './pages/Profile'
 import AdminPanel from './pages/admin/AdminPanel'
 import NotFound from './pages/NotFound'
@@ -122,6 +126,10 @@ const router = createBrowserRouter([
       { path: 'calculators', element: <CategoryHub /> },
       { path: 'text-tools', element: <CategoryHub /> },
       { path: 'login', element: <Login /> },
+      { path: 'register', element: <Register /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password', element: <ResetPassword /> },
+      { path: 'verify-email', element: <VerifyEmail /> },
       { path: 'profile', element: <Profile /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
