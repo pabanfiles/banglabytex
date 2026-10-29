@@ -20,7 +20,7 @@ export default function Profile() {
   const [favourites, setFavourites] = useState<string[]>([])
 
   useEffect(() => {
-    fetch('/api/auth/profile').then((r) => r.ok ? r.json() : null).then((d) => setProfile(d && d.email ? d : null)).catch(() => {}).finally(() => setLoading(false))
+    fetch('/api/auth/profile', { credentials: 'include' }).then((r) => r.ok ? r.json() : null).then((d) => setProfile(d && d.email ? d : null)).catch(() => {}).finally(() => setLoading(false))
     try { setFavourites(JSON.parse(localStorage.getItem(FAVOURITES_KEY) || '[]')) } catch {}
   }, [])
 

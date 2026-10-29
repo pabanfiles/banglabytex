@@ -17,13 +17,13 @@ export default function Login() {
   const [otp, setOtp] = useState('')
 
   useEffect(() => {
-    fetch('/api/auth/profile').then((r) => r.ok ? r.json() : null).then((d) => { if (d && d.email) setProfile(d) }).catch(() => {})
+    fetch('/api/auth/profile', { credentials: 'include' }).then((r) => r.ok ? r.json() : null).then((d) => { if (d && d.email) setProfile(d) }).catch(() => {})
   }, [])
 
   const loginPassword = async () => {
     setError(''); setBusy(true)
     try {
-      const r = await fetch('/api/auth/login-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
+      const r = await fetch('/api/auth/login-password', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) })
       const d = await r.json()
       if (!r.ok) { setError(d.error || 'Login failed.'); return }
       nav('/profile')

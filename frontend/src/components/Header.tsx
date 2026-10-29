@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export default function Header() {
   const [user, setUser] = useState<{ email: string; avatar_url: string | null; name: string | null } | null>(null)
   useEffect(() => {
-    fetch('/api/auth/profile').then((r) => r.ok ? r.json() : null).then((d) => { if (d && d.email) setUser(d) }).catch(() => {})
+    fetch('/api/auth/profile', { credentials: 'include' }).then((r) => r.ok ? r.json() : null).then((d) => { if (d && d.email) setUser(d) }).catch(() => {})
   }, [])
   return (
     <header style={{ background: '#fff', borderBottom: '1px solid #e7e5e4', position: 'sticky', top: 0, zIndex: 20 }}>
