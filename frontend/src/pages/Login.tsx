@@ -33,7 +33,7 @@ export default function Login() {
   const sendOtp = async () => {
     setError(''); setBusy(true)
     try {
-      const r = await fetch('/api/auth/email/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
+      const r = await fetch('/api/auth/email/send', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
       const d = await r.json().catch(() => ({}))
       if (!r.ok) { setError(d.error || 'Could not send code.'); return }
       setOtpStep('code')
@@ -42,7 +42,7 @@ export default function Login() {
   const verifyOtp = async () => {
     setError(''); setBusy(true)
     try {
-      const r = await fetch('/api/auth/email/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code: otp }) })
+      const r = await fetch('/api/auth/email/verify', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, code: otp }) })
       const d = await r.json()
       if (!r.ok) { setError(d.error || 'Invalid code.'); return }
       nav('/profile')
