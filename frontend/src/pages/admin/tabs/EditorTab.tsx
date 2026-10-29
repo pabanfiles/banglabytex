@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { card, h2, btn, btnP, btnSm, input, label, note, scoreColour } from '../ui'
+import { DEMO_POST_DETAIL } from '../demoData'
 
 type C = { id: string; t: string; s: 'PASS' | 'WARN' | 'FAIL'; f: string; fix?: 'yes' | 'outline' | 'faq' | 'none' }
 
@@ -32,6 +33,10 @@ function calc(p: { title: string; slug: string; body: string; kw: string; mt: st
   return { list, score: Math.round((pts / list.length) * 100) }
 }
 
+function fileToDataUrl(f: File): Promise<string> {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result || '')); r.onerror = rej; r.readAsDataURL(f) })
+}
+
 export default function EditorTab({ id, onBack, onSaved }: { id: number | null; onBack: () => void; onSaved: () => void }) {
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
@@ -39,57 +44,83 @@ export default function EditorTab({ id, onBack, onSaved }: { id: number | null; 
   const [kw, setKw] = useState('')
   const [mt, setMt] = useState('')
   const [md, setMd] = useState('')
-  const [status, setStatus] = useState('draft')
+  const [excerpt, setExcerpt] = useState('')
+  const [thumbnail, setThumbnail] = useState('')
   const [saving, setSaving] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [demo, setDemo] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const coverRef = useRef<HTMLInputElement>(null)
+  const bodyImgRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (id) {
-      fetch('/api/posts?id=' + id).then((r) => r.json()).then((p) => {
-        setTitle(p.title || ''); setSlug(p.slug || ''); setBody(p.content || ''); setStatus(p.status || 'draft')
+      fetch('/api/posts?id=' + id, { credentials: 'include' }).then((r) => r.json()).then((p) => {
+        if (!p || !p.title) throw new Error()
+        setTitle(p.title || ''); setSlug(p.slug || ''); setBody(p.content || '')
         setKw(p.meta_title || ''); setMt(p.meta_title || ''); setMd(p.meta_description || '')
+        setExcerpt(p.excerpt || ''); setThumbnail(p.thumbnail || '')
+      }).catch(() => {
+        setTitle(DEMO_POST_DETAIL.title); setSlug(DEMO_POST_DETAIL.slug); setBody(DEMO_POST_DETAIL.content); setKw(DEMO_POST_DETAIL.meta_title); setMt(DEMO_POST_DETAIL.meta_title); setMd(DEMO_POST_DETAIL.meta_description); setDemo(true)
       }).finally(() => setLoaded(true))
     } else setLoaded(true)
   }, [id])
 
   const seo = calc({ title, slug, body, kw, mt, md })
 
+  const uploadImage = async (file: File): Promise<string> => {
+    setUploading(true)
+    try {
+      const data_url = await fileToDataUrl(file)
+      const r = await fetch('/api/upload', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data_url }) })
+      const d = await r.json()
+      if (!r.ok) throw new Error(d.error || 'upload failed')
+      return d.url
+    } finally { setUploading(false) }
+  }
+
+  const onCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return
+    if (f.size > 2 * 1024 * 1024) { alert('Cover image must be under 2 MB.'); return }
+    try { const url = await uploadImage(f); setThumbnail(url) }
+    catch { alert('Upload failed.') }
+    if (coverRef.current) coverRef.current.value = ''
+  }
+
+  const onBodyImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f) return
+    if (f.size > 2 * 1024 * 1024) { alert('Image must be under 2 MB.'); return }
+    try { const url = await uploadImage(f); setBody(body + '\n\n![' + (f.name.split('.')[0] || 'image') + '](' + url + ')\n\n') }
+    catch { alert('Upload failed.') }
+    if (bodyImgRef.current) bodyImgRef.current.value = ''
+  }
+
   const save = async (nextStatus: string) => {
     setSaving(true)
-    const payload = { id, title, slug, content: body, status: nextStatus, meta_title: mt, meta_description: md }
     try {
-      const res = await fetch('/api/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      if (!res.ok) throw new Error('save failed')
+      const r = await fetch('/api/posts', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, title, slug, content: body, excerpt, thumbnail, status: nextStatus, meta_title: mt, meta_description: md }) })
+      if (!r.ok) throw new Error()
       onSaved()
-    } catch { alert('Could not save. The backend may be offline or the login session expired.') }
+    } catch { alert('Save failed. Check that the backend is deployed.') }
     finally { setSaving(false) }
   }
 
-  const publish = () => {
-    if (seo.score < 80 && !confirm('SEO checklist is at ' + seo.score + '%. Some items are open. Publish anyway?')) return
-    save('published')
-  }
-
-  const wrap = (pre: string, suf: string) => setBody(body + pre + suf)
-  const prefix = (pre: string) => setBody(body + '\n' + pre)
+  const publish = () => { if (seo.score < 80 && !confirm('SEO checklist is at ' + seo.score + '%. Publish anyway?')) return; save('published') }
   const insertFaq = () => setBody(body + '\n\n## Frequently asked questions\n\nQ: Question one?\nA: Answer in your own words.\n\nQ: Question two?\nA: Answer in your own words.\n\nQ: Question three?\nA: Answer in your own words.')
 
-  const fixOne = (checkId: string) => {
+  const fixOne = (cid: string) => {
     const k = kw.trim(); if (!k) { alert('Enter a focus keyword first.'); return }
-    if (checkId === 'kw-title' && !title.toLowerCase().includes(k.toLowerCase())) setTitle(k.charAt(0).toUpperCase() + k.slice(1) + ': ' + title)
-    if ((checkId === 'kw-mt' || checkId === 'mt-len') && !mt.toLowerCase().includes(k.toLowerCase())) setMt(k.charAt(0).toUpperCase() + k.slice(1) + ' | PPM Creator')
-    if ((checkId === 'kw-md' || checkId === 'md-len') && !md.toLowerCase().includes(k.toLowerCase())) setMd('Learn about ' + k + ' in a few simple steps. This guide explains what to expect and how to use the tool safely.')
-    if (checkId === 'slug') setSlug(k.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''))
-    if (checkId === 'first') setBody('Here is how to ' + k + ' in a few simple steps.\n\n' + body)
-    if (checkId === 'h2') setBody(body + '\n\n## About ' + k + '\n\nExplain ' + k + ' in your own words here.')
-    if (checkId === 'words') setBody(body + '\n\n## Section to write\n\nWrite about this point in your own words.\n\n## Another section to write\n\nWrite about this point in your own words.')
-    if (checkId === 'int') setBody(body + '\n\nRelated: [Image Compressor](/image-compress) and [Merge PDF](/pdf-merge).')
-    if (checkId === 'faq') insertFaq()
+    if (cid === 'kw-title' && !title.toLowerCase().includes(k.toLowerCase())) setTitle(k.charAt(0).toUpperCase() + k.slice(1) + ': ' + title)
+    if ((cid === 'kw-mt' || cid === 'mt-len') && !mt.toLowerCase().includes(k.toLowerCase())) setMt(k.charAt(0).toUpperCase() + k.slice(1) + ' | PPM Creator')
+    if ((cid === 'kw-md' || cid === 'md-len') && !md.toLowerCase().includes(k.toLowerCase())) setMd('Learn about ' + k + ' in a few simple steps. This guide explains what to expect and how to use the tool safely.')
+    if (cid === 'slug') setSlug(k.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''))
+    if (cid === 'first') setBody('Here is how to ' + k + ' in a few simple steps.\n\n' + body)
+    if (cid === 'h2') setBody(body + '\n\n## About ' + k + '\n\nExplain ' + k + ' in your own words here.')
+    if (cid === 'words') setBody(body + '\n\n## Section to write\n\nWrite about this point in your own words.\n\n## Another section to write\n\nWrite about this point in your own words.')
+    if (cid === 'int') setBody(body + '\n\nRelated: [Image Compressor](/image-compress) and [Merge PDF](/pdf-merge).')
+    if (cid === 'faq') insertFaq()
   }
-
-  const fixAll = () => {
-    ['kw-title', 'kw-mt', 'mt-len', 'kw-md', 'md-len', 'slug', 'first', 'h2', 'int'].forEach(fixOne)
-  }
+  const fixAll = () => { ['kw-title', 'kw-mt', 'mt-len', 'kw-md', 'md-len', 'slug', 'first', 'h2', 'int'].forEach(fixOne) }
 
   if (!loaded) return <div style={card}>Loading...</div>
 
@@ -104,18 +135,33 @@ export default function EditorTab({ id, onBack, onSaved }: { id: number | null; 
             <button onClick={publish} disabled={saving} style={btnP}>Publish</button>
           </div>
         </div>
+        {demo && <div style={{ background: '#FFF7ED', borderRadius: 8, padding: '8px 11px', fontSize: 12, color: '#B45309', marginBottom: 12 }}>Sample content â€” real post loads when the database is connected.</div>}
         <label style={label}>Title<input value={title} onChange={(e) => setTitle(e.target.value)} style={input} /></label>
         <label style={label}>URL slug<input value={slug} onChange={(e) => setSlug(e.target.value)} style={input} /></label>
+
+        <h3 style={{ fontSize: 14, margin: '10px 0 6px', fontWeight: 600 }}>Cover image</h3>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
+          <input ref={coverRef} type="file" accept="image/*" onChange={onCover} style={{ display: 'none' }} />
+          <button onClick={() => coverRef.current?.click()} disabled={uploading} style={btn}>{uploading ? 'Uploading...' : 'Choose cover image'}</button>
+          {thumbnail && <img src={thumbnail} alt="Cover" style={{ height: 48, borderRadius: 8, border: '1px solid #e7e5e4' }} />}
+          {thumbnail && <button onClick={() => setThumbnail('')} style={{ ...btnSm, color: '#B91C1C' }}>Remove</button>}
+        </div>
+        <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 12 }}>Image is stored as base64 in D1 (max 2 MB).</div>
+
+        <label style={label}>Short summary<input value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="One line shown on the blog list" style={input} /></label>
+
         <h3 style={{ fontSize: 14, margin: '10px 0 6px', fontWeight: 600 }}>Body</h3>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', padding: 6, border: '1px solid #e7e5e4', borderBottom: 0, borderRadius: '8px 8px 0 0', background: '#fafaf9' }}>
-          <button onClick={() => wrap('**', '**')} style={btnSm}><b>B</b></button>
-          <button onClick={() => wrap('*', '*')} style={btnSm}><i>I</i></button>
-          <button onClick={() => prefix('## ')} style={btnSm}>H2</button>
-          <button onClick={() => prefix('### ')} style={btnSm}>H3</button>
-          <button onClick={() => prefix('- ')} style={btnSm}>List</button>
+          <button onClick={() => setBody(body + '**text**')} style={btnSm}><b>B</b></button>
+          <button onClick={() => setBody(body + '*text*')} style={btnSm}><i>I</i></button>
+          <button onClick={() => setBody(body + '\n## Heading')} style={btnSm}>H2</button>
+          <button onClick={() => setBody(body + '\n### Sub')} style={btnSm}>H3</button>
+          <button onClick={() => setBody(body + '\n- item')} style={btnSm}>List</button>
+          <input ref={bodyImgRef} type="file" accept="image/*" onChange={onBodyImage} style={{ display: 'none' }} />
+          <button onClick={() => bodyImgRef.current?.click()} disabled={uploading} style={btnSm}>Image</button>
           <button onClick={insertFaq} style={btnSm}>FAQ</button>
         </div>
-        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={16} style={{ ...input, borderRadius: '0 0 8px 8px', marginTop: 0, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 13, lineHeight: 1.6 }} />
+        <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={16} placeholder="Write your post here. Use the toolbar above." style={{ ...input, borderRadius: '0 0 8px 8px', marginTop: 0, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 13, lineHeight: 1.6 }} />
       </div>
       <div style={card}>
         <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 12 }}>
