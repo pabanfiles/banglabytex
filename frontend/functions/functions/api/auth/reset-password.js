@@ -1,4 +1,4 @@
-import { hashPassword } from '../../_lib/crypto.js';
+import { hashPassword } from '../../shared/crypto.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;

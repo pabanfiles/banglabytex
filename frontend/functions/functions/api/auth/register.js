@@ -1,6 +1,6 @@
-import { hashPassword, validEmail, randomToken } from '../../_lib/crypto.js';
-import { sendEmail } from '../../_lib/send-email.js';
-import { verifyEmailHtml } from '../../_lib/email-templates.js';
+import { hashPassword, validEmail, randomToken } from '../../shared/crypto.js';
+import { sendEmail } from '../../shared/send-email.js';
+import { verifyEmailHtml } from '../../shared/email-templates.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;

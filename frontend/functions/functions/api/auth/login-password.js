@@ -1,4 +1,4 @@
-import { verifyPassword, validEmail } from '../../_lib/crypto.js';
+import { verifyPassword, validEmail } from '../../shared/crypto.js';
 
 export async function onRequestPost(context) {
   const { request, env } = context;
