@@ -7,10 +7,10 @@ async function hashPassword(password) {
   const saltHex = bytesToHex(salt);
   const keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
   const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, 256);
-  return 'pbkdf2\\$' + saltHex + '\$' + bytesToHex(new Uint8Array(bits));
+  return ['pbkdf2', '100000', saltHex, bytesToHex(new Uint8Array(bits))].join('$');
 }
 async function verifyPassword(password, stored) {
-  const parts = (stored || '').split('\$');
+  const parts = (stored || '').split('$');
   if (parts.length !== 4 || parts[0] !== 'pbkdf2') return false;
   const salt = new Uint8Array(parts[2].match(/.{2}/g).map((h) => parseInt(h, 16)));
   const keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveBits']);
