@@ -1,0 +1,16 @@
+﻿{
+  "name": "PPM Creator",
+  "url": "https://ppmcreator.com",
+  "accent": "#F97316",
+  "contactEmail": "hello@ppmcreator.com",
+  "social": "@ppmcreator",
+  "description": "Free browser-based tools for images, PDFs and everyday calculations. Files stay on your device.",
+  "lang": "en",
+  "year": 2026,
+  "nav": [
+    { "label": "Image Tools", "to": "/image-tools" },
+    { "label": "PDF Tools", "to": "/pdf-tools" },
+    { "label": "Calculators", "to": "/calculators" },
+    { "label": "Blog", "to": "/blog" }
+  ]
+}
