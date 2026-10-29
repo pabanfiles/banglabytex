@@ -1,42 +1,109 @@
 import { useState } from 'react'
-import { toast } from 'sonner'
-import { Upload, Download } from 'lucide-react'
-import ToolPageLayout from '@/components/ToolPageLayout'
-import { useToolData } from '@/hooks/useToolData'
+import ToolShell from '@/components/ToolShell'
+
+function parseCsv(text: string): Record<string, string>[] {
+  const lines = text.trim().split(/\r?\n/)
+  if (lines.length < 2) return []
+  const splitLine = (line: string) => {
+    const out: string[] = []
+    let cur = '', inQ = false
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i]
+      if (c === '\"') { if (inQ && line[i + 1] === '\"') { cur += '\"'; i++ } else inQ = !inQ }
+      else if (c === ',' && !inQ) { out.push(cur); cur = '' }
+      else cur += c
+    }
+    out.push(cur)
+    return out
+  }
+  const headers = splitLine(lines[0]).map((h) => h.trim())
+  return lines.slice(1).map((line) => {
+    const cells = splitLine(line)
+    const row: Record<string, string> = {}
+    headers.forEach((h, i) => { row[h] = cells[i] ?? '' })
+    return row
+  })
+}
 
 export default function CsvToJson() {
-  const { toolData, faqs, relatedPosts } = useToolData('csv-to-json')
-  const [file, setFile] = useState<File | null>(null)
+  const [csv, setCsv] = useState('')
+  const [json, setJson] = useState('')
+  const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
 
-  const handleConvert = async () => {
-    if(!file) return toast.error('Select a CSV file')
-    const text = await file.text()
-    const lines = text.split('\n').filter(l => l.trim())
-    const headers = lines[0].split(',').map(h => h.trim())
-    const json = lines.slice(1).map(line => {
-      const values = line.split(',')
-      const obj: any = {}
-      headers.forEach((h, i) => { obj[h] = values[i]?.trim() || '' })
-      return obj
-    })
-    const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' })
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'data.json'; a.click()
-    toast.success('Converted!')
+  const convert = () => {
+    setError('')
+    try {
+      const rows = parseCsv(csv)
+      if (rows.length === 0) { setError('Paste CSV with a header row and at least one data row.'); return }
+      setJson(JSON.stringify(rows, null, 2))
+    } catch { setError('Could not parse this CSV.') }
   }
+  const copy = async () => { try { await navigator.clipboard.writeText(json); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch {} }
+
+  const faqGroups = [
+    { heading: 'Basics', items: [
+      { q: 'What does this tool do?', a: 'It reads a CSV file as text and outputs a JSON array of objects. The first row is treated as the header row.' },
+      { q: 'Is it free?', a: 'Yes. No account, no upload.' },
+      { q: 'Is my CSV uploaded?', a: 'No. The parsing runs in your browser.' },
+    ]},
+    { heading: 'CSV format', items: [
+      { q: 'Which CSV dialects are supported?', a: 'The parser handles quoted fields and escaped quotes, which covers most exports from spreadsheets and databases.' },
+      { q: 'What if a row has fewer cells than the header?', a: 'Missing cells become empty strings, so the JSON stays valid.' },
+      { q: 'What about numbers?', a: 'Values are kept as strings. Convert them later with a small script if the target requires numbers.' },
+    ]},
+    { heading: 'Privacy', items: [
+      { q: 'Is the JSON saved?', a: 'No. Reload the page and the fields clear.' },
+      { q: 'Can I convert a large file?', a: 'Yes, up to browser memory. A few hundred rows is easily handled.' },
+    ]},
+  ]
+
+  const article = (
+    <>
+      <h2>How to convert CSV to JSON</h2>
+      <ol>
+        <li>Paste CSV text with a header row.</li>
+        <li>Press Convert.</li>
+        <li>Copy the JSON.</li>
+      </ol>
+      <h2>Why use this tool</h2>
+      <p>Quick way to move data from a spreadsheet to JSON. Local parsing, no upload.</p>
+      <h2>Privacy and data</h2>
+      <p>Nothing is uploaded.</p>
+    </>
+  )
 
   return (
-    <ToolPageLayout title={toolData?.h1_title || 'CSV to JSON Converter'} description={toolData?.intro_text || 'Convert CSV data to JSON format.'} category="Converters" faqs={faqs} relatedPosts={relatedPosts}>
-      <div className="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-700 max-w-2xl mx-auto">
-        <label className="border-2 border-dashed border-[#F97316] bg-[#FFF7ED] dark:bg-slate-900 rounded-2xl p-10 flex flex-col items-center cursor-pointer mb-6">
-          <Upload className="text-[#F97316] mb-2" size={32} />
-          <span className="text-lg font-semibold text-[#431407] dark:text-white">Select CSV File</span>
-          <input type="file" accept=".csv" className="hidden" onChange={e => { if(e.target.files) setFile(e.target.files[0]) }} />
-        </label>
-        {file && <p className="mb-4 text-slate-600 dark:text-slate-400">Selected: {file.name}</p>}
-        <button onClick={handleConvert} disabled={!file} className="w-full py-4 bg-[#F97316] text-white font-bold rounded-full disabled:opacity-50">
-          <Download size={18} className="inline mr-2"/> Convert to JSON
-        </button>
-      </div>
-    </ToolPageLayout>
+    <ToolShell
+      title="CSV to JSON Converter Online Free | PPM Creator"
+      description="Convert CSV text to JSON. Runs in your browser."
+      path="/csv-to-json"
+      crumb={[{ label: 'Text Tools', to: '/calculators' }]}
+      h1="CSV to JSON"
+      lead="Paste CSV with a header row to get JSON."
+      faqGroups={faqGroups}
+      related={[
+        { name: 'HTML to Text', href: '/html-to-text', blurb: 'Remove HTML tags' },
+        { name: 'Word Counter', href: '/word-counter', blurb: 'Count words and characters' },
+        { name: 'Text Case Converter', href: '/text-case-converter', blurb: 'Change text case' },
+        { name: 'Password Generator', href: '/password-generator', blurb: 'Generate a strong password' },
+      ]}
+      guides={[
+        { title: 'Moving data from a spreadsheet to JSON' },
+        { title: 'Quoted fields in CSV' },
+        { title: 'Why CSV numbers can lose precision' },
+      ]}
+      article={article}
+    >
+      <section style={{ border: '1px solid #e7e5e4', borderRadius: 16, padding: 18, background: '#fafaf9', margin: '20px 0 8px' }}>
+        <textarea value={csv} onChange={(e) => setCsv(e.target.value)} rows={6} placeholder={'name,age\nAlice,30\nBob,25'} style={{ width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, fontSize: 13, fontFamily: 'monospace' }} />
+        <button type="button" onClick={convert} style={{ marginTop: 10, border: 0, padding: '10px 16px', borderRadius: 10, background: '#F97316', color: '#fff', fontWeight: 600, cursor: 'pointer' }}>Convert</button>
+        {json && (<>
+          <textarea readOnly value={json} rows={10} style={{ width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, marginTop: 12, fontSize: 12, fontFamily: 'monospace' }} />
+          <button type="button" onClick={copy} style={{ marginTop: 10, border: '1px solid #e7e5e4', padding: '10px 16px', borderRadius: 10, background: 'transparent', cursor: 'pointer' }}>{copied ? 'Copied' : 'Copy JSON'}</button>
+        </>)}
+        {error && <p role="alert" style={{ color: '#be123c', fontSize: 14, marginTop: 10 }}>{error}</p>}
+      </section>
+    </ToolShell>
   )
 }

@@ -1,90 +1,89 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import ToolShell from '@/components/ToolShell'
 
 export default function PercentageCalc() {
-  const [percent, setPercent] = useState(10)
-  const [total, setTotal] = useState(500)
-  const result = (percent / 100) * total
+  const [mode, setMode] = useState<'of' | 'change' | 'iswhat'>('of')
+  const [a, setA] = useState('')
+  const [b, setB] = useState('')
 
-  // Schema.org JSON-LD
-  useEffect(() => {
-    const script = document.createElement('script')
-    script.type = 'application/ld+json'
-    script.innerHTML = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Percentage Calculator",
-      "url": "https://ppmcreator.com/percentage-calc",
-      "applicationCategory": "UtilityApplication",
-      "operatingSystem": "Any",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-    })
-    document.head.appendChild(script)
-    return () => { document.head.removeChild(script) }
-  }, [])
+  const result = (() => {
+    const x = parseFloat(a), y = parseFloat(b)
+    if (isNaN(x) || isNaN(y)) return null
+    if (mode === 'of') return { value: (x / 100) * y, label: x + '% of ' + y + ' =' }
+    if (mode === 'change') { const p = ((y - x) / x) * 100; return { value: p, label: 'Change from ' + x + ' to ' + y + ' =', suffix: '%' } }
+    return { value: (x / y) * 100, label: x + ' is what % of ' + y + ' =', suffix: '%' }
+  })()
+
+  const faqGroups = [
+    { heading: 'Basics', items: [
+      { q: 'What does this calculator do?', a: 'It handles the three most common percentage questions: X percent of Y, the percentage change between two numbers, and X is what percent of Y.' },
+      { q: 'Is it free?', a: 'Yes. No account, no upload, no daily limit.' },
+      { q: 'Can I use decimals?', a: 'Yes. Any number, including decimals and negative values, works.' },
+    ]},
+    { heading: 'Formulas', items: [
+      { q: 'How is X percent of Y calculated?', a: 'Multiply Y by X and divide by 100. For example, 20 percent of 150 is 150 * 20 / 100 = 30.' },
+      { q: 'How is percentage change calculated?', a: 'Subtract the old value from the new value, divide by the old value, and multiply by 100. A negative result means a decrease.' },
+      { q: 'How is X is what percent of Y calculated?', a: 'Divide X by Y and multiply by 100. For example, 30 is 20 percent of 150.' },
+    ]},
+    { heading: 'Privacy', items: [
+      { q: 'Is my data sent anywhere?', a: 'No. The calculation runs in your browser. Nothing is uploaded.' },
+      { q: 'Does the tool store the values?', a: 'No. Reloading the page clears the inputs.' },
+    ]},
+  ]
+
+  const article = (
+    <>
+      <h2>How to use this percentage calculator</h2>
+      <ol>
+        <li>Pick the question you want to answer.</li>
+        <li>Type the two numbers.</li>
+        <li>The result appears immediately.</li>
+      </ol>
+      <h2>Why use this tool</h2>
+      <p>Different questions need different formulas. This calculator keeps the three common ones in one place, so you do not have to remember which is which.</p>
+      <h2>Privacy and data</h2>
+      <p>Nothing is uploaded. Inputs stay in your browser.</p>
+    </>
+  )
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <div className="text-sm text-slate-500 mb-4">
-        <Link to="/" className="hover:text-[#F97316]">Home</Link> / <span className="text-[#F97316]">Percentage Calculator</span>
-      </div>
-
-      <h1 className="text-3xl font-extrabold mb-6 text-[#431407]">Percentage Calculator Online Free</h1>
-      <p className="text-slate-600 mb-8">Calculate percentages quickly and easily. Just enter the total value and the percentage you want to find out.</p>
-
-      {/* Tool UI */}
-      <div className="bg-white p-6 rounded-3xl shadow-sm border border-[#FFEDD5] space-y-4 mb-12">
-        <div>
-          <label className="text-sm font-semibold text-[#431407]">Total Value</label>
-          <input type="number" value={total} onChange={e => setTotal(Number(e.target.value))} className="w-full p-3 border border-[#FFEDD5] rounded-xl mt-1 outline-none focus:ring-2 focus:ring-[#F97316]" />
+    <ToolShell
+      title="Percentage Calculator Online Free | PPM Creator"
+      description="Calculate a percentage of a number, percentage change, or what percent one number is of another. Runs in your browser."
+      path="/percentage-calc"
+      crumb={[{ label: 'Calculators', to: '/calculators' }]}
+      h1="Percentage Calculator: Three Common Questions"
+      lead="Calculate X percent of Y, percentage change, or X is what percent of Y."
+      faqGroups={faqGroups}
+      related={[
+        { name: 'Age Calculator', href: '/age-calculator', blurb: 'Calculate your exact age' },
+        { name: 'Unit Converter', href: '/unit-converter', blurb: 'Convert between common units' },
+        { name: 'Word Counter', href: '/word-counter', blurb: 'Count words and characters' },
+        { name: 'Password Generator', href: '/password-generator', blurb: 'Generate a strong password' },
+      ]}
+      guides={[
+        { title: 'Percentage change explained' },
+        { title: 'Common percentage mistakes' },
+        { title: 'Using percentages in everyday life' },
+      ]}
+      article={article}
+    >
+      <section style={{ border: '1px solid #e7e5e4', borderRadius: 16, padding: 18, background: '#fafaf9', margin: '20px 0 8px' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+          {(['of', 'change', 'iswhat'] as const).map((m) => (
+            <button key={m} type="button" onClick={() => setMode(m)} style={{ padding: '8px 14px', borderRadius: 10, border: '1px solid ' + (mode === m ? '#F97316' : '#e7e5e4'), background: mode === m ? '#FFF7ED' : '#fff', color: mode === m ? '#F97316' : '#1c1917', fontSize: 13, fontWeight: 500, cursor: 'pointer' }}>{m === 'of' ? '% of a number' : m === 'change' ? 'Change' : 'Is what %'}</button>
+          ))}
         </div>
-        <div>
-          <label className="text-sm font-semibold text-[#431407]">Percentage (%)</label>
-          <input type="number" value={percent} onChange={e => setPercent(Number(e.target.value))} className="w-full p-3 border border-[#FFEDD5] rounded-xl mt-1 outline-none focus:ring-2 focus:ring-[#F97316]" />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+          <input type="number" value={a} onChange={(e) => setA(e.target.value)} placeholder={mode === 'of' ? 'Percent' : 'First number'} style={{ padding: '10px 12px', border: '1px solid #e7e5e4', borderRadius: 10, fontSize: 14 }} />
+          <input type="number" value={b} onChange={(e) => setB(e.target.value)} placeholder={mode === 'of' ? 'Number' : 'Second number'} style={{ padding: '10px 12px', border: '1px solid #e7e5e4', borderRadius: 10, fontSize: 14 }} />
         </div>
-        <div className="bg-[#FFF7ED] p-6 rounded-xl text-center mt-4">
-          <p className="text-sm text-slate-600 mb-1">Result ({percent}% of {total})</p>
-          <p className="text-4xl font-bold text-[#F97316]">{result}</p>
-        </div>
-      </div>
-
-      {/* Content for SEO */}
-      <div className="prose prose-slate max-w-none mb-12">
-        <h2 className="text-2xl font-bold text-[#431407] mb-4">How to use the Percentage Calculator</h2>
-        <ol className="list-decimal pl-5 space-y-2 text-slate-600">
-          <li>Enter the total value in the first input box (e.g., 500).</li>
-          <li>Enter the percentage you want to calculate in the second box (e.g., 10).</li>
-          <li>The result will automatically appear below, showing the exact calculated amount.</li>
-        </ol>
-
-        <h2 className="text-2xl font-bold text-[#431407] mt-8 mb-4">Features and Benefits</h2>
-        <ul className="list-disc pl-5 space-y-2 text-slate-600">
-          <li><strong>Instant Results:</strong> No need to press a calculate button; it updates live.</li>
-          <li><strong>100% Free:</strong> Use it as many times as you want without any limits.</li>
-          <li><strong>Privacy First:</strong> Everything is calculated in your browser. No data is sent to our servers.</li>
-        </ul>
-
-        <h2 className="text-2xl font-bold text-[#431407] mt-8 mb-4">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-bold text-lg text-[#431407]">How do I calculate a percentage of a number?</h3>
-            <p className="text-slate-600">To calculate X% of Y, simply multiply Y by (X/100). Our tool does this automatically for you.</p>
+        {result && (
+          <div style={{ background: '#fff', border: '1px solid #e7e5e4', borderRadius: 12, padding: 14, fontSize: 16 }}>
+            {result.label} <b>{Math.round(result.value * 100) / 100}{'suffix' in result ? result.suffix : ''}</b>
           </div>
-          <div>
-            <h3 className="font-bold text-lg text-[#431407]">Is this calculator accurate for financial use?</h3>
-            <p className="text-slate-600">Yes, it uses standard mathematical formulas and is perfectly accurate for daily financial calculations and discounts.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Related Tools */}
-      <div>
-        <h2 className="text-xl font-bold text-[#431407] mb-4">Related Tools</h2>
-        <div className="flex gap-4 flex-wrap">
-          <Link to="/age-calc" className="px-4 py-2 bg-white border border-[#FFEDD5] rounded-xl text-[#F97316] font-semibold hover:bg-[#FFF7ED]">Age Calculator</Link>
-          <Link to="/pdf-tools" className="px-4 py-2 bg-white border border-[#FFEDD5] rounded-xl text-[#F97316] font-semibold hover:bg-[#FFF7ED]">PDF Tools</Link>
-        </div>
-      </div>
-    </div>
+        )}
+      </section>
+    </ToolShell>
   )
 }

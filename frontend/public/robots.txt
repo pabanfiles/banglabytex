@@ -1,3 +1,5 @@
 User-agent: *
 Allow: /
-Sitemap: https://ppmcreator.com/sitemap.xml
+Disallow: /hellowsaipatit
+
+Sitemap: https://ppmcreator.pages.dev/sitemap.xml

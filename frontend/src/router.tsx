@@ -58,6 +58,8 @@ import About from './pages/legal/About'
 import Contact from './pages/legal/Contact'
 import Privacy from './pages/legal/Privacy'
 import Terms from './pages/legal/Terms'
+import Disclaimer from './pages/legal/Disclaimer'
+import SitemapPage from './pages/legal/SitemapPage'
 import PageLoader from './components/PageLoader'
 
 const router = createBrowserRouter([
@@ -118,6 +120,8 @@ const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'privacy-policy', element: <Privacy /> },
       { path: 'terms', element: <Terms /> },
+      { path: 'disclaimer', element: <Disclaimer /> },
+      { path: 'sitemap', element: <SitemapPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },
