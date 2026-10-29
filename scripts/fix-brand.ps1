@@ -5,7 +5,7 @@ $src = "$fe\src"
 
 $count = 0
 
-# 1. Replace in src/ files
+# Replace in all src files
 $files = Get-ChildItem -Path $src -Recurse -Include *.tsx,*.ts,*.js,*.jsx,*.json,*.css -ErrorAction SilentlyContinue | Where-Object { $_.FullName -notmatch "node_modules" }
 foreach ($f in $files) {
   $c = [System.IO.File]::ReadAllText($f.FullName)
@@ -23,7 +23,7 @@ foreach ($f in $files) {
   }
 }
 
-# 2. Fix public + index.html
+# Fix public + index.html
 $publicFiles = @("$fe\index.html", "$fe\public\site.json", "$fe\public\robots.txt", "$fe\public\sitemap.xml", "$fe\public\_routes.json")
 foreach ($f in $publicFiles) {
   if (Test-Path $f) {
@@ -40,23 +40,8 @@ foreach ($f in $publicFiles) {
   }
 }
 
-# 3. Fix site.json data (src/data/site.json)
-$siteData = "$src\data\site.json"
-if (Test-Path $siteData) {
-  $c = [System.IO.File]::ReadAllText($siteData)
-  $orig = $c
-  $c = $c.Replace('"PPM Creator"', '"PPM Creator Tools"')
-  $c = $c.Replace("BanglaByteX", "PPM Creator Tools")
-  $c = $c.Replace("banglabytex", "ppmcreator")
-  if ($c -ne $orig) {
-    [System.IO.File]::WriteAllText($siteData, $c, $utf8)
-    Write-Host "  [+] src/data/site.json" -ForegroundColor Green
-    $count++
-  }
-}
-
 Write-Host "`n=== Total files updated: $count ===" -ForegroundColor Cyan
-Write-Host "`n=== Verify no BanglaByteX remains in src ===" -ForegroundColor Cyan
+Write-Host "`n=== Verify no BanglaByteX remains ===" -ForegroundColor Cyan
 $remaining = Get-ChildItem -Path $src -Recurse -Include *.tsx,*.ts,*.js,*.jsx,*.json | Where-Object { $_.FullName -notmatch "node_modules" } | Select-String -Pattern "BanglaByteX|banglabytex|BanglaByte"
 if ($remaining) {
   $remaining | Select-Object Path, LineNumber, Line | Format-Table -AutoSize
