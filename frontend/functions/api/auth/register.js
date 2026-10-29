@@ -23,17 +23,23 @@ function randomToken(len = 32) {
 }
 function validEmail(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e || ''); }
 async function sendEmail(env, to, subject, html) {
-  const key = env.RESEND_API_KEY;
-  if (!key) return { ok: false, error: 'RESEND_API_KEY is not set. Add it in Cloudflare Pages env vars.' };
-  const from = env.RESEND_FROM || 'PPM Creator <onboarding@resend.dev>';
-  const res = await fetch('https://api.resend.com/emails', {
+  const token = env.MAILTRAP_API_TOKEN;
+  if (!token) return { ok: false, error: 'MAILTRAP_API_TOKEN is not set. Add it in Cloudflare Pages env vars.' };
+  const fromEmail = env.MAILTRAP_FROM_EMAIL || 'hello@demomailtrap.com';
+  const fromName = env.MAILTRAP_FROM_NAME || 'PPM Creator';
+  const res = await fetch('https://send.api.mailtrap.io/api/send', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: [to], subject, html }),
+    headers: { 'Api-Token': token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: { email: fromEmail, name: fromName },
+      to: [{ email: to }],
+      subject,
+      html,
+    }),
   });
   if (!res.ok) {
     const t = await res.text().catch(() => '');
-    return { ok: false, error: 'Resend error: ' + res.status + ' ' + t.slice(0, 200) };
+    return { ok: false, error: 'Mailtrap error: ' + res.status + ' ' + t.slice(0, 300) };
   }
   return { ok: true };
 }
