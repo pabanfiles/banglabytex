@@ -2,10 +2,10 @@ import { Facebook, Youtube, Instagram, Send } from 'lucide-react'
 
 export default function SocialLinks() {
   const links = [
-    { name: 'Facebook', url: 'https://www.facebook.com/banglabytex', icon: Facebook, color: 'bg-blue-600 hover:bg-blue-700' },
-    { name: 'YouTube', url: 'https://www.youtube.com/@banglabytex', icon: Youtube, color: 'bg-red-600 hover:bg-red-700' },
-    { name: 'Instagram', url: 'https://www.instagram.com/banglabytex', icon: Instagram, color: 'bg-gradient-to-r from-pink-500 to-orange-500 hover:opacity-90' },
-    { name: 'Telegram', url: 'https://t.me/banglabytex', icon: Send, color: 'bg-sky-500 hover:bg-sky-600' },
+    { name: 'Facebook', url: 'https://www.facebook.com/ppmcreator', icon: Facebook, color: 'bg-blue-600 hover:bg-blue-700' },
+    { name: 'YouTube', url: 'https://www.youtube.com/@ppmcreator', icon: Youtube, color: 'bg-red-600 hover:bg-red-700' },
+    { name: 'Instagram', url: 'https://www.instagram.com/ppmcreator', icon: Instagram, color: 'bg-gradient-to-r from-pink-500 to-orange-500 hover:opacity-90' },
+    { name: 'Telegram', url: 'https://t.me/ppmcreator', icon: Send, color: 'bg-sky-500 hover:bg-sky-600' },
   ]
 
   return (

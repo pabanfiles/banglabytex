@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Trash2, Edit } from 'lucide-react'
 
@@ -9,7 +9,7 @@ export default function Admin() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (email === 'admin@banglabytex.com' && pass === 'admin123') {
+    if (email === 'admin@ppmcreator.com' && pass === 'admin123') {
       setIsLoggedIn(true)
       toast.success('Welcome to Admin Panel')
     } else {
@@ -25,7 +25,7 @@ export default function Admin() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-slate-700">Email</label>
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="admin@banglabytex.com" />
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="admin@ppmcreator.com" />
             </div>
             <div>
               <label className="text-sm font-medium text-slate-700">Password</label>
@@ -33,7 +33,7 @@ export default function Admin() {
             </div>
             <button type="submit" className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 mt-2">Login</button>
           </div>
-          <p className="text-xs text-center text-slate-400 mt-4">Demo: admin@banglabytex.com / admin123</p>
+          <p className="text-xs text-center text-slate-400 mt-4">Demo: admin@ppmcreator.com / admin123</p>
         </form>
       </div>
     )

@@ -12,10 +12,10 @@ export default function SubscribeModal({ isOpen, onClose, onUnlock }: Props) {
   const [isVerifying, setIsVerifying] = useState(false)
 
   const links = [
-    { name: 'Facebook', url: 'https://www.facebook.com/banglabytex', icon: Facebook, color: 'bg-blue-600' },
-    { name: 'YouTube', url: 'https://www.youtube.com/@banglabytex', icon: Youtube, color: 'bg-red-600' },
-    { name: 'Instagram', url: 'https://www.instagram.com/banglabytex', icon: Instagram, color: 'bg-gradient-to-r from-pink-500 to-orange-500' },
-    { name: 'Telegram', url: 'https://t.me/banglabytex', icon: Send, color: 'bg-sky-500' },
+    { name: 'Facebook', url: 'https://www.facebook.com/ppmcreator', icon: Facebook, color: 'bg-blue-600' },
+    { name: 'YouTube', url: 'https://www.youtube.com/@ppmcreator', icon: Youtube, color: 'bg-red-600' },
+    { name: 'Instagram', url: 'https://www.instagram.com/ppmcreator', icon: Instagram, color: 'bg-gradient-to-r from-pink-500 to-orange-500' },
+    { name: 'Telegram', url: 'https://t.me/ppmcreator', icon: Send, color: 'bg-sky-500' },
   ]
 
   useEffect(() => {
