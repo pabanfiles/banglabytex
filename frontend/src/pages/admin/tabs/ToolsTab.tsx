@@ -14,6 +14,7 @@ const TOOLS: Tool[] = [
   { slug: 'pdf-compress', name: 'Compress PDF', url: '/pdf-compress' },
   { slug: 'age-calculator', name: 'Age Calculator', url: '/age-calculator' },
   { slug: 'percentage-calc', name: 'Percentage Calculator', url: '/percentage-calc' },
+  { slug: 'code-runner', name: 'Code Runner', url: '/code-runner' },
 ]
 
 export default function ToolsTab() {

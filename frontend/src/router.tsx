@@ -43,6 +43,7 @@ import FaviconGenerator from './pages/tools/FaviconGenerator'
 import BgRemover from './pages/tools/BgRemover'
 import CsvToJson from './pages/tools/CsvToJson'
 import HtmlToText from './pages/tools/HtmlToText'
+import CodeRunner from './pages/tools/CodeRunner'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
 import PdfToWord from './pages/tools/PdfToWord'
 import PdfToExcel from './pages/tools/PdfToExcel'
@@ -101,6 +102,7 @@ const router = createBrowserRouter([
       { path: 'bg-remover', element: <BgRemover /> },
       { path: 'csv-to-json', element: <CsvToJson /> },
       { path: 'html-to-text', element: <HtmlToText /> },
+      { path: 'code-runner', element: <CodeRunner /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },
       { path: 'pdf-to-word', element: <PdfToWord /> },
       { path: 'pdf-to-excel', element: <PdfToExcel /> },
