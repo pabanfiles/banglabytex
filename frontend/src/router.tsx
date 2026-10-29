@@ -121,6 +121,8 @@ const router = createBrowserRouter([
       { path: 'pdf-tools', element: <CategoryHub /> },
       { path: 'calculators', element: <CategoryHub /> },
       { path: 'text-tools', element: <CategoryHub /> },
+      { path: 'login', element: <Login /> },
+      { path: 'profile', element: <Profile /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <Contact /> },
       { path: 'privacy-policy', element: <Privacy /> },
