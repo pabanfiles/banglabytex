@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import ToolShell from '@/components/ToolShell'
+import UploadBox from '@/components/UploadBox'
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
 
@@ -44,20 +45,35 @@ function TreeNode({ name, data }: { name: string | null, data: JsonValue }) {
 }
 
 export default function JsonViewer() {
-  const [input, setInput] = useState('{\n  "name": "PPM Creator Tools",\n  "isAwesome": true,\n  "tools": 30,\n  "features": ["Fast", "Private", "Free"],\n  "author": {\n    "name": "Admin",\n    "verified": true\n  }\n}')
+  const [input, setInput] = useState('')
   const [parsed, setParsed] = useState<JsonValue | null>(null)
   const [error, setError] = useState('')
 
-  const handleFormat = () => {
+  const processJson = (text: string) => {
     setError('')
     try {
-      if (!input.trim()) return
-      const obj = JSON.parse(input)
+      if (!text.trim()) return
+      const obj = JSON.parse(text)
       setParsed(obj)
+      setInput(text)
     } catch (e: any) {
       setError(e.message)
       setParsed(null)
     }
+  }
+
+  const handleFile = (file: File) => {
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+      setError('Please upload a valid .json file.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const text = e.target?.result as string
+      processJson(text)
+    }
+    reader.onerror = () => setError('Failed to read the file.')
+    reader.readAsText(file)
   }
 
   const faqGroups = [
@@ -65,11 +81,11 @@ export default function JsonViewer() {
       { q: 'What is a JSON Viewer?', a: 'A JSON Viewer takes raw JSON data and displays it as a clean, interactive tree structure. This makes it easy to read and navigate through deeply nested objects and arrays.' },
       { q: 'Is this tool free?', a: 'Yes, it is completely free. You can validate, format, and view as many JSON files as you like without any limits.' },
       { q: 'Is my data sent to a server?', a: 'No. The parsing and rendering happen entirely in your browser. Your JSON data is never uploaded, ensuring complete privacy.' },
-      { q: 'Can it fix broken JSON?', a: 'It does not automatically fix broken JSON, but it provides the exact error message (like a missing comma or quote) so you can easily correct it.' },
+      { q: 'Can I upload a backup JSON file?', a: 'Yes! You can upload any valid .json file (like an app backup or configuration file). The tool will parse it locally and show the structure in the tree view.' },
     ]},
     { heading: 'Using the Viewer', items: [
-      { q: 'How do I use the tree view?', a: 'Simply paste your JSON into the input box and click "View JSON". The output will appear as a tree where you can click the arrows to expand or collapse nested nodes.' },
-      { q: 'Can I copy the formatted JSON?', a: 'Yes, once your JSON is parsed successfully, you can copy it or download it as a .json file for later use.' },
+      { q: 'How do I use the tree view?', a: 'Simply paste your JSON or upload a file. The output will appear as a tree where you can click the arrows to expand or collapse nested nodes.' },
+      { q: 'Can I copy the formatted JSON?', a: 'Yes, once your JSON is parsed successfully, you can copy it from the text box or download it as a .json file.' },
       { q: 'Does it support large JSON files?', a: 'Yes, it handles large files well. However, extremely large files (over 5MB) might slow down your browser due to the massive DOM rendering required for the tree.' },
       { q: 'What is the difference between an array and an object?', a: 'An object uses curly braces {} and has key-value pairs. An array uses square brackets [] and holds a list of items. This viewer clearly shows both.' },
     ]},
@@ -87,18 +103,18 @@ export default function JsonViewer() {
       
       <h2>Why Use Our JSON Viewer?</h2>
       <ul>
+        <li><b>File Upload Support:</b> Upload a `.json` backup file directly from your computer to inspect its contents.</li>
         <li><b>Instant Validation:</b> It checks if your JSON is valid. If there is an error, it tells you exactly where the syntax broke.</li>
         <li><b>Tree Navigation:</b> Click to expand or collapse objects and arrays. Perfect for exploring complex API responses.</li>
-        <li><b>Dark Mode Supported Colors:</b> Syntax highlighting makes it easy to distinguish strings, numbers, and booleans.</li>
         <li><b>Privacy First:</b> Your data never leaves your browser. No server uploads.</li>
       </ul>
 
       <h2>How to Use the Tool</h2>
       <ol>
-        <li>Paste your raw JSON into the "Input JSON" textarea.</li>
-        <li>Click the "View JSON" button.</li>
-        <li>If the JSON is valid, it will render as a tree below. You can click the arrows to expand/collapse nodes.</li>
-        <li>If there is an error, a red message will show you exactly what is wrong (e.g., "Unexpected token at position 14").</li>
+        <li>Upload a `.json` file using the upload box, or paste your raw JSON into the textarea.</li>
+        <li>The data will render automatically as a tree below.</li>
+        <li>You can click the arrows to expand/collapse nodes.</li>
+        <li>If there is an error, a red message will show you exactly what is wrong.</li>
       </ol>
 
       <h2>Common JSON Errors</h2>
@@ -114,11 +130,11 @@ export default function JsonViewer() {
   return (
     <ToolShell
       title="JSON Viewer, Formatter & Validator | PPM Creator Tools"
-      description="View, format, and validate JSON data online. Our interactive tree view makes it easy to explore complex JSON structures. Free, fast, and private."
+      description="View, format, and validate JSON data online. Upload a JSON file or paste raw text. Our interactive tree view makes it easy to explore complex JSON structures."
       path="/json-viewer"
       crumb={[{ label: 'Developer Tools', to: '/calculators' }]}
       h1="JSON Viewer & Formatter"
-      lead="Paste your JSON below to format it and view it as an interactive tree."
+      lead="Upload a .json file or paste your JSON below to view it as an interactive tree."
       faqGroups={faqGroups}
       related={[
         { name: 'CSV to JSON', href: '/csv-to-json', blurb: 'Convert CSV to JSON' },
@@ -135,18 +151,23 @@ export default function JsonViewer() {
     >
       <section style={{ border: '1px solid #e7e5e4', borderRadius: 16, padding: 18, background: '#fafaf9', margin: '20px 0 8px' }}>
         
+        <div style={{ marginBottom: 20 }}>
+          <UploadBox accept=".json,application/json" maxMB={10} hint="Upload a .json file (Max 10 MB) - Processed in your browser" onFile={handleFile} />
+        </div>
+
         <div style={{ marginBottom: 14 }}>
-          <label style={{ fontSize: 13, color: '#6b7280', fontWeight: 600 }}>Input JSON</label>
+          <label style={{ fontSize: 13, color: '#6b7280', fontWeight: 600 }}>Or paste your JSON here</label>
           <textarea 
             value={input} 
-            onChange={(e) => setInput(e.target.value)} 
+            onChange={(e) => { setInput(e.target.value); processJson(e.target.value); }} 
             rows={8} 
+            placeholder='{ "hello": "world" }'
             style={{ width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, marginTop: 4, fontFamily: 'monospace', fontSize: 13, background: '#fff' }} 
           />
         </div>
 
-        <button type="button" onClick={handleFormat} style={{ padding: '10px 20px', background: '#F97316', color: '#fff', border: 0, borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-          View JSON
+        <button type="button" onClick={() => processJson(input)} style={{ padding: '10px 20px', background: '#F97316', color: '#fff', border: 0, borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+          Format JSON
         </button>
 
         {error && (
@@ -157,8 +178,8 @@ export default function JsonViewer() {
 
         {parsed && (
           <div style={{ marginTop: 20 }}>
-            <label style={{ fontSize: 13, color: '#6b7280', fontWeight: 600, marginBottom: 8, display: 'block' }}>Tree View</label>
-            <div style={{ border: '1px solid #e7e5e4', borderRadius: 10, padding: 16, background: '#fff', overflowX: 'auto' }}>
+            <label style={{ fontSize: 13, color: '#6b7280', fontWeight: 600, marginBottom: 8, display: 'block' }}>Live Tree View</label>
+            <div style={{ border: '1px solid #e7e5e4', borderRadius: 10, padding: 16, background: '#fff', overflowX: 'auto', maxHeight: 500, overflowY: 'auto' }}>
               <TreeNode name={null} data={parsed} />
             </div>
           </div>
