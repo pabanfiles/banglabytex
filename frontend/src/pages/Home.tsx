@@ -40,6 +40,10 @@ const ALL_TOOLS = [
   { name: 'QR Generator', icon: '📱', link: '/qr-code-gen' },
   { name: 'CV Maker', icon: '📋', link: '/cv-maker' },
   { name: 'Video Downloader', icon: '🎬', link: '/video-downloader' },
+  { name: 'HTML Formatter', icon: '📝', link: '/html-formatter' },
+  { name: 'CSS Minifier', icon: '🎨', link: '/css-minifier' },
+  { name: 'Code Runner', icon: '💻', link: '/code-runner' },
+  { name: 'JSON Viewer', icon: '📊', link: '/json-viewer' },
 ]
 
 export default function Home() {
