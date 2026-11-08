@@ -1,144 +1,226 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState, useEffect } from 'react'
 import ToolShell from '@/components/ToolShell'
 
-const DEFAULT_HTML = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <style>
-    body { font-family: system-ui, sans-serif; padding: 24px; background: #fafaf9; margin: 0; }
-    h1 { color: #F97316; margin: 0 0 8px; }
-    p { color: #6b7280; margin: 0 0 16px; }
-    button { padding: 10px 20px; background: #F97316; color: white; border: 0; border-radius: 8px; cursor: pointer; font-size: 14px; }
-  </style>
-</head>
-<body>
-  <h1>Hello, PPM Creator!</h1>
-  <p>Edit the HTML above. The preview updates automatically.</p>
-  <button onclick="alert('It works!')">Click me</button>
-</body>
-</html>`
+const DEFAULT_HTML = `<!-- Write your HTML here -->
+<div class="box">
+  <h1>Hello PPM Creator!</h1>
+  <p>Edit the HTML, CSS, and JS tabs to see changes live.</p>
+  <button id="myBtn">Click Me</button>
+</div>`
+
+const DEFAULT_CSS = `/* Write your CSS here */
+body {
+  font-family: system-ui, sans-serif;
+  background-color: #fafaf9;
+  padding: 20px;
+}
+.box {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  text-align: center;
+}
+h1 { color: #F97316; }
+button {
+  background: #F97316;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}`
+
+const DEFAULT_JS = `// Write your JavaScript here
+document.getElementById('myBtn').addEventListener('click', function() {
+  alert('JavaScript is working perfectly!');
+});`
 
 export default function CodeRunner() {
   const [html, setHtml] = useState(DEFAULT_HTML)
-  const [srcDoc, setSrcDoc] = useState(DEFAULT_HTML)
-  const [autoRun, setAutoRun] = useState(true)
-  const debounceRef = useRef<number | null>(null)
-
-  const run = () => setSrcDoc(html)
+  const [css, setCss] = useState(DEFAULT_CSS)
+  const [js, setJs] = useState(DEFAULT_JS)
+  const [tab, setTab] = useState<'html' | 'css' | 'js'>('html')
+  const [srcDoc, setSrcDoc] = useState('')
 
   useEffect(() => {
-    if (!autoRun) return
-    if (debounceRef.current) window.clearTimeout(debounceRef.current)
-    debounceRef.current = window.setTimeout(() => setSrcDoc(html), 500)
-    return () => { if (debounceRef.current) window.clearTimeout(debounceRef.current) }
-  }, [html, autoRun])
-
-  const reset = () => { setHtml(DEFAULT_HTML); setSrcDoc(DEFAULT_HTML) }
+    const timer = setTimeout(() => {
+      const combined = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <style>${css}</style>
+          </head>
+          <body>
+            ${html}
+            <script>${js}</script>
+          </body>
+        </html>
+      `
+      setSrcDoc(combined)
+    }, 500) // 500ms debounce for performance
+    return () => clearTimeout(timer)
+  }, [html, css, js])
 
   const faqGroups = [
     { heading: 'Basics', items: [
-      { q: 'What does this code runner do?', a: 'It runs HTML, CSS and JavaScript code inside a sandboxed iframe in your browser. You see the live result instantly. No upload and no server is involved.' },
-      { q: 'Is it free?', a: 'Yes. No account is needed and there is no daily limit. The tool runs entirely in your browser.' },
-      { q: 'Can I use it offline?', a: 'After the page loads once, yes. The tool does not call any server for the preview. You can edit and run code without an internet connection.' },
-      { q: 'Which browsers are supported?', a: 'Any modern browser with iframe support, including Chrome, Edge, Firefox and Safari on desktop and mobile.' },
+      { q: 'What is an HTML/CSS/JS live preview tool?', a: 'It is a browser-based code editor that lets you write HTML, CSS, and JavaScript and see the result instantly. You do not need to install any software or set up a local server.' },
+      { q: 'Is it free to use?', a: 'Yes. This tool is completely free and requires no account. You can run it as many times as you like.' },
+      { q: 'Does it require an internet connection?', a: 'Once the page is loaded, the tool runs entirely in your browser. You can write and test code offline.' },
+      { q: 'Is my code saved anywhere?', a: 'No. Everything runs locally in your browser memory. If you close the tab, your code is permanently deleted. Always copy your final code to a safe file.' },
+      { q: 'Can I use this for a real project?', a: 'Absolutely. It is perfect for prototyping, learning, and testing small snippets before moving them into a full code editor like VS Code.' },
     ]},
-    { heading: 'Using the editor', items: [
-      { q: 'How do I run my code?', a: 'Turn auto-run on for a 500 millisecond delay after each edit, or turn it off and use the Run button. Both modes show the result in the preview panel below the editor.' },
-      { q: 'How do I add CSS and JS?', a: 'Add a <style> tag inside <head> and a <script> tag before </body>. The iframe runs the page like a real browser, so both work normally.' },
-      { q: 'Can I load external libraries?', a: 'Yes. Add <script src="https://..."> tags in the HTML. The preview loads scripts the same way a browser does, so CDN links work.' },
-      { q: 'What happens to my code after I close the tab?', a: 'The code is not saved. Keep a copy in your own file if you want to continue later.' },
+    { heading: 'Using the Editor', items: [
+      { q: 'How do I run my code?', a: 'The preview updates automatically after you stop typing. We use a 500-millisecond delay (debounce) to prevent lag while you type.' },
+      { q: 'Can I load external libraries like React or jQuery?', a: 'Yes. You can add a script tag in the HTML editor to load libraries from a CDN (like cdnjs or jsDelivr), and they will run in the preview.' },
+      { q: 'Does the tool support modern JavaScript (ES6+)?', a: 'Yes. The preview is rendered inside a modern iframe, which supports all modern JavaScript features including classes, arrow functions, and async/await.' },
+      { q: 'How do I reset the editor?', a: 'You can refresh the page to clear everything, or manually delete the code and paste the starter template.' },
+      { q: 'Why is my CSS not applying?', a: 'Make sure your CSS selector matches the class or ID in your HTML. For example, if your HTML has <div class="box">, your CSS should use .box { ... }.' },
+      { q: 'Can I use images in my HTML?', a: 'Yes. You can use external image URLs like <img src="https://example.com/image.jpg">. Local image uploads are not supported in this version.' },
     ]},
-    { heading: 'Limits and safety', items: [
-      { q: 'Can the code access my browser data?', a: 'No. The iframe runs in a sandboxed context, so scripts cannot read cookies, localStorage from this site, or parent document data.' },
-      { q: 'Can the code make network requests?', a: 'Inline scripts can fetch public URLs. Requests follow the same CORS rules as any browser page. The tool does not proxy or relay requests.' },
-      { q: 'Why does my alert() not appear?', a: 'Some browsers block alert() inside sandboxed iframes without allow-modals. The default sandbox includes allow-modals, so alert() works in most browsers.' },
-      { q: 'Is the preview isolated from this site?', a: 'Yes. The preview uses a separate iframe with its own document. Styles and scripts in the preview do not affect this site.' },
+    { heading: 'Security & Privacy', items: [
+      { q: 'Can the code access my browser cookies?', a: 'No. The code runs in a sandboxed iframe. It cannot read cookies, localStorage, or any personal data from this website.' },
+      { q: 'Can the code make API requests?', a: 'Yes, but they are subject to standard CORS rules. If an API allows cross-origin requests, your JavaScript can fetch data from it.' },
+      { q: 'Does the tool store my code on a server?', a: 'No. Your code never leaves your device. There is no backend processing involved.' },
+      { q: 'Can someone else see what I am coding?', a: 'No. The entire process is local. Only you can see the code and the preview.' },
     ]},
     { heading: 'Troubleshooting', items: [
-      { q: 'Why is the preview blank?', a: 'A JavaScript error usually stops the page from rendering. Open DevTools in your browser to see the error. Once fixed, the preview updates after the next edit.' },
-      { q: 'Why does the preview not refresh automatically?', a: 'Check that auto-run is on. Some browsers cache iframe content; pressing Run forces a fresh render.' },
-      { q: 'Can I paste minified code?', a: 'Yes. Minified code works but is harder to edit. Use a formatter first if you plan to make changes.' },
+      { q: 'Why is my preview blank?', a: 'A JavaScript error or an unclosed HTML tag can break the rendering. Check your code carefully. If you have an infinite loop in JS, the preview might freeze.' },
+      { q: 'Why does alert() not work?', a: 'Some browsers block alert() inside iframes. This tool allows modals, so it should work, but if it does not, use console.log() and check your browser developer tools.' },
+      { q: 'Is there a limit to how much code I can write?', a: 'There is no strict limit, but extremely large files (over 1MB) might slow down your browser.' },
+      { q: 'Can I use this on my mobile phone?', a: 'Yes. The editor is mobile-friendly. However, typing long code on a phone screen can be challenging.' },
     ]},
   ]
 
   const article = (
     <>
-      <h2>How to use the code runner</h2>
+      <h2>What is the HTML, CSS, and JavaScript Code Runner?</h2>
+      <p>The PPM Creator Code Runner is an online coding playground that allows developers and learners to write HTML, CSS, and JavaScript directly in their browser. It provides an instant, live preview of the output without the need to set up a local development environment. This tool is ideal for quick testing, debugging, and experimenting with web technologies.</p>
+      <p>Traditionally, to test a simple HTML page, you would need a text editor, save the file, and then open it in a browser. If you wanted to add CSS or JavaScript, the process became even more complex. This tool eliminates all that friction by combining the editor and the browser preview into one single interface.</p>
+      
+      <h2>Why Use an Online Code Runner?</h2>
+      <p>There are several reasons why an online code runner is an essential tool for web developers:</p>
+      <ul>
+        <li><b>Instant Feedback:</b> Write a line of code and see the result immediately. This tight feedback loop is the fastest way to learn and debug.</li>
+        <li><b>No Setup Required:</b> You do not need to install Node.js, configure a server, or create project folders. Just open the page and start coding.</li>
+        <li><b>Safe Sandbox:</b> The code runs in an isolated environment. Even if you write a script that crashes, it will not affect your browser or your computer.</li>
+        <li><b>Cross-Device Compatibility:</b> Because it runs in the browser, you can use it on any device, including Chromebooks, tablets, and even smartphones.</li>
+      </ul>
+
+      <h2>How to Use the Code Runner</h2>
+      <p>Using the tool is straightforward. You are presented with three tabs: HTML, CSS, and JS.</p>
       <ol>
-        <li>Type or paste your HTML into the editor.</li>
-        <li>Turn auto-run on, or click Run to render the code in the preview panel.</li>
-        <li>Edit and repeat. The result updates after each change.</li>
-        <li>Copy your final code into your own file when you are done.</li>
+        <li>Click on the <b>HTML</b> tab to write your markup. This is the structure of your page.</li>
+        <li>Switch to the <b>CSS</b> tab to style your elements. You can use classes, IDs, and flexbox just like a normal stylesheet.</li>
+        <li>Use the <b>JS</b> tab to add interactivity. You can select elements, add event listeners, and manipulate the DOM.</li>
+        <li>The <b>Live Preview</b> panel on the right (or bottom on mobile) updates automatically after a 500-millisecond delay.</li>
       </ol>
-      <h2>Why use this tool</h2>
-      <p>It is the fastest way to test a small HTML snippet, a CSS rule or a JavaScript function without setting up a project. The preview runs in a sandbox, so experiments do not leak into this site.</p>
-      <p>For learning, it is helpful to keep the editor and the preview side by side. Change one line and see the effect immediately. This tight loop is how most developers learn the browser.</p>
-      <h2>What you can build</h2>
-      <p>Small demos, prototypes, learning exercises, interactive widgets and snippets for a blog post all fit well. If you need a full framework, download the code and run it in your own development environment.</p>
-      <h2>Limits</h2>
-      <p>The sandbox restricts access to cookies, localStorage of this site, and the parent page. External libraries load normally, and network requests follow the same CORS rules as any browser page.</p>
-      <h2>Privacy</h2>
-      <p>Your code stays in your browser. It is never sent to a server, never stored, and it disappears when you close the tab.</p>
+
+      <h2>Common Use Cases</h2>
+      <h3>1. Learning Web Development</h3>
+      <p>If you are a beginner, this is the perfect tool to practice. You can follow tutorials and test the code instantly. No need to worry about saving files or setting up servers.</p>
+      <h3>2. Debugging Snippets</h3>
+      <p>Sometimes you copy a piece of code from a forum or a library documentation. Paste it here to verify that it works correctly and to see its visual output.</p>
+      <h3>3. Prototyping UI Ideas</h3>
+      <p>Before building a full component in a large framework like React, you can quickly draft the HTML and CSS structure here to validate your design idea.</p>
+
+      <h2>Security and Privacy</h2>
+      <p>We take privacy seriously. All the code you write in this tool is processed entirely on your device. It is never uploaded to a server, and it is not stored in any database. When you close the tab, the code is gone. The preview runs inside a sandboxed iframe, which prevents it from accessing sensitive data like cookies or the local storage of this website.</p>
     </>
   )
 
   return (
     <ToolShell
-      title="HTML, CSS, JS Code Runner Online Free | PPM Creator"
-      description="Write and run HTML, CSS and JavaScript code in your browser. Live preview, no upload, no signup."
+      title="HTML CSS JS Code Runner & Live Preview | PPM Creator Tools"
+      description="Run HTML, CSS, and JavaScript code online. Test your code live in the browser with instant preview. No signup required, completely private."
       path="/code-runner"
       crumb={[{ label: 'Developer Tools', to: '/calculators' }]}
-      h1="HTML, CSS, JS Code Runner"
-      lead="Write HTML, CSS and JavaScript in your browser and see the live result instantly. Nothing is uploaded."
+      h1="HTML, CSS, and JS Live Preview"
+      lead="Write code in the editor and see the result instantly in the live preview."
       faqGroups={faqGroups}
       related={[
-        { name: 'HTML to Text', href: '/html-to-text', blurb: 'Remove HTML tags from text' },
-        { name: 'CSV to JSON', href: '/csv-to-json', blurb: 'Convert CSV to JSON' },
-        { name: 'Word Counter', href: '/word-counter', blurb: 'Count words and characters' },
-        { name: 'Password Generator', href: '/password-generator', blurb: 'Generate a strong password' },
+        { name: 'HTML Formatter', href: '/html-formatter', blurb: 'Beautify HTML code' },
+        { name: 'CSS Minifier', href: '/css-minifier', blurb: 'Compress CSS files' },
+        { name: 'HTML to Text', href: '/html-to-text', blurb: 'Remove HTML tags' },
+        { name: 'Word Counter', href: '/word-counter', blurb: 'Count characters' },
       ]}
       guides={[
-        { title: 'Learning HTML, CSS and JS in the browser' },
-        { title: 'Testing snippets without a project setup' },
-        { title: 'Why iframe sandboxing matters' },
+        { title: 'HTML vs CSS vs JS: What is the difference?', slug: 'html-css-js-difference' },
+        { title: '10 HTML best practices for beginners', slug: 'html-best-practices' },
+        { title: 'Why sandboxed previews matter in web tools', slug: 'sandboxed-preview-security' },
       ]}
       article={article}
     >
       <section style={{ border: '1px solid #e7e5e4', borderRadius: 16, padding: 18, background: '#fafaf9', margin: '20px 0 8px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 8 }}>
-          <div style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>HTML Editor</div>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            <label style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 6, color: '#6b7280' }}>
-              <input type="checkbox" checked={autoRun} onChange={(e) => setAutoRun(e.target.checked)} />
-              Auto-run
-            </label>
-            <button type="button" onClick={run} style={{ padding: '7px 14px', background: '#F97316', color: '#fff', border: 0, borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Run</button>
-            <button type="button" onClick={reset} style={{ padding: '7px 12px', border: '1px solid #e7e5e4', background: '#fff', color: '#6b7280', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>Reset</button>
+        
+        <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #e7e5e4', marginBottom: 12 }}>
+          {(['html', 'css', 'js'] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              style={{
+                padding: '10px 20px',
+                background: tab === t ? '#fff' : 'transparent',
+                border: '1px solid #e7e5e4',
+                borderBottomColor: tab === t ? '#fff' : 'transparent',
+                marginBottom: '-1px',
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+                cursor: 'pointer',
+                fontSize: 14,
+                fontWeight: 600,
+                color: tab === t ? '#F97316' : '#6b7280',
+              }}
+            >
+              {t.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+          {tab === 'html' && (
+            <textarea
+              value={html}
+              onChange={(e) => setHtml(e.target.value)}
+              spellCheck={false}
+              style={{ width: '100%', height: 250, padding: 16, border: '1px solid #e7e5e4', borderRadius: 8, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 13, background: '#fff', resize: 'vertical' }}
+            />
+          )}
+          {tab === 'css' && (
+            <textarea
+              value={css}
+              onChange={(e) => setCss(e.target.value)}
+              spellCheck={false}
+              style={{ width: '100%', height: 250, padding: 16, border: '1px solid #e7e5e4', borderRadius: 8, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 13, background: '#fff', resize: 'vertical' }}
+            />
+          )}
+          {tab === 'js' && (
+            <textarea
+              value={js}
+              onChange={(e) => setJs(e.target.value)}
+              spellCheck={false}
+              style={{ width: '100%', height: 250, padding: 16, border: '1px solid #e7e5e4', borderRadius: 8, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 13, background: '#fff', resize: 'vertical' }}
+            />
+          )}
+        </div>
+
+        <div style={{ marginTop: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <h3 style={{ margin: 0, fontSize: 16, color: '#1c1917' }}>Live Preview</h3>
+          </div>
+          <div style={{ border: '1px solid #e7e5e4', borderRadius: 8, overflow: 'hidden', background: '#fff' }}>
+            <iframe
+              title="Code preview"
+              srcDoc={srcDoc}
+              sandbox="allow-scripts allow-modals allow-forms allow-popups"
+              style={{ width: '100%', height: 400, border: 0, display: 'block' }}
+            />
           </div>
         </div>
 
-        <textarea
-          value={html}
-          onChange={(e) => setHtml(e.target.value)}
-          rows={18}
-          spellCheck={false}
-          style={{ width: '100%', padding: 12, border: '1px solid #e7e5e4', borderRadius: 10, fontFamily: 'ui-monospace, Consolas, monospace', fontSize: 12, lineHeight: 1.6, background: '#fff', boxSizing: 'border-box', marginBottom: 12 }}
-        />
-
-        <div style={{ border: '1px solid #e7e5e4', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
-          <div style={{ padding: '8px 12px', background: '#fafaf9', borderBottom: '1px solid #e7e5e4', fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Preview</div>
-          <iframe
-            title="Code preview"
-            srcDoc={srcDoc}
-            sandbox="allow-scripts allow-modals allow-forms allow-popups"
-            style={{ width: '100%', height: 400, border: 0, display: 'block', background: '#fff' }}
-          />
-        </div>
-
-        <p style={{ fontSize: 12, color: '#6b7280', marginTop: 12, background: '#FFF7ED', padding: 10, borderRadius: 8 }}>
-          Code runs in a sandboxed iframe. It cannot read this site's cookies or localStorage. Network requests follow normal browser CORS rules.
-        </p>
       </section>
     </ToolShell>
   )
