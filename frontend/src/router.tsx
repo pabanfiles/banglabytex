@@ -46,6 +46,7 @@ import HtmlToText from './pages/tools/HtmlToText'
 import CodeRunner from './pages/tools/CodeRunner'
 import HtmlFormatter from './pages/tools/HtmlFormatter'
 import CssMinifier from './pages/tools/CssMinifier'
+import JsonViewer from './pages/tools/JsonViewer'
 import OfficeToPdf from './pages/tools/OfficeToPdf'
 import PdfToWord from './pages/tools/PdfToWord'
 import PdfToExcel from './pages/tools/PdfToExcel'
@@ -107,6 +108,7 @@ const router = createBrowserRouter([
       { path: 'code-runner', element: <CodeRunner /> },
       { path: 'html-formatter', element: <HtmlFormatter /> },
       { path: 'css-minifier', element: <CssMinifier /> },
+      { path: 'json-viewer', element: <JsonViewer /> },
       { path: 'office-to-pdf', element: <OfficeToPdf /> },
       { path: 'pdf-to-word', element: <PdfToWord /> },
       { path: 'pdf-to-excel', element: <PdfToExcel /> },
