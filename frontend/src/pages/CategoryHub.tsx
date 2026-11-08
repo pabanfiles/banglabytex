@@ -53,6 +53,8 @@ const CATS: Record<string, { title: string; blurb: string; items: { name: string
       { name: 'CSV to JSON', href: '/csv-to-json', blurb: 'Convert CSV to JSON' },
       { name: 'Password Generator', href: '/password-generator', blurb: 'Strong random password' },
       { name: 'HTML CSS JS Runner', href: '/code-runner', blurb: 'Run code live in your browser' },
+      { name: 'HTML Formatter', href: '/html-formatter', blurb: 'Beautify HTML code' },
+      { name: 'CSS Minifier', href: '/css-minifier', blurb: 'Compress CSS files' },
     ],
   },
 }
